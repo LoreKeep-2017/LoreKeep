@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.vk.sdk.VKSdk;
+import com.vk.sdk.util.VKUtil;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button button;
@@ -22,5 +25,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        //auth vk
+        VKSdk.login(MainActivity.this, VKUtil.getCertificateFingerprint(this, this.getPackageName()));
     }
 }

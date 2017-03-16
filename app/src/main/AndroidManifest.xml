@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ilya.lorekeep">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:name=".app"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -18,7 +21,11 @@
         <activity
             android:name=".LinksActivity"
             android:label="@string/title_activity_links"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name="com.vk.sdk.VKServiceActivity" android:label="ServiceActivity"
+            android:theme="@style/VK.Transparent" />
     </application>
 
 </manifest>
