@@ -27,30 +27,28 @@ public class LinksActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.linksLayout, new LinkFragment())
+                        .commitAllowingStateLoss();
             }
         });
-        Button button = (Button)findViewById(R.id.addButton);
-        button.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                 addFragment();
-            }
-        });
+//        Button button = (Button)findViewById(R.id.addButton);
+//        button.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v){
+//                 addFragment();
+//            }
+//        });
+        addFragment();
     }
 
     private void addFragment(){
-        getSupportFragmentManager()
-                .beginTransaction()
-//        LinkFragment link = (LinkFragment)manager.findFragmentById(R.id.linkFragment);
-                .replace(R.id.linkFragment, new LinkFragment())
-//        transaction.addToBackStack(null);
-                .commitAllowingStateLoss();
-        LinkFragment link = (LinkFragment)getSupportFragmentManager().findFragmentById(R.id.linkFragment);
-        if(link == null){
-            int a =0 ;
-            a++;
+        for(int i = 0; i < 10; i++) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.linksLayout, new LinkFragment())
+                    .commitAllowingStateLoss();
         }
     }
 
