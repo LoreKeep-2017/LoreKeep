@@ -2,6 +2,7 @@ package com.example.ilya.lorekeep.LinkFragment;
 
 
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -35,6 +36,7 @@ public class LinkFragment extends Fragment {
         // return inflater.inflate(R.layout.link_layout,container, false);
         LinearLayout layout = new LinearLayout(getContext());
         layout.setBackgroundColor(Color.GRAY);
+        layout.setOrientation(LinearLayout.VERTICAL);
 
         TextView title = new TextView(getContext());
         title.setLayoutParams(params);
@@ -50,8 +52,8 @@ public class LinkFragment extends Fragment {
         layout.addView(title);
 
         content.setText("OLOLOLLOLO Content OLOLOLOLOL");
+        content.setGravity(Gravity.CENTER);
         content.setTextColor(Color.WHITE);
-        content.setBackgroundColor(Color.RED);
         layout.addView(content);
 
         return layout;
