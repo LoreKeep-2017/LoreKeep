@@ -1,19 +1,28 @@
 package com.example.ilya.lorekeep;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ilya.lorekeep.LinkFragment.LinkFragment;
 
 public class LinksActivity extends AppCompatActivity {
+
+    private Intent intent;
+    private boolean intentCreated = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,26 +38,86 @@ public class LinksActivity extends AppCompatActivity {
             public void onClick(View view) {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.linksLayout, new LinkFragment())
-                        .commitAllowingStateLoss();
+                intent = new Intent(LinksActivity.this, CreateActivity.class);
+                intentCreated = !intentCreated;
+                startActivity(intent);
             }
         });
-//        Button button = (Button)findViewById(R.id.addButton);
-//        button.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v){
-//                 addFragment();
-//            }
-//        });
-        addFragment();
+
+        RecyclerView recycle = (RecyclerView)findViewById(R.id.recycle);
+        recycle.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView.Adapter adapter = new RecycleAdapter();
+        recycle.setAdapter(adapter);
+
     }
 
-    private void addFragment(){
-        for(int i = 0; i < 10; i++) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.linksLayout, new LinkFragment())
-                    .commitAllowingStateLoss();
+    @Override
+    public void onResume(){
+        super.onResume();
+        if(intentCreated) {
+//            String title = intent.getStringExtra("newTitle");
+//            if (title == null) {
+//                Toast.makeText(getApplicationContext(), "Krasava", Toast.LENGTH_SHORT).show();
+//
+//            }
+            SharedPreferences shared = getSharedPreferences("settings", Context.MODE_PRIVATE);
+            String title = shared.getString("newTitle", "");
+            Toast.makeText(getApplicationContext(), title, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHolder> {
+
+        private LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+
+        private LinearLayout layout;
+
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+
+            public ViewHolder(View v) {
+                super(v);
+
+            }
+        }
+
+        public RecycleAdapter() {
+
+        }
+
+        @Override
+        public RecycleAdapter.ViewHolder onCreateViewHolder(final ViewGroup outside, int viewType) {
+
+            LinkFragment link = new LinkFragment();
+
+            View layout = link.CreateView(outside);
+            layout.setOnClickListener(new View.OnClickListener(){
+
+                @Override
+                public void onClick(View v){
+                    Intent intent = new Intent(LinksActivity.this, InfoActivity.class);
+                    intent.putExtra("title", "OLOLOLOL Title OLololol0");
+                    intent.putExtra("content", "OLOLOLLOLO Content OLOLOLOLOL");
+                    intent.putExtra("childCount", outside.getChildCount());
+                    startActivity(intent);
+                }
+            });
+
+            ViewHolder vh = new ViewHolder(layout);
+            return vh;
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder hoder, int position){
+
+        }
+
+        @Override
+        public int getItemCount(){
+            return 3;
         }
     }
 

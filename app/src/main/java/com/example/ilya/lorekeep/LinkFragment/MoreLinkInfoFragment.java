@@ -1,13 +1,9 @@
 package com.example.ilya.lorekeep.LinkFragment;
 
-
-import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,29 +11,36 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.ilya.lorekeep.InfoActivity;
-import com.example.ilya.lorekeep.LinksActivity;
+/**
+ * Created by ilya on 3/27/17.
+ */
 
-public class LinkFragment {
+public class MoreLinkInfoFragment extends Fragment {
 
     private LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
     );
 
-    private LinearLayout layout;
+    public static MoreLinkInfoFragment newInstance() {
 
-    @Nullable
-    public View CreateView(ViewGroup parent) {
+        Bundle args = new Bundle();
 
-        layout = new LinearLayout(parent.getContext());
+        MoreLinkInfoFragment fragment = new MoreLinkInfoFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        LinearLayout layout = new LinearLayout(getContext());
         layout.setBackgroundColor(Color.GRAY);
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        TextView title = new TextView(parent.getContext());
+        TextView title = new TextView(getContext());
         title.setLayoutParams(params);
 
-        TextView content = new TextView(parent.getContext());
+        TextView content = new TextView(getContext());
         content.setLayoutParams(params);
 
         params.setMargins(20,20,20,20);
@@ -53,9 +56,6 @@ public class LinkFragment {
         layout.addView(content);
 
         return layout;
-    }
 
-    private int getChildNumber(){
-        return ((ViewGroup)layout.getParent()).getChildCount();
     }
 }

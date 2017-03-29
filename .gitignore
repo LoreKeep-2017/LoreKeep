@@ -7,4 +7,4 @@
 /build
 /captures
 .externalNativeBuild
-#/vksdk_library
+/vksdk_library
