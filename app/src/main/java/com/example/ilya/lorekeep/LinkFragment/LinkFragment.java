@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.ilya.lorekeep.DAO.LinkInfo;
 import com.example.ilya.lorekeep.InfoActivity;
 import com.example.ilya.lorekeep.LinksActivity;
 
@@ -28,7 +29,7 @@ public class LinkFragment {
     private LinearLayout layout;
 
     @Nullable
-    public View CreateView(ViewGroup parent) {
+    public View CreateView(ViewGroup parent, LinkInfo linkInfo) {
 
         layout = new LinearLayout(parent.getContext());
         layout.setBackgroundColor(Color.GRAY);
@@ -37,20 +38,28 @@ public class LinkFragment {
         TextView title = new TextView(parent.getContext());
         title.setLayoutParams(params);
 
-        TextView content = new TextView(parent.getContext());
-        content.setLayoutParams(params);
+        if(!linkInfo.getLinkDescription().isEmpty()) {
+            TextView content = new TextView(parent.getContext());
+            content.setLayoutParams(params);
+            content.setText(linkInfo.getLinkDescription());
+            content.setGravity(Gravity.CENTER);
+            content.setTextColor(Color.WHITE);
+            layout.addView(content);
+        }
+
+        TextView link = new TextView(parent.getContext());
+        link.setLayoutParams(params);
 
         params.setMargins(20,20,20,20);
         layout.setLayoutParams(params);
 
-        title.setText("OLOLOLOL Title OLololol0");
+        title.setText(linkInfo.getLinkTitle());
         title.setGravity(Gravity.CENTER);
         layout.addView(title);
 
-        content.setText("OLOLOLLOLO Content OLOLOLOLOL");
-        content.setGravity(Gravity.CENTER);
-        content.setTextColor(Color.WHITE);
-        layout.addView(content);
+        link.setText(linkInfo.getLink());
+        link.setGravity(Gravity.CENTER);
+        layout.addView(link);
 
         return layout;
     }

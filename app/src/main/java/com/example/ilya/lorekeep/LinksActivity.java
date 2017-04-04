@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ilya.lorekeep.DAO.HelperFactory;
+import com.example.ilya.lorekeep.DAO.LinkInfo;
 import com.example.ilya.lorekeep.LinkFragment.LinkFragment;
+
+import java.sql.SQLException;
+import java.util.List;
 
 public class LinksActivity extends AppCompatActivity {
 
     private Intent intent;
-    private boolean intentCreated = false;
+    private int initSize = -1;
+    private List<LinkInfo> linkList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,42 +46,35 @@ public class LinksActivity extends AppCompatActivity {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
                 intent = new Intent(LinksActivity.this, CreateActivity.class);
-                intentCreated = !intentCreated;
                 startActivity(intent);
             }
         });
 
-        RecyclerView recycle = (RecyclerView)findViewById(R.id.recycle);
-        recycle.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerView.Adapter adapter = new RecycleAdapter();
-        recycle.setAdapter(adapter);
+        HelperFactory.setHelper(getApplicationContext());
 
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        if(intentCreated) {
-//            String title = intent.getStringExtra("newTitle");
-//            if (title == null) {
-//                Toast.makeText(getApplicationContext(), "Krasava", Toast.LENGTH_SHORT).show();
-//
-//            }
-            SharedPreferences shared = getSharedPreferences("settings", Context.MODE_PRIVATE);
-            String title = shared.getString("newTitle", "");
-            Toast.makeText(getApplicationContext(), title, Toast.LENGTH_SHORT).show();
+        RecyclerView recycle = (RecyclerView)findViewById(R.id.recycle);
+        recycle.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView.Adapter adapter = new RecycleAdapter();
+        recycle.setAdapter(adapter);
+        try {
+            linkList = HelperFactory.getHelper().getLinkInfoDao().getAllLinks();
+        } catch (SQLException e){
+            Log.e("on resume", "error getting links");
+        }
+        if(initSize == -1){
+            initSize = linkList.size();
+        }
+        if(initSize != linkList.size()) {
+            Toast.makeText(getApplicationContext(), "New link succesfully added", Toast.LENGTH_SHORT).show();
         }
     }
 
     private class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHolder> {
-
-        private LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-
-        private LinearLayout layout;
-
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -84,6 +84,8 @@ public class LinksActivity extends AppCompatActivity {
             }
         }
 
+        private int i = 0;
+
         public RecycleAdapter() {
 
         }
@@ -92,8 +94,8 @@ public class LinksActivity extends AppCompatActivity {
         public RecycleAdapter.ViewHolder onCreateViewHolder(final ViewGroup outside, int viewType) {
 
             LinkFragment link = new LinkFragment();
-
-            View layout = link.CreateView(outside);
+            Log.d("viewType number", "number is " + viewType);
+            View layout = link.CreateView(outside, linkList.get(i));
             layout.setOnClickListener(new View.OnClickListener(){
 
                 @Override
@@ -105,20 +107,25 @@ public class LinksActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
-
-            ViewHolder vh = new ViewHolder(layout);
-            return vh;
+            ++i;
+            return new ViewHolder(layout);
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder hoder, int position){
+        public void onBindViewHolder(ViewHolder holder, int position){
 
         }
 
         @Override
         public int getItemCount(){
-            return 3;
+            return linkList.size();
         }
+    }
+
+    @Override
+    public void onDestroy(){
+        HelperFactory.releaseHelper();
+        super.onDestroy();
     }
 
 }

@@ -22,7 +22,7 @@ public class MoreLinkInfoFragment extends Fragment {
             LinearLayout.LayoutParams.WRAP_CONTENT
     );
 
-    public static MoreLinkInfoFragment newInstance() {
+    public static MoreLinkInfoFragment newInstance(int position) {
 
         Bundle args = new Bundle();
 
