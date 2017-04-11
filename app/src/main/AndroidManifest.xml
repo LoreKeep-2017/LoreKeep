@@ -19,15 +19,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LinksActivity"
+            android:name=".note.NoteActivity"
             android:label="@string/title_activity_links"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.vk.sdk.VKServiceActivity"
             android:label="ServiceActivity"
             android:theme="@style/VK.Transparent" />
-        <activity android:name=".InfoActivity" />
-        <activity android:name=".CreateActivity"></activity>
+        <activity android:name=".note.ListNoteActivity" />
+        <activity android:name=".note.CreateNoteActivity"></activity>
     </application>
 
 </manifest>

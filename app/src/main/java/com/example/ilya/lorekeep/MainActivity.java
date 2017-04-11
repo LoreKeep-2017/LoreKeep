@@ -6,10 +6,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.example.ilya.lorekeep.DAO.GroupLink;
-import com.example.ilya.lorekeep.DAO.HelperFactory;
+import com.example.ilya.lorekeep.config.HelperFactory;
+import com.example.ilya.lorekeep.note.NoteActivity;
+import com.example.ilya.lorekeep.topic.dao.Topic;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.util.VKUtil;
 
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v){
-                Intent intent = new Intent(MainActivity.this, LinksActivity.class);
+                Intent intent = new Intent(MainActivity.this, NoteActivity.class);
                 startActivity(intent);
             }
         });
@@ -41,11 +41,11 @@ public class MainActivity extends AppCompatActivity {
         HelperFactory.setHelper(getApplicationContext());
 
         try {
-            List<GroupLink> links = HelperFactory.getHelper().getGroupLinkDAO().getAllGroups();
-            Log.d("on create", "query lenght: " + links.size());
-            HelperFactory.getHelper().getGroupLinkDAO().setLinkGroup();
-            links = HelperFactory.getHelper().getGroupLinkDAO().getAllGroups();
-            Log.d("on create", "query lenght: " + links.size());
+            List<Topic> topics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
+            Log.d("on create", "query lenght: " + topics.size());
+            HelperFactory.getHelper().getTopicDAO().setTopic();
+            topics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
+            Log.d("on create", "query lenght: " + topics.size());
         } catch (SQLException e){
             Log.e("on create", "fail to get query");
         }

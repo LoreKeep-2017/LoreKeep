@@ -1,4 +1,4 @@
-package com.example.ilya.lorekeep.DAO;
+package com.example.ilya.lorekeep.config;
 
 import android.content.Context;
 

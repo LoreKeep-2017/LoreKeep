@@ -1,9 +1,6 @@
-package com.example.ilya.lorekeep;
+package com.example.ilya.lorekeep.note;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -11,25 +8,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.ilya.lorekeep.DAO.HelperFactory;
-import com.example.ilya.lorekeep.DAO.LinkInfo;
-import com.example.ilya.lorekeep.LinkFragment.LinkFragment;
+import com.example.ilya.lorekeep.config.HelperFactory;
+import com.example.ilya.lorekeep.R;
+import com.example.ilya.lorekeep.note.dao.Note;
+import com.example.ilya.lorekeep.note.notefragment.NoteFragment;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public class LinksActivity extends AppCompatActivity {
+public class NoteActivity extends AppCompatActivity {
 
     private Intent intent;
     private int initSize = -1;
-    private List<LinkInfo> linkList;
+    private List<Note> noteList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +40,7 @@ public class LinksActivity extends AppCompatActivity {
             public void onClick(View view) {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
-                intent = new Intent(LinksActivity.this, CreateActivity.class);
+                intent = new Intent(NoteActivity.this, CreateNoteActivity.class);
                 startActivity(intent);
             }
         });
@@ -62,15 +57,15 @@ public class LinksActivity extends AppCompatActivity {
         RecyclerView.Adapter adapter = new RecycleAdapter();
         recycle.setAdapter(adapter);
         try {
-            linkList = HelperFactory.getHelper().getLinkInfoDao().getAllLinks();
+            noteList = HelperFactory.getHelper().getNoteDao().getAllNotes();
         } catch (SQLException e){
-            Log.e("on resume", "error getting links");
+            Log.e("on resume", "error getting notes");
         }
         if(initSize == -1){
-            initSize = linkList.size();
+            initSize = noteList.size();
         }
-        if(initSize != linkList.size()) {
-            Toast.makeText(getApplicationContext(), "New link succesfully added", Toast.LENGTH_SHORT).show();
+        if(initSize != noteList.size()) {
+            Toast.makeText(getApplicationContext(), "New note succesfully added", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -93,14 +88,14 @@ public class LinksActivity extends AppCompatActivity {
         @Override
         public RecycleAdapter.ViewHolder onCreateViewHolder(final ViewGroup outside, int viewType) {
 
-            LinkFragment link = new LinkFragment();
+            NoteFragment note = new NoteFragment();
             Log.d("viewType number", "number is " + viewType);
-            View layout = link.CreateView(outside, linkList.get(i));
+            View layout = note.CreateView(outside, noteList.get(i));
             layout.setOnClickListener(new View.OnClickListener(){
 
                 @Override
                 public void onClick(View v){
-                    Intent intent = new Intent(LinksActivity.this, InfoActivity.class);
+                    Intent intent = new Intent(NoteActivity.this, ListNoteActivity.class);
                     intent.putExtra("title", "OLOLOLOL Title OLololol0");
                     intent.putExtra("content", "OLOLOLLOLO Content OLOLOLOLOL");
                     intent.putExtra("childCount", outside.getChildCount());
@@ -118,7 +113,7 @@ public class LinksActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount(){
-            return linkList.size();
+            return noteList.size();
         }
     }
 

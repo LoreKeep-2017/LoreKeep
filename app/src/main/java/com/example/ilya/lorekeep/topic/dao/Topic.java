@@ -1,21 +1,21 @@
-package com.example.ilya.lorekeep.DAO;
+package com.example.ilya.lorekeep.topic.dao;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 
-@DatabaseTable(tableName = "GroupLink")
-public class GroupLink {
+@DatabaseTable(tableName = "Topic")
+public class Topic {
 
     @DatabaseField(generatedId = true)
     private int mId;
 
     @DatabaseField(canBeNull = false, dataType = DataType.STRING)
-    private String GroupTitle;
+    private String topicTitle;
 
-    public GroupLink(){
-        GroupTitle = "Java";
+    public Topic(){
+        topicTitle = "Java";
     }
 
 }

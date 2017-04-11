@@ -1,4 +1,4 @@
-package com.example.ilya.lorekeep.LinkFragment;
+package com.example.ilya.lorekeep.note.notefragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,22 +11,19 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/**
- * Created by ilya on 3/27/17.
- */
 
-public class MoreLinkInfoFragment extends Fragment {
+public class MoreNoteInfoFragment extends Fragment {
 
     private LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
     );
 
-    public static MoreLinkInfoFragment newInstance(int position) {
+    public static MoreNoteInfoFragment newInstance(int position) {
 
         Bundle args = new Bundle();
 
-        MoreLinkInfoFragment fragment = new MoreLinkInfoFragment();
+        MoreNoteInfoFragment fragment = new MoreNoteInfoFragment();
         fragment.setArguments(args);
         return fragment;
     }

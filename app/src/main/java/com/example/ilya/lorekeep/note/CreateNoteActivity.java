@@ -1,22 +1,20 @@
-package com.example.ilya.lorekeep;
+package com.example.ilya.lorekeep.note;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.ilya.lorekeep.DAO.HelperFactory;
-import com.example.ilya.lorekeep.DAO.LinkInfo;
+import com.example.ilya.lorekeep.config.HelperFactory;
+import com.example.ilya.lorekeep.note.dao.Note;
+import com.example.ilya.lorekeep.R;
 
 import java.sql.SQLException;
 
-public class CreateActivity extends AppCompatActivity {
+public class CreateNoteActivity extends AppCompatActivity {
 
     private String title;
     private String link;
@@ -32,7 +30,7 @@ public class CreateActivity extends AppCompatActivity {
         final EditText linkEdit = (EditText) findViewById(R.id.enterLink);
         final EditText contentEdit = (EditText) findViewById(R.id.enterContent);
 
-        button = (Button)findViewById(R.id.create);
+        button = (Button) findViewById(R.id.create);
         button.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -41,16 +39,16 @@ public class CreateActivity extends AppCompatActivity {
                 link = linkEdit.getText().toString();
                 content = contentEdit.getText().toString();
 
-                if(title.isEmpty() || link.isEmpty()){
+                if (title.isEmpty() || link.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Please, fill Title and Link filed", Toast.LENGTH_SHORT).show();
                 } else {
                     try {
-                        LinkInfo newLink = new LinkInfo();
-                        newLink.setLinkTitle(title);
-                        newLink.setLinkDecription(content);
-                        newLink.setLink(link);
-                        HelperFactory.getHelper().getLinkInfoDao().setNewLink(newLink);
-                    } catch(SQLException e){
+                        Note newNote = new Note();
+                        newNote.setNoteTitle(title);
+                        newNote.setNoteDecription(content);
+                        newNote.setNote(link);
+                        HelperFactory.getHelper().getNoteDao().setNewNote(newNote);
+                    } catch (SQLException e) {
                         Log.e("in create link", "error craeting link");
                     }
                     finish();

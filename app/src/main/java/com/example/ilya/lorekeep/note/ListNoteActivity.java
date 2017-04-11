@@ -1,23 +1,19 @@
-package com.example.ilya.lorekeep;
+package com.example.ilya.lorekeep.note;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.example.ilya.lorekeep.LinkFragment.LinkFragment;
-import com.example.ilya.lorekeep.LinkFragment.MoreLinkInfoFragment;
+import com.example.ilya.lorekeep.R;
+import com.example.ilya.lorekeep.note.notefragment.MoreNoteInfoFragment;
 
 import java.util.ArrayList;
 
-public class InfoActivity extends AppCompatActivity {
+public class ListNoteActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
     private String title;
@@ -47,7 +43,7 @@ public class InfoActivity extends AppCompatActivity {
 
     private class Manager extends FragmentPagerAdapter{
 
-        private ArrayList<MoreLinkInfoFragment> data;
+        private ArrayList<MoreNoteInfoFragment> data;
 
         Manager(FragmentManager fm){
             super(fm);
@@ -55,7 +51,7 @@ public class InfoActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return MoreLinkInfoFragment.newInstance(position);
+            return MoreNoteInfoFragment.newInstance(position);
         }
 
         @Override
