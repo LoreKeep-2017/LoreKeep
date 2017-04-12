@@ -35,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //auth vk
-        VKSdk.login(MainActivity.this, VKUtil.getCertificateFingerprint(this, this.getPackageName()));
-        VKSdk.initialize(MainActivity.this);
+        //VKSdk.login(MainActivity.this, VKUtil.getCertificateFingerprint(this, this.getPackageName()));
+        //VKSdk.initialize(MainActivity.this);
 
         HelperFactory.setHelper(getApplicationContext());
 

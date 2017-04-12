@@ -9,10 +9,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.ilya.lorekeep.config.HelperFactory;
+import com.example.ilya.lorekeep.dbexecutor.executorCreateNote;
 import com.example.ilya.lorekeep.note.dao.Note;
 import com.example.ilya.lorekeep.R;
 
 import java.sql.SQLException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class CreateNoteActivity extends AppCompatActivity {
 
@@ -20,6 +23,9 @@ public class CreateNoteActivity extends AppCompatActivity {
     private String link;
     private String content;
     private Button button;
+    private String TAG = "CreateNoteActivity";
+
+    private final Executor executor = Executors.newCachedThreadPool();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +48,17 @@ public class CreateNoteActivity extends AppCompatActivity {
                 if (title.isEmpty() || link.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Please, fill Title and Link filed", Toast.LENGTH_SHORT).show();
                 } else {
-                    try {
-                        Note newNote = new Note();
-                        newNote.setNoteTitle(title);
-                        newNote.setNoteDecription(content);
-                        newNote.setNote(link);
-                        HelperFactory.getHelper().getNoteDao().setNewNote(newNote);
-                    } catch (SQLException e) {
-                        Log.e("in create link", "error craeting link");
-                    }
+                    executor.execute(new executorCreateNote(title, content, link));
+                    Log.d(TAG, "onClick: createNote");
+//                    try {
+//                        Note newNote = new Note();
+//                        newNote.setNoteTitle(title);
+//                        newNote.setNoteDecription(content);
+//                        newNote.setNote(link);
+//                        HelperFactory.getHelper().getNoteDao().setNewNote(newNote);
+//                    } catch (SQLException e) {
+//                        Log.e("in create link", "error craeting link");
+//                    }
                     finish();
 
                 }
