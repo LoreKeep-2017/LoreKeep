@@ -7,11 +7,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.config.HelperFactory;
@@ -59,8 +61,25 @@ public class TopicFragment extends Fragment {
                 .findViewById(R.id.fragment_topic_recycler_view);
         mTopicRecyclerView.setLayoutManager(new GridLayoutManager
                 (getActivity(), 3));
+
+        initToolbars(v);
+
         setupAdapter();
         return v;
+    }
+
+    private void initToolbars(View v) {
+
+        Toolbar toolbarBottom = (Toolbar) v.findViewById(R.id.toolbar_bottom);
+        ImageView mAddTopic = (ImageView) toolbarBottom.findViewById(R.id.add_topic);
+
+        mAddTopic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
     }
 
 
