@@ -38,7 +38,7 @@ public class Note {
     }
 
     public void setNote(String note){
-        note = note;
+        this.note = note;
     }
 
     public String getNoteTitle(){

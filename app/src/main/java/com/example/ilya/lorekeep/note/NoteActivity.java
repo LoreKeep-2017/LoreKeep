@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ilya.lorekeep.config.HelperFactory;
@@ -20,17 +21,19 @@ import com.example.ilya.lorekeep.note.dao.Note;
 import com.example.ilya.lorekeep.note.notefragment.NoteFragment;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class NoteActivity extends AppCompatActivity {
 
     private Intent intent;
     private int initSize = -1;
-    private List<Note> noteList;
+    private List<Note> noteList = new ArrayList<Note>();
     private String TAG = "NoteActivity";
 
     //add cache
     private LruCache<Integer, Note> cache = new LruCache(32);
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,31 @@ public class NoteActivity extends AppCompatActivity {
 
         HelperFactory.setHelper(getApplicationContext());
 
+
+
+        //recyclerView
+        recyclerView = (RecyclerView) findViewById(R.id.recycle);
+        recyclerView.setAdapter(new RecyclerView.Adapter() {
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                return new ItemViewHolder(
+                        getLayoutInflater().inflate(R.layout.note_item, parent, false)
+                );
+            }
+
+            @Override
+            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+                Note note = noteList.get(position);
+                ((ItemViewHolder) holder).bind(note);
+            }
+
+            @Override
+            public int getItemCount() {
+                return noteList.size();
+            }
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         executorGetAllNotes.getInstance().setCallback(new executorGetAllNotes.Callback() {
             @Override
             public void onLoaded(List<Note> noteList) {
@@ -63,79 +91,15 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-//        RecyclerView recycle = (RecyclerView)findViewById(R.id.recycle);
-//        recycle.setLayoutManager(new LinearLayoutManager(this));
-//        RecyclerView.Adapter adapter = new RecycleAdapter();
-//        recycle.setAdapter(adapter);
 
         //load all Notes in new thread
 
-        noteList = executorGetAllNotes.getInstance().load();
+        executorGetAllNotes.getInstance().load();
         Log.d(TAG, "onResume: create new thread and execute!");
-//        try {
-//            noteList = HelperFactory.getHelper().getNoteDao().getAllNotes();
-//        } catch (SQLException e){
-//            Log.e("on resume", "error getting notes");
-//        }
-//        if(initSize == -1){
-//            initSize = noteList.size();
-//        }
-//        if(initSize != noteList.size()) {
-//            Toast.makeText(getApplicationContext(), "New note succesfully added", Toast.LENGTH_SHORT).show();
-//        }
     }
 
-//    private class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHolder> {
-//
-//        public class ViewHolder extends RecyclerView.ViewHolder {
-//
-//            public ViewHolder(View v) {
-//                super(v);
-//
-//            }
-//        }
-//
-//        private int i = 0;
-//
-//        public RecycleAdapter() {
-//
-//        }
-//
-//        @Override
-//        public RecycleAdapter.ViewHolder onCreateViewHolder(final ViewGroup outside, int viewType) {
-//
-//            NoteFragment note = new NoteFragment();
-//            Log.d("viewType number", "number is " + viewType);
-//            View layout = note.CreateView(outside, noteList.get(i));
-//            layout.setOnClickListener(new View.OnClickListener(){
-//
-//                @Override
-//                public void onClick(View v){
-//                    Intent intent = new Intent(NoteActivity.this, ListNoteActivity.class);
-//                    intent.putExtra("title", "OLOLOLOL Title OLololol0");
-//                    intent.putExtra("content", "OLOLOLLOLO Content OLOLOLOLOL");
-//                    intent.putExtra("childCount", outside.getChildCount());
-//                    startActivity(intent);
-//                }
-//            });
-//            ++i;
-//            return new ViewHolder(layout);
-//        }
-//
-//        @Override
-//        public void onBindViewHolder(ViewHolder holder, int position){
-//
-//        }
-//
-//        @Override
-//        public int getItemCount(){
-//            return 2;
-//            //??
-//            //return noteList.size();
-//        }
-//    }
 
     @Override
     public void onDestroy(){
@@ -150,6 +114,26 @@ public class NoteActivity extends AppCompatActivity {
         } else {
             //TODO: спросить какого уя в ресайкл вью ниче не добавляется
             //do smth
+            this.noteList = noteList;
+            recyclerView.getAdapter().notifyItemInserted(noteList.size() - 1);
+        }
+
+    }
+
+    private static class ItemViewHolder extends RecyclerView.ViewHolder {
+
+        private final TextView link;
+        private final TextView title;
+
+        public ItemViewHolder(View itemView) {
+            super(itemView);
+            this.title = (TextView) itemView.findViewById(R.id.title);
+            this.link = (TextView) itemView.findViewById(R.id.link);
+        }
+
+        public void bind(Note note) {
+            title.setText(note.getNoteTitle());
+            link.setText(note.getNoteDescription());
         }
 
     }

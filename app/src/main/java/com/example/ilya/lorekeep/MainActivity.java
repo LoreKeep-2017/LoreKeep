@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.ilya.lorekeep.config.HelperFactory;
+import com.example.ilya.lorekeep.note.NoteActivity;
 import com.example.ilya.lorekeep.topic.TopicActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, TopicActivity.class);
+                Intent intent = new Intent(MainActivity.this, NoteActivity.class);
                 startActivity(intent);
             }
         });

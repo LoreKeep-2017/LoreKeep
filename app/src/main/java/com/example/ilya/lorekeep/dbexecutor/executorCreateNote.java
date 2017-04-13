@@ -28,7 +28,7 @@ public class executorCreateNote implements Runnable {
             e.printStackTrace();
         }
         Log.d(TAG, "run: executorCreateRun");
-
+        Log.d(TAG, "run: !!!!!!!!"+this.title + this.content + this.link);
         try {
             Note newNote = new Note();
             newNote.setNoteTitle(this.title);
@@ -36,7 +36,7 @@ public class executorCreateNote implements Runnable {
             newNote.setNote(this.link);
             HelperFactory.getHelper().getNoteDao().setNewNote(newNote);
         } catch (SQLException e) {
-            Log.e("in create link", "error craeting link");
+            Log.e("in create link", e.toString());
         }
 
     }

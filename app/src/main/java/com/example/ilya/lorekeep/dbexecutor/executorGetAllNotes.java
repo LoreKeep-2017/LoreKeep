@@ -35,7 +35,7 @@ public class executorGetAllNotes {
         this.callback = callback;
     }
 
-    public List<Note> load() {
+    public void load() {
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -54,7 +54,7 @@ public class executorGetAllNotes {
                 notifyLoaded(noteList);
             }
         });
-        return noteList;
+        //return noteList;
     }
 
     private void notifyLoaded(final List<Note> notelist) {
@@ -69,6 +69,7 @@ public class executorGetAllNotes {
                 if (callback != null) {
                     callback.onLoaded(notelist);
                 }
+                Log.d(TAG, "run: notify UI");
             }
         });
     }

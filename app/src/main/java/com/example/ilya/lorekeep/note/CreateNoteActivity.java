@@ -26,6 +26,7 @@ public class CreateNoteActivity extends AppCompatActivity {
     private String TAG = "CreateNoteActivity";
 
     private final Executor executor = Executors.newCachedThreadPool();
+    private executorCreateNote executorCreateNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,9 @@ public class CreateNoteActivity extends AppCompatActivity {
                 if (title.isEmpty() || link.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Please, fill Title and Link filed", Toast.LENGTH_SHORT).show();
                 } else {
-                    executor.execute(new executorCreateNote(title, content, link));
+                    Log.d(TAG, "onClick: title content link"+ title+content+link);
+                    executorCreateNote = new executorCreateNote(title, content, link);
+                    executor.execute(executorCreateNote);
                     Log.d(TAG, "onClick: createNote");
 //                    try {
 //                        Note newNote = new Note();
