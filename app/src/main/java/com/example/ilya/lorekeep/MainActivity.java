@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import com.example.ilya.lorekeep.config.HelperFactory;
 import com.example.ilya.lorekeep.note.NoteActivity;
+import com.example.ilya.lorekeep.topic.TopicActivity;
 import com.example.ilya.lorekeep.topic.dao.Topic;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.util.VKUtil;
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v){
-                Intent intent = new Intent(MainActivity.this, NoteActivity.class);
+                Intent intent = new Intent(MainActivity.this, TopicActivity.class);
                 startActivity(intent);
             }
         });
@@ -38,17 +39,7 @@ public class MainActivity extends AppCompatActivity {
         //VKSdk.login(MainActivity.this, VKUtil.getCertificateFingerprint(this, this.getPackageName()));
         //VKSdk.initialize(MainActivity.this);
 
-        HelperFactory.setHelper(getApplicationContext());
 
-        try {
-            List<Topic> topics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
-            Log.d("on create", "query lenght: " + topics.size());
-            HelperFactory.getHelper().getTopicDAO().setTopic();
-            topics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
-            Log.d("on create", "query lenght: " + topics.size());
-        } catch (SQLException e){
-            Log.e("on create", "fail to get query");
-        }
 
     }
 

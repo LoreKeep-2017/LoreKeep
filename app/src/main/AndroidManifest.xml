@@ -19,6 +19,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".topic.TopicActivity"
+            android:label="@string/title_activity_topics"/>
+        <activity
             android:name=".note.NoteActivity"
             android:label="@string/title_activity_links"
             android:theme="@style/AppTheme.NoActionBar" />

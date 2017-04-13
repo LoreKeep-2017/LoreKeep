@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">LoreKeep</string>
+    <string name="topic_name">topic_item</string>
+    <string name="title_activity_topics">TopciActivity</string>
     <string name="title_activity_links">LinksActivity</string>
     <string name="action_settings">Settings</string>
     <integer name="com_vk_sdk_AppId">5928386</integer>
