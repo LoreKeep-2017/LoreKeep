@@ -53,15 +53,6 @@ public class CreateNoteActivity extends AppCompatActivity {
                     executorCreateNote = new executorCreateNote(title, content, link);
                     executor.execute(executorCreateNote);
                     Log.d(TAG, "onClick: createNote");
-//                    try {
-//                        Note newNote = new Note();
-//                        newNote.setNoteTitle(title);
-//                        newNote.setNoteDecription(content);
-//                        newNote.setNote(link);
-//                        HelperFactory.getHelper().getNoteDao().setNewNote(newNote);
-//                    } catch (SQLException e) {
-//                        Log.e("in create link", "error craeting link");
-//                    }
                     finish();
 
                 }

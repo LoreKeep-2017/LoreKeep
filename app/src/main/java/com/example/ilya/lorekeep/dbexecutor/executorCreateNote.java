@@ -27,8 +27,6 @@ public class executorCreateNote implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "run: executorCreateRun");
-        Log.d(TAG, "run: !!!!!!!!"+this.title + this.content + this.link);
         try {
             Note newNote = new Note();
             newNote.setNoteTitle(this.title);

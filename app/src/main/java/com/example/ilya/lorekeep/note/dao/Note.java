@@ -30,11 +30,11 @@ public class Note {
     }
 
     public void setNoteTitle(String title){
-        noteTitle = title;
+        this.noteTitle = title;
     }
 
     public void setNoteDecription(String decription){
-        noteDescription = decription;
+        this.noteDescription = decription;
     }
 
     public void setNote(String note){
@@ -42,14 +42,14 @@ public class Note {
     }
 
     public String getNoteTitle(){
-        return noteTitle;
+        return this.noteTitle;
     }
 
     public String getNoteDescription(){
-        return noteDescription;
+        return this.noteDescription;
     }
 
     public String getNote(){
-        return note;
+        return this.note;
     }
 }

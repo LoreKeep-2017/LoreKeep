@@ -40,7 +40,7 @@ public class executorGetAllNotes {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -54,7 +54,6 @@ public class executorGetAllNotes {
                 notifyLoaded(noteList);
             }
         });
-        //return noteList;
     }
 
     private void notifyLoaded(final List<Note> notelist) {
