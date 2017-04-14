@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.example.ilya.lorekeep.MainActivity;
 import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.config.HelperFactory;
 import com.example.ilya.lorekeep.note.NoteActivity;
@@ -76,10 +77,10 @@ public class TopicFragment extends Fragment {
         mAddTopic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(getActivity(), NewTopicActivity.class);
+                startActivity(intent);
             }
         });
-
     }
 
 

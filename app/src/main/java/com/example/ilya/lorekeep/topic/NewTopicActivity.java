@@ -9,4 +9,10 @@ public class NewTopicActivity extends SingleFragmentActivity{
     public Fragment createFragment() {
         return NewTopicFragment.newInstance();
     }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 }

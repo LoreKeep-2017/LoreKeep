@@ -18,5 +18,4 @@ public class TopicActivity extends SingleFragmentActivity{
         return TopicFragment.newInstance();
     }
 
-
 }

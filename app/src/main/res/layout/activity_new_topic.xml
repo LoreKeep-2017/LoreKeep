@@ -4,36 +4,5 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/topic_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="start"
-        android:text="Enter title"/>
-
-    <EditText
-        android:id="@+id/topic_name_edit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Title"
-        android:layout_below="@+id/staticText1"/>
-
-
-    <EditText
-        android:id="@+id/enterContent"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:hint="Content"
-        android:layout_below="@+id/enterLink"/>
-
-    <Button
-        android:id="@+id/create"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="Create"
-        android:gravity="center"
-        android:layout_centerInParent="true"
-        android:layout_below="@+id/enterContent"/>
-
 
 </LinearLayout>
