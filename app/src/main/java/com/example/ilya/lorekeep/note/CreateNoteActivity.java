@@ -8,12 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.ilya.lorekeep.config.HelperFactory;
 import com.example.ilya.lorekeep.dbexecutor.executorCreateNote;
-import com.example.ilya.lorekeep.note.dao.Note;
 import com.example.ilya.lorekeep.R;
 
-import java.sql.SQLException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -31,7 +28,7 @@ public class CreateNoteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create);
+        setContentView(R.layout.activity_note_create);
 
         final EditText titleEdit = (EditText) findViewById(R.id.enterTitle);
         final EditText linkEdit = (EditText) findViewById(R.id.enterLink);

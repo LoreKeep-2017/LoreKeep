@@ -31,4 +31,11 @@
         layout="@layout/topic_image"/>
 
 
+    <TextView
+        android:id="@+id/targeturi"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        />
+
+
 </LinearLayout>

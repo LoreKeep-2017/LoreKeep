@@ -12,15 +12,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.ilya.lorekeep.config.HelperFactory;
 import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.dbexecutor.executorGetAllNotes;
 import com.example.ilya.lorekeep.note.dao.Note;
-import com.example.ilya.lorekeep.note.notefragment.NoteFragment;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +35,7 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_links);
+        setContentView(R.layout.activity_note);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Postgre SQL");
         setSupportActionBar(toolbar);
