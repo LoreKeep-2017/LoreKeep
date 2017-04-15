@@ -18,7 +18,7 @@
             android:background="@color/greyUpLoad"
             android:cropToPadding="true"
             android:text="Upload\nimage"
-            android:textSize = "10sp"/>
+            android:textSize = "12sp"/>
 
     </LinearLayout>
 

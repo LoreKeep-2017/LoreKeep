@@ -16,7 +16,14 @@ public class TopicImpl extends BaseDaoImpl<Topic, Integer> {
         return this.queryForAll();
     }
 
-    public void setTopic() throws SQLException{
-        this.create(new Topic());
+    public void setTopic(Topic paramTopic) throws SQLException{
+        Topic topic = new Topic();
+        topic.setTopicTitle(paramTopic.getTopicTitle());
+        topic.setImage(paramTopic.getImage());
+        this.create(topic);
+    }
+
+    public void deleteTopicById(Integer topicId) throws SQLException{
+        this.deleteById(topicId);
     }
 }
