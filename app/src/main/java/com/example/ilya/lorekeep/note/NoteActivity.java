@@ -3,7 +3,6 @@ package com.example.ilya.lorekeep.note;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.util.LruCache;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,27 +11,20 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.ilya.lorekeep.config.HelperFactory;
 import com.example.ilya.lorekeep.R;
-import com.example.ilya.lorekeep.dbexecutor.executorGetAllNotes;
+import com.example.ilya.lorekeep.dbexecutor.ExecutorCreateNote;
+import com.example.ilya.lorekeep.dbexecutor.ExecutorGetAllNotes;
 import com.example.ilya.lorekeep.note.dao.Note;
-import com.example.ilya.lorekeep.note.notefragment.NoteFragment;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class NoteActivity extends AppCompatActivity {
 
     private Intent intent;
-    private int initSize = -1;
-    private List<Note> noteList = new ArrayList<Note>();
+    private List<Note> notes = NoteList.getInstance().notes;
     private String TAG = "NoteActivity";
 
-    //add cache
-    private LruCache<Integer, Note> cache = new LruCache(32);
     private RecyclerView recyclerView;
 
     @Override
@@ -70,21 +62,30 @@ public class NoteActivity extends AppCompatActivity {
 
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-                Note note = noteList.get(position);
+//                Note note = noteList.get(position);
+                Note note = notes.get(position);
                 ((ItemViewHolder) holder).bind(note);
             }
 
             @Override
             public int getItemCount() {
-                return noteList.size();
+                return notes.size();
+//                return noteList.size();
             }
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        executorGetAllNotes.getInstance().setCallback(new executorGetAllNotes.Callback() {
+        ExecutorGetAllNotes.getInstance().setCallback(new ExecutorGetAllNotes.Callback() {
             @Override
-            public void onLoaded(List<Note> noteList) {
-                onNotesLoaded(noteList);
+            public void onLoaded() {
+                onNotesLoaded();
+            }
+        });
+
+        ExecutorCreateNote.getInstance().setCallback(new ExecutorCreateNote.Callback() {
+            @Override
+            public void onCreate() {
+                onNoteCreate();
             }
         });
 
@@ -93,10 +94,7 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-
-        //load all Notes in new thread
-
-        executorGetAllNotes.getInstance().load();
+        ExecutorGetAllNotes.getInstance().load();
         Log.d(TAG, "onResume: create new thread and execute!");
     }
 
@@ -107,16 +105,19 @@ public class NoteActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void onNotesLoaded(List<Note> noteList){
-        if (noteList == null){
-            //TODO: спросить какого уя в ресайкл вью ниче не добавляется
-            //do smth
+    private void onNotesLoaded(){
+        if (notes == null){
+            //TODO: smth
         } else {
-            //TODO: спросить какого уя в ресайкл вью ниче не добавляется
-            //do smth
-            this.noteList = noteList;
-            recyclerView.getAdapter().notifyItemInserted(noteList.size() - 1);
+            Log.e(TAG, "onNotesLoaded: callback, cache size: "+notes.size() );
+            recyclerView.getAdapter().notifyDataSetChanged();
         }
+
+    }
+
+    public void onNoteCreate(){
+        Log.e(TAG, "onNoteCreate: callback, cache size: "+notes.size() );
+        recyclerView.getAdapter().notifyItemInserted(notes.size());
 
     }
 

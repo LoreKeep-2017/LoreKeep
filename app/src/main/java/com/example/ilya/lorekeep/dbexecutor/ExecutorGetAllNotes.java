@@ -1,11 +1,11 @@
 package com.example.ilya.lorekeep.dbexecutor;
 
 
-import android.support.v4.util.LruCache;
 import android.util.Log;
 
 import com.example.ilya.lorekeep.Ui;
 import com.example.ilya.lorekeep.config.HelperFactory;
+import com.example.ilya.lorekeep.note.NoteList;
 import com.example.ilya.lorekeep.note.dao.Note;
 
 import java.sql.SQLException;
@@ -13,22 +13,22 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class executorGetAllNotes {
+public class ExecutorGetAllNotes {
 
-    private static final executorGetAllNotes GET_ALL_NOTES = new executorGetAllNotes();
+    private static final ExecutorGetAllNotes GET_ALL_NOTES = new ExecutorGetAllNotes();
 
-    public static executorGetAllNotes getInstance() {
+    public static ExecutorGetAllNotes getInstance() {
         return GET_ALL_NOTES;
     }
 
     public interface Callback {
-        void onLoaded(List<Note> notelist);
+        void onLoaded();
     }
 
+
     private final Executor executor = Executors.newCachedThreadPool();
-    private LruCache<Integer, Note> cache = new LruCache<>(32);
     private Callback callback;
-    private List<Note> noteList;
+    private List<Note> notes = NoteList.getInstance().notes;
     private String TAG = "executorGetAllNotes";
 
     public void setCallback(Callback callback) {
@@ -45,28 +45,28 @@ public class executorGetAllNotes {
                     e.printStackTrace();
                 }
                 Log.d(TAG, "run: getAllNotes in new thread!");
-                try {
-                    noteList = HelperFactory.getHelper().getNoteDao().getAllNotes();
-                } catch (SQLException e) {
-                    Log.e(TAG, "run: ", e);
+                if (notes.size() == 0){
+                    Log.e(TAG, "run: without cache! cache size" + notes.size() );
+                    try {
+                        notes.addAll(HelperFactory.getHelper().getNoteDao().getAllNotes());
+                    } catch (SQLException e) {
+                        Log.e(TAG, "run: ", e);
+                    }
+                } else {
+                    Log.e(TAG, "run: with cache size: "+ notes.size() );
                 }
 
-                notifyLoaded(noteList);
+                notifyLoaded();
             }
         });
     }
 
-    private void notifyLoaded(final List<Note> notelist) {
+    protected void notifyLoaded() {
         Ui.run(new Runnable() {
             @Override
             public void run() {
-                if (notelist != null) {
-                    for(Note note: notelist){
-                        cache.put(note.mId, note);
-                    }
-                }
                 if (callback != null) {
-                    callback.onLoaded(notelist);
+                    callback.onLoaded();
                 }
                 Log.d(TAG, "run: notify UI");
             }
