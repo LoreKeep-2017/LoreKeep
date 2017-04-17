@@ -8,9 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.dbexecutor.ExecutorCreateNote;
-
 
 public class CreateNoteActivity extends AppCompatActivity {
 
@@ -24,7 +24,7 @@ public class CreateNoteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create);
+        setContentView(R.layout.activity_note_create);
 
 
         final EditText titleEdit = (EditText) findViewById(R.id.enterTitle);

@@ -15,59 +15,59 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 
-public class DataBaseHelper extends OrmLiteSqliteOpenHelper{
+public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String TAG = DataBaseHelper.class.getSimpleName();
 
     private static final String DATABASE_NAME = "links.db";
 
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 8;
 
     private TopicImpl topicNoteDAO = null;
     private NoteImpl noteInfoDao = null;
 
-    public DataBaseHelper(Context context){
-        super(context,DATABASE_NAME, null, DATABASE_VERSION);
+    public DataBaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource){
-        try{
+    public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
+        try {
             TableUtils.createTable(connectionSource, Topic.class);
             TableUtils.createTable(connectionSource, Note.class);
             Log.d(TAG, "on create call");
-        } catch (SQLException e){
+        } catch (SQLException e) {
             Log.e(TAG, "error creating database");
         }
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVer, int newVer){
-        try{
+    public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVer, int newVer) {
+        try {
             TableUtils.dropTable(connectionSource, Topic.class, true);
             TableUtils.dropTable(connectionSource, Note.class, true);
-            onCreate(db,connectionSource);
-        } catch (SQLException e){
+            onCreate(db, connectionSource);
+        } catch (SQLException e) {
             Log.e(TAG, "error creating database");
         }
     }
 
-    public TopicImpl getTopicDAO() throws SQLException{
-        if(topicNoteDAO == null){
+    public TopicImpl getTopicDAO() throws SQLException {
+        if (topicNoteDAO == null) {
             topicNoteDAO = new TopicImpl(getConnectionSource(), Topic.class);
         }
         return topicNoteDAO;
     }
 
-    public NoteImpl getNoteDao() throws SQLException{
-        if(noteInfoDao == null){
+    public NoteImpl getNoteDao() throws SQLException {
+        if (noteInfoDao == null) {
             noteInfoDao = new NoteImpl(getConnectionSource(), Note.class);
         }
         return noteInfoDao;
     }
 
     @Override
-    public void close(){
+    public void close() {
         super.close();
         topicNoteDAO = null;
     }

@@ -3,6 +3,14 @@
     package="com.example.ilya.lorekeep">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+                     android:maxSdkVersion="18"/>
+
+    <uses-feature android:name="android.hardware.camera"
+                  android:required="false"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+                     android:maxSdkVersion="18"/>
 
     <application
         android:name=".app"

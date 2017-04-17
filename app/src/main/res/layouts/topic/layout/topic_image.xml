@@ -18,7 +18,7 @@
             android:background="@color/greyUpLoad"
             android:cropToPadding="true"
             android:text="Upload\nimage"
-            android:textSize = "10sp"/>
+            android:textSize = "12sp"/>
 
     </LinearLayout>
 
@@ -32,7 +32,11 @@
             android:id="@+id/set_topic_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/topic_title"/>
+            android:hint="@string/topic_title"
+            android:background="@android:color/transparent"
+            android:maxLength="20"
+            android:maxLines="3"
+            android:layout_marginLeft="8dp"/>
 
 
     </LinearLayout>

@@ -14,8 +14,36 @@ public class Topic {
     @DatabaseField(canBeNull = false, dataType = DataType.STRING)
     private String topicTitle;
 
-    public Topic(){
-        topicTitle = "Java";
+    @DatabaseField(dataType = DataType.BYTE_ARRAY)
+    byte[] mImage;
+
+    public byte[] getImage() {
+        return mImage;
     }
 
+    public void setImage(byte[] image) {
+        this.mImage = image;
+    }
+
+    public Topic(){
+        topicTitle = null;
+        mImage = null;
+    }
+
+    public int getId() {
+        return mId;
+    }
+
+    public String getTopicTitle() {
+        return topicTitle;
+    }
+
+    public void setId(int id) {
+
+        mId = id;
+    }
+
+    public void setTopicTitle(String topicTitle) {
+        this.topicTitle = topicTitle;
+    }
 }

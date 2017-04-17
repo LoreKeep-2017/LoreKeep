@@ -23,7 +23,7 @@ public class ListNoteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_info);
+        setContentView(R.layout.activity_list_note);
 
         // title = (TextView) findViewById(R.id.title);
         // content = (TextView) findViewById(R.id.content);
