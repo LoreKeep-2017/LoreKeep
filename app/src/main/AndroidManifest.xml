@@ -42,7 +42,6 @@
             android:label="ServiceActivity"
             android:theme="@style/VK.Transparent" />
         <activity android:name=".note.ListNoteActivity" />
-        <activity android:name=".note.CreateNoteActivity"></activity>
     </application>
 
 </manifest>

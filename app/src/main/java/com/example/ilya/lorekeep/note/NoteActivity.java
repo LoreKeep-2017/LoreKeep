@@ -3,6 +3,7 @@ package com.example.ilya.lorekeep.note;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,8 +42,9 @@ public class NoteActivity extends AppCompatActivity {
             public void onClick(View view) {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
-                intent = new Intent(NoteActivity.this, CreateNoteActivity.class);
-                startActivity(intent);
+                FragmentManager manager = getSupportFragmentManager();
+                NoteDialogFragment noteDialogFragment = new NoteDialogFragment();
+                noteDialogFragment.show(manager, "noteDialogFragment");
             }
         });
 
