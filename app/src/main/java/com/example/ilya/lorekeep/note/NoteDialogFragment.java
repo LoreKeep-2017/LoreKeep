@@ -58,8 +58,8 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
                 link = this.linkEdit.getText().toString();
                 content = this.contentEdit.getText().toString();
 
-                if (title.isEmpty() || link.isEmpty()) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Please, fill Title and Link filed", Toast.LENGTH_SHORT).show();
+                if (title.isEmpty() || link.isEmpty() || content.isEmpty()) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Please, fill all filed", Toast.LENGTH_SHORT).show();
                 } else {
                     Log.d(TAG, "onClick: title content link"+ title+content+link);
                     ExecutorCreateNote.getInstance().create(title, content, link);

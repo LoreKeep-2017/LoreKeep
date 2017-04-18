@@ -15,6 +15,4 @@ public class NoteList {
 
     public List<Note> notes = new ArrayList<Note>();
 
-//    private NoteList() {
-//    }
 }

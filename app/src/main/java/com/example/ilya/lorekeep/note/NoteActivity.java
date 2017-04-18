@@ -127,16 +127,19 @@ public class NoteActivity extends AppCompatActivity {
 
         private final TextView link;
         private final TextView title;
+        private final TextView description;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
             this.title = (TextView) itemView.findViewById(R.id.title);
             this.link = (TextView) itemView.findViewById(R.id.link);
+            this.description = (TextView) itemView.findViewById(R.id.description);
         }
 
         public void bind(Note note) {
             title.setText(note.getNoteTitle());
-            link.setText(note.getNoteDescription());
+            link.setText("https://github.com/");
+            description.setText(note.getNoteDescription());
         }
 
     }
