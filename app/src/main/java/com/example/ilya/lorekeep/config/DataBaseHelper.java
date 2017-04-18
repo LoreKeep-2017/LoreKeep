@@ -10,6 +10,7 @@ import com.example.ilya.lorekeep.note.dao.NoteImpl;
 import com.example.ilya.lorekeep.topic.dao.Topic;
 import com.example.ilya.lorekeep.topic.dao.TopicImpl;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 

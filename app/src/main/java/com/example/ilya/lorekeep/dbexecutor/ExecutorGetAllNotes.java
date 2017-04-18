@@ -39,11 +39,6 @@ public class ExecutorGetAllNotes {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 Log.d(TAG, "run: getAllNotes in new thread!");
                 if (notes.size() == 0){
                     Log.e(TAG, "run: without cache! cache size" + notes.size() );
