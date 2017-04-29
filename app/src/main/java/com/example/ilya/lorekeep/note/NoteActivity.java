@@ -126,20 +126,20 @@ public class NoteActivity extends AppCompatActivity {
     private static class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView link;
-        private final TextView title;
-        private final TextView description;
+        private final TextView content;
+        private final TextView comment;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-            this.title = (TextView) itemView.findViewById(R.id.title);
+            this.content = (TextView) itemView.findViewById(R.id.content);
             this.link = (TextView) itemView.findViewById(R.id.link);
-            this.description = (TextView) itemView.findViewById(R.id.description);
+            this.comment = (TextView) itemView.findViewById(R.id.comment);
         }
 
         public void bind(Note note) {
-            title.setText(note.getNoteTitle());
-            link.setText("https://github.com/");
-            description.setText(note.getNoteDescription());
+            content.setText(note.getNoteContent());
+            link.setText(note.getNoteUrl());
+            comment.setText(note.getNoteComment());
         }
 
     }

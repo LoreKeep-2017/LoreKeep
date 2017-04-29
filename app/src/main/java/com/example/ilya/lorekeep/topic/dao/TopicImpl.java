@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 public class TopicImpl extends BaseDaoImpl<Topic, Integer> {
@@ -16,11 +17,14 @@ public class TopicImpl extends BaseDaoImpl<Topic, Integer> {
         return this.queryForAll();
     }
 
-    public void setTopic(Topic paramTopic) throws SQLException{
-        Topic topic = new Topic();
-        topic.setTopicTitle(paramTopic.getTopicTitle());
-        topic.setImage(paramTopic.getImage());
-        this.create(topic);
+    public void setTopic(Topic newTopic) throws SQLException{
+        newTopic.setTopicUserId(0);
+        newTopic.setTopicColor("");
+        newTopic.setTopicCreationDate(new Date());
+        newTopic.setTopicLastUsed(new Date());
+        newTopic.setTopicRating(0);
+        newTopic.setTopicChanged(false);
+        this.create(newTopic);
     }
 
     public void deleteTopicById(Integer topicId) throws SQLException{

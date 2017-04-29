@@ -73,10 +73,15 @@ public class NewTopicFragment extends Fragment {
 
 
         mImageTopicButton = (Button) v.findViewById(R.id.set_topic_image);
-        if(editTopic.getImage() != null){
-            Bitmap bitmap = BitmapFactory.decodeByteArray(editTopic.getImage(), 0, editTopic.getImage().length);
-            BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
-            mImageTopicButton.setBackground(bdrawable);
+        String topicImagePath = editTopic.getTopicImage();
+        if(topicImagePath != null){
+            try {
+                Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(Uri.parse(topicImagePath)));
+                BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
+                mImageTopicButton.setBackground(bdrawable);
+            } catch(FileNotFoundException e){
+                // TODO : write catch
+            }
         }
 
         mImageTopicButton.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +133,7 @@ public class NewTopicFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 try {
+                    Log.d("create topic", mTopic.toString());
                     HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
                 }catch(SQLException e){
                     Log.d(TAG, "onClick: " + e.toString());
@@ -146,22 +152,19 @@ public class NewTopicFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
             Uri targetUri = data.getData();
+            Log.d("New Topic Fragment", targetUri.toString());
             Bitmap bitmap;
             try {
                 bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(targetUri));
-                BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(),bitmap);
+                BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
                 mImageTopicButton.setBackground(bdrawable);
-                mTopic.setImage(insertImg(bitmap));
-
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            } catch(FileNotFoundException e){}
+            mImageTopicButton.setText("");
+            mTopic.setTopicImage(targetUri.toString());
         }
     }
 
