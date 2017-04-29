@@ -1,12 +1,16 @@
 package com.example.ilya.lorekeep.topic;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -22,27 +26,45 @@ import com.example.ilya.lorekeep.config.HelperFactory;
 import com.example.ilya.lorekeep.note.NoteActivity;
 import com.example.ilya.lorekeep.topic.dao.Topic;
 
+import java.io.FileNotFoundException;
+import java.net.URI;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.jar.Manifest;
 
 
 public class TopicFragment extends Fragment {
 
     public static final String TOPIC_ID = "topic_id";
     private String TAG = "TopicActivity";
+    private final static int MY_PERMISSION_READ_STORAGE = 1;
 
     private RecyclerView mTopicRecyclerView;
     private List<Topic> mTopics;
 
-    public static TopicFragment newInstance() {
+    public static TopicFragment newInstance()
+    {
         return new TopicFragment();
     }
 
     @Override
+    @TargetApi(23)
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
+        int buffer = ContextCompat.checkSelfPermission(this.getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE);
+        Log.d("topic fragment", "" + buffer);
+        if(ContextCompat.checkSelfPermission(this.getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            Log.d("topic fragment", "permission != check self");
+            if (this.getActivity().shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                //TODO: write asking permision
+            } else {
+                this.getActivity().requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                        MY_PERMISSION_READ_STORAGE);
+            }
+        }
         HelperFactory.setHelper(getActivity().getApplicationContext());
 
         try {
@@ -50,6 +72,18 @@ public class TopicFragment extends Fragment {
             Log.d("on create", "query lenght: " + mTopics.size());
         } catch (SQLException e) {
             Log.e("on create", "fail to get query");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch(requestCode){
+            case MY_PERMISSION_READ_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Log.d("topic fragment", "in case read_storage");
+                } else {
+
+                }
         }
     }
 
@@ -109,7 +143,6 @@ public class TopicFragment extends Fragment {
     private class TopicHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private Button mTopicButton;
         Integer topicId;
-        Drawable mDrawable;
 
         public TopicHolder(LayoutInflater inflater, ViewGroup container) {
             super(inflater.inflate(R.layout.topic_item, container, false));
@@ -128,15 +161,26 @@ public class TopicFragment extends Fragment {
         }
 
         public void bindTopicItem(Topic item) {
-            if(item.getImage() != null){
-                Bitmap bitmap = BitmapFactory.decodeByteArray(item.getImage(), 0, item.getImage().length);
-                BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
-                mTopicButton.setBackground(bdrawable);
+            String imageUri = item.getTopicImage();
+            if(imageUri != null) {
+                Bitmap bitmap;
+                try {
+                    bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver()
+                            .openInputStream(Uri.parse(imageUri)));
+                    BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
+                    mTopicButton.setBackground(bdrawable);
+                } catch (FileNotFoundException e) {
+                }
             }
-//            mDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.bill_up_close, null);
+//            if(item.getImage() != null){
+//                Bitmap bitmap = BitmapFactory.decodeByteArray(item.getImage(), 0, item.getImage().length);
+//                BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
+//                mTopicButton.setBackground(bdrawable);
+//            }
+////            mDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.bill_up_close, null);
             mTopicButton.setText(item.getTopicTitle());
-//            mTopicButton.setBackground(mDrawable);
-            topicId = item.getId();
+////            mTopicButton.setBackground(mDrawable);
+            topicId = item.getTopicId();
         }
 
 

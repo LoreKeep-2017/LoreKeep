@@ -32,15 +32,15 @@ public class ExecutorCreateNote {
         this.callback = callback;
     }
 
-    public void create(final String title, final String content, final String link) {
+    public void create(final String content, final String comment, final String link) {
         executor.execute(new Runnable() {
             @Override
             public void run() {
                 try {
                     Note newNote = new Note();
-                    newNote.setNoteTitle(title);
-                    newNote.setNoteDecription(content);
-                    newNote.setNote(link);
+                    newNote.setNoteContent(content);
+                    newNote.setNoteComment(comment);
+                    newNote.setNoteUrl(link);
                     HelperFactory.getHelper().getNoteDao().setNewNote(newNote);
                     notes.add(newNote);
                     Log.e(TAG, "run: put in cache!!!" );

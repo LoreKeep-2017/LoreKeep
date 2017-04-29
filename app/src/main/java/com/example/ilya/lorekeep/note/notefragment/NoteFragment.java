@@ -27,16 +27,16 @@ public class NoteFragment {
         layout.setBackgroundColor(Color.GRAY);
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        TextView title = new TextView(parent.getContext());
-        title.setLayoutParams(params);
+        TextView content = new TextView(parent.getContext());
+        content.setLayoutParams(params);
 
-        if (!note.getNoteDescription().isEmpty()) {
-            TextView content = new TextView(parent.getContext());
-            content.setLayoutParams(params);
-            content.setText(note.getNoteDescription());
-            content.setGravity(Gravity.CENTER);
-            content.setTextColor(Color.WHITE);
-            layout.addView(content);
+        if (!note.getNoteComment().isEmpty()) {
+            TextView comment = new TextView(parent.getContext());
+            comment.setLayoutParams(params);
+            comment.setText(note.getNoteComment());
+            comment.setGravity(Gravity.CENTER);
+            comment.setTextColor(Color.WHITE);
+            layout.addView(comment);
         }
 
         TextView link = new TextView(parent.getContext());
@@ -45,11 +45,11 @@ public class NoteFragment {
         params.setMargins(20, 20, 20, 20);
         layout.setLayoutParams(params);
 
-        title.setText(note.getNoteTitle());
-        title.setGravity(Gravity.CENTER);
-        layout.addView(title);
+        content.setText(note.getNoteContent());
+        content.setGravity(Gravity.CENTER);
+        layout.addView(content);
 
-        link.setText(note.getNote());
+        link.setText(note.getNoteContent());
         link.setGravity(Gravity.CENTER);
         layout.addView(link);
 
