@@ -4,10 +4,15 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -23,10 +28,16 @@ import android.widget.TextView;
 import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.config.HelperFactory;
 import com.example.ilya.lorekeep.topic.dao.Topic;
+import com.example.ilya.lorekeep.topic.image.CapturePhotoUtils;
+import com.example.ilya.lorekeep.topic.image.FlickrFetchr;
+import com.example.ilya.lorekeep.topic.image.FlickrItem;
+import com.example.ilya.lorekeep.topic.image.ThumbnailDownloader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
@@ -38,7 +49,11 @@ public class NewTopicFragment extends Fragment {
     }
 
     private Button mImageTopicButton;
+    private RecyclerView mPhotoRecyclerView;
+    private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
+    private List<FlickrItem> mItems = new ArrayList<>();
     private EditText mTopicTitle;
+    private EditText mSearchImage;
     private TextView mCreateTopic;
     private ImageView mRemoveTopic;
     private Integer topicId;
@@ -49,8 +64,26 @@ public class NewTopicFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-
         HelperFactory.setHelper(getActivity().getApplicationContext());
+
+//        updateItems();
+        Handler responseHandler = new Handler();
+
+        mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
+
+        mThumbnailDownloader.setThumbnailDownloadListener(
+                new ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder>() {
+                    @Override
+                    public void onThumbnailDownloaded(PhotoHolder photoHolder,
+                                                      Bitmap bitmap) {
+                        Drawable drawable = new BitmapDrawable(getResources(),
+                                bitmap);
+                        photoHolder.bindDrawable(drawable);
+                    }
+                } );
+        mThumbnailDownloader.start();
+        mThumbnailDownloader.getLooper();
+        Log.i(TAG, "Background thread started");
     }
 
 
@@ -126,6 +159,32 @@ public class NewTopicFragment extends Fragment {
             }
         });
 
+        mSearchImage = (EditText) bottomToolbar.findViewById(R.id.flickr_search_image);
+        mSearchImage.addTextChangedListener(new TextWatcher(){
+            @Override
+            public void beforeTextChanged(
+                    CharSequence c, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence c, int start, int before, int count) {
+                Log.d(TAG, "QueryTextSubmit: " + c.toString());
+                updateItems(c.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable c) {
+
+            }
+        });
+
+
+
+        mPhotoRecyclerView = (RecyclerView) v
+                .findViewById(R.id.fragment_photo_gallery_recycler_view);
+        mPhotoRecyclerView.setLayoutManager(new GridLayoutManager
+                (getActivity(), 3));
+
         Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar_topic_top);
         mCreateTopic = (TextView) toolbar.findViewById(R.id.toolbar_topic_create);
 
@@ -147,7 +206,20 @@ public class NewTopicFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        setupAdapter();
+
         return v;
+    }
+
+    private void updateItems(String query){
+        new FetchItemsTask(query).execute();
+    }
+
+
+    private void setupAdapter() {
+        if (isAdded()) {
+            mPhotoRecyclerView.setAdapter(new PhotoAdapter(mItems));
+        }
     }
 
     @Override
@@ -172,5 +244,100 @@ public class NewTopicFragment extends Fragment {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         img.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
         return outputStream.toByteArray();
+    }
+
+
+    private class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private ImageView mItemImageView;
+        private Drawable mDrawable;
+        public PhotoHolder(View ImageView) {
+            super(ImageView);
+            mItemImageView = (ImageView) itemView
+                    .findViewById(R.id.fragment_photo_gallery_image_view);
+            mItemImageView.setOnClickListener(this);
+        }
+
+        public void bindDrawable(Drawable drawable) {
+            mItemImageView.setImageDrawable(drawable);
+            mDrawable = drawable;
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            Bitmap bitmap = ((BitmapDrawable)mDrawable).getBitmap();
+            BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
+            mImageTopicButton.setBackground(bdrawable);
+            mImageTopicButton.setText("");
+
+            String targetUri = CapturePhotoUtils.insertImage(getActivity().getContentResolver(), bitmap, "hell", "hell");
+            mTopic.setTopicImage(targetUri);
+        }
+    }
+
+    private class PhotoAdapter extends RecyclerView.Adapter<PhotoHolder> {
+        private List<FlickrItem> mGalleryItems;
+        public PhotoAdapter(List<FlickrItem> galleryItems) {
+            mGalleryItems = galleryItems;
+        }
+        @Override
+        public PhotoHolder onCreateViewHolder(ViewGroup viewGroup,
+                                              int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
+            View view = inflater.inflate(R.layout.flickr_item, viewGroup, false);
+            return new PhotoHolder(view);
+        }
+        @Override
+        public void onBindViewHolder(PhotoHolder photoHolder, int position) {
+            FlickrItem galleryItem = mGalleryItems.get(position);
+            Drawable placeholder = getResources().getDrawable
+                    (R.drawable.bill_up_close);
+            photoHolder.bindDrawable(placeholder);
+            mThumbnailDownloader.queueThumbnail(photoHolder,
+                    galleryItem.getUrl());
+        }
+        @Override
+        public int getItemCount() {
+            return mGalleryItems.size();
+        }
+    }
+
+    private class FetchItemsTask extends AsyncTask<Void,Void,List<FlickrItem>> {
+
+        private String mQuery = null;
+
+        public FetchItemsTask(String query) {
+            mQuery = query;
+        }
+
+        @Override
+        protected List<FlickrItem>  doInBackground(Void... params) {
+
+            if (mQuery == null) {
+//                return new FlickrFetchr().fetchRecentPhotos();
+                return null;
+            } else {
+                return new FlickrFetchr().searchPhotos(mQuery);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<FlickrItem> items) {
+            mItems = items;
+            setupAdapter();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mThumbnailDownloader.clearQueue();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mThumbnailDownloader.quit();
+        Log.i(TAG, "Background thread destroyed");
     }
 }

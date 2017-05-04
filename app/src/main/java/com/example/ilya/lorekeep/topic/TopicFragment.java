@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,10 +26,8 @@ import com.example.ilya.lorekeep.note.NoteActivity;
 import com.example.ilya.lorekeep.topic.dao.Topic;
 
 import java.io.FileNotFoundException;
-import java.net.URI;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.jar.Manifest;
 
 
 public class TopicFragment extends Fragment {
@@ -42,8 +39,7 @@ public class TopicFragment extends Fragment {
     private RecyclerView mTopicRecyclerView;
     private List<Topic> mTopics;
 
-    public static TopicFragment newInstance()
-    {
+    public static TopicFragment newInstance() {
         return new TopicFragment();
     }
 
@@ -55,7 +51,7 @@ public class TopicFragment extends Fragment {
 
         int buffer = ContextCompat.checkSelfPermission(this.getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE);
         Log.d("topic fragment", "" + buffer);
-        if(ContextCompat.checkSelfPermission(this.getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)
+        if (ContextCompat.checkSelfPermission(this.getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             Log.d("topic fragment", "permission != check self");
             if (this.getActivity().shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
@@ -71,15 +67,15 @@ public class TopicFragment extends Fragment {
             mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
             Log.d("on create", "query lenght: " + mTopics.size());
         } catch (SQLException e) {
-            Log.e("on create", "fail to get query");
+            Log.e("on create", "fail to get query" + e.toString());
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch(requestCode){
+        switch (requestCode) {
             case MY_PERMISSION_READ_STORAGE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.d("topic fragment", "in case read_storage");
                 } else {
 
@@ -162,7 +158,7 @@ public class TopicFragment extends Fragment {
 
         public void bindTopicItem(Topic item) {
             String imageUri = item.getTopicImage();
-            if(imageUri != null) {
+            if (imageUri != null) {
                 Bitmap bitmap;
                 try {
                     bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver()
@@ -182,7 +178,6 @@ public class TopicFragment extends Fragment {
 ////            mTopicButton.setBackground(mDrawable);
             topicId = item.getTopicId();
         }
-
 
         @Override
         public void onClick(View v) {
