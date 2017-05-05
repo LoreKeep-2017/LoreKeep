@@ -2,18 +2,15 @@ package com.example.ilya.lorekeep;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.ilya.lorekeep.topic.TopicActivity;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.util.VKUtil;
-
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -37,9 +34,6 @@ public class LoginActivity extends AppCompatActivity {
 
         VKSdk.login(LoginActivity.this, VKUtil.getCertificateFingerprint(this, this.getPackageName()));
         VKSdk.initialize(LoginActivity.this);
-
-
-
     }
 
     @Override
@@ -51,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
             }
+
             @Override
             public void onError(VKError error) {
                 // Произошла ошибка авторизации (например, пользователь запретил авторизацию)

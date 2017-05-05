@@ -158,6 +158,7 @@ public class TopicFragment extends Fragment {
 
         public void bindTopicItem(Topic item) {
             String imageUri = item.getTopicImage();
+            Integer color = item.getTopicColor();
             if (imageUri != null) {
                 Bitmap bitmap;
                 try {
@@ -168,14 +169,11 @@ public class TopicFragment extends Fragment {
                 } catch (FileNotFoundException e) {
                 }
             }
-//            if(item.getImage() != null){
-//                Bitmap bitmap = BitmapFactory.decodeByteArray(item.getImage(), 0, item.getImage().length);
-//                BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
-//                mTopicButton.setBackground(bdrawable);
-//            }
-////            mDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.bill_up_close, null);
+            if(color != 0){
+                mTopicButton.setBackgroundColor(color);
+            }
+
             mTopicButton.setText(item.getTopicTitle());
-////            mTopicButton.setBackground(mDrawable);
             topicId = item.getTopicId();
         }
 

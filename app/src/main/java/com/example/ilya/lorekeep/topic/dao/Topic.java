@@ -1,7 +1,5 @@
 package com.example.ilya.lorekeep.topic.dao;
 
-import android.renderscript.Element;
-
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -24,8 +22,8 @@ public class Topic {
     @DatabaseField(dataType = DataType.STRING)
     private String image;
 
-    @DatabaseField(dataType = DataType.STRING)
-    private String color;
+    @DatabaseField(dataType = DataType.INTEGER)
+    private int color;
 
     @DatabaseField(dataType = DataType.DATE)
     private Date creationDate;
@@ -39,37 +37,39 @@ public class Topic {
     @DatabaseField(dataType = DataType.BOOLEAN)
     private boolean changed;
 
-    public Topic(){topicId = 1;}
+    public Topic() {
+        topicId = 1;
+    }
 
-    public void setTopicUserId(int userId){
+    public void setTopicUserId(int userId) {
         this.userId = userId;
     }
 
-    public void setTopicTitle(String title){
+    public void setTopicTitle(String title) {
         this.title = title;
     }
 
-    public void setTopicImage(String image){
+    public void setTopicImage(String image) {
         this.image = image;
     }
 
-    public void setTopicColor(String color){
+    public void setTopicColor(int color) {
         this.color = color;
     }
 
-    public void setTopicCreationDate(Date creationDate){
+    public void setTopicCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 
-    public void setTopicLastUsed(Date lastUsed){
+    public void setTopicLastUsed(Date lastUsed) {
         this.lastUsed = lastUsed;
     }
 
-    public void setTopicRating(int rating){
+    public void setTopicRating(int rating) {
         this.rating = rating;
     }
 
-    public void setTopicChanged(boolean changed){
+    public void setTopicChanged(boolean changed) {
         this.changed = changed;
     }
 
@@ -77,35 +77,35 @@ public class Topic {
         return topicId;
     }
 
-    public int getTopicUserId(){
+    public int getTopicUserId() {
         return userId;
     }
 
-    public String getTopicTitle(){
+    public String getTopicTitle() {
         return title;
     }
 
-    public String getTopicImage(){
+    public String getTopicImage() {
         return image;
     }
 
-    public String getTopicColor(){
+    public int getTopicColor() {
         return color;
     }
 
-    public Date getTopicCreationDate(){
+    public Date getTopicCreationDate() {
         return creationDate;
     }
 
-    public Date getTopicLastUsed(){
+    public Date getTopicLastUsed() {
         return lastUsed;
     }
 
-    public int getTopicRating(){
+    public int getTopicRating() {
         return rating;
     }
 
-    public boolean getTopicChanged(){
+    public boolean getTopicChanged() {
         return changed;
     }
 }

@@ -36,14 +36,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/fragment_photo_gallery_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/toolbar_topic_bottom">
-
-        </android.support.v7.widget.RecyclerView>
-
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar_topic_bottom"
             android:layout_height="wrap_content"
@@ -55,10 +47,19 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true">
 
+            <ImageView
+                android:id="@+id/button_color_picker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginLeft="16dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_color_picker"
+                android:cropToPadding="true"/>
 
             <EditText
                 android:id="@+id/flickr_search_image"
-                android:layout_width="320dp"
+                android:layout_width="270dp"
                 android:layout_height="40dp"
                 android:layout_margin="5dp"
                 android:background="@drawable/searchimage"
@@ -67,6 +68,7 @@
                 android:drawableLeft="@drawable/ic_search_image"
                 android:gravity="center" >
             </EditText>
+
 
 
             <ImageView
@@ -80,6 +82,19 @@
                 android:cropToPadding="true"/>
 
         </android.support.v7.widget.Toolbar>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/fragment_photo_gallery_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_above="@+id/toolbar_topic_bottom">
+
+        </android.support.v7.widget.RecyclerView>
+
+
     </RelativeLayout>
 
 

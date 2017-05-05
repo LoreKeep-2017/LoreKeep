@@ -19,7 +19,6 @@ public class TopicImpl extends BaseDaoImpl<Topic, Integer> {
 
     public void setTopic(Topic newTopic) throws SQLException{
         newTopic.setTopicUserId(0);
-        newTopic.setTopicColor("");
         newTopic.setTopicCreationDate(new Date());
         newTopic.setTopicLastUsed(new Date());
         newTopic.setTopicRating(0);

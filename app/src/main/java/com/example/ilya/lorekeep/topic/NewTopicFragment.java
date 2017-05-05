@@ -33,7 +33,6 @@ import com.example.ilya.lorekeep.topic.image.FlickrFetchr;
 import com.example.ilya.lorekeep.topic.image.FlickrItem;
 import com.example.ilya.lorekeep.topic.image.ThumbnailDownloader;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -43,6 +42,8 @@ import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
 
 public class NewTopicFragment extends Fragment {
+
+    static final int PICK_COLOR_REQUEST = 1;
 
     public static NewTopicFragment newInstance() {
         return new NewTopicFragment();
@@ -55,8 +56,12 @@ public class NewTopicFragment extends Fragment {
     private EditText mTopicTitle;
     private EditText mSearchImage;
     private TextView mCreateTopic;
+
     private ImageView mRemoveTopic;
+    private ImageView mColorPicker;
+
     private Integer topicId;
+    private Integer color;
     private Topic mTopic = new Topic();
     private Topic editTopic = new Topic();
 
@@ -80,7 +85,7 @@ public class NewTopicFragment extends Fragment {
                                 bitmap);
                         photoHolder.bindDrawable(drawable);
                     }
-                } );
+                });
         mThumbnailDownloader.start();
         mThumbnailDownloader.getLooper();
         Log.i(TAG, "Background thread started");
@@ -96,7 +101,7 @@ public class NewTopicFragment extends Fragment {
 
         topicId = getActivity().getIntent().getIntExtra("topic_id", -1);
 
-        if(topicId != -1) {
+        if (topicId != -1) {
             try {
                 editTopic = HelperFactory.getHelper().getTopicDAO().queryForId(topicId);
             } catch (SQLException e) {
@@ -107,12 +112,12 @@ public class NewTopicFragment extends Fragment {
 
         mImageTopicButton = (Button) v.findViewById(R.id.set_topic_image);
         String topicImagePath = editTopic.getTopicImage();
-        if(topicImagePath != null){
+        if (topicImagePath != null) {
             try {
                 Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(Uri.parse(topicImagePath)));
                 BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
                 mImageTopicButton.setBackground(bdrawable);
-            } catch(FileNotFoundException e){
+            } catch (FileNotFoundException e) {
                 // TODO : write catch
             }
         }
@@ -127,7 +132,7 @@ public class NewTopicFragment extends Fragment {
         });
 
         mTopicTitle = (EditText) v.findViewById(R.id.set_topic_title);
-        mTopicTitle.addTextChangedListener(new TextWatcher(){
+        mTopicTitle.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(
                     CharSequence c, int start, int count, int after) {
@@ -152,15 +157,24 @@ public class NewTopicFragment extends Fragment {
             public void onClick(View v) {
                 try {
                     HelperFactory.getHelper().getTopicDAO().deleteTopicById(topicId);
-                }catch(SQLException e){
+                } catch (SQLException e) {
                     Log.d(TAG, "onClick: " + e.toString());
                 }
                 getActivity().finish();
             }
         });
 
+        mColorPicker = (ImageView) bottomToolbar.findViewById(R.id.button_color_picker);
+        mColorPicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), ColorPicker.class);
+                startActivityForResult(intent, PICK_COLOR_REQUEST);
+            }
+        });
+
         mSearchImage = (EditText) bottomToolbar.findViewById(R.id.flickr_search_image);
-        mSearchImage.addTextChangedListener(new TextWatcher(){
+        mSearchImage.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(
                     CharSequence c, int start, int count, int after) {
@@ -179,7 +193,6 @@ public class NewTopicFragment extends Fragment {
         });
 
 
-
         mPhotoRecyclerView = (RecyclerView) v
                 .findViewById(R.id.fragment_photo_gallery_recycler_view);
         mPhotoRecyclerView.setLayoutManager(new GridLayoutManager
@@ -188,13 +201,13 @@ public class NewTopicFragment extends Fragment {
         Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar_topic_top);
         mCreateTopic = (TextView) toolbar.findViewById(R.id.toolbar_topic_create);
 
-        mCreateTopic.setOnClickListener(new View.OnClickListener(){
+        mCreateTopic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
                     Log.d("create topic", mTopic.toString());
                     HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
-                }catch(SQLException e){
+                } catch (SQLException e) {
                     Log.d(TAG, "onClick: " + e.toString());
                 }
                 getActivity().finish();
@@ -211,7 +224,7 @@ public class NewTopicFragment extends Fragment {
         return v;
     }
 
-    private void updateItems(String query){
+    private void updateItems(String query) {
         new FetchItemsTask(query).execute();
     }
 
@@ -226,30 +239,39 @@ public class NewTopicFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK) {
-            Uri targetUri = data.getData();
-            Log.d("New Topic Fragment", targetUri.toString());
-            Bitmap bitmap;
-            try {
-                bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(targetUri));
-                BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
-                mImageTopicButton.setBackground(bdrawable);
-            } catch(FileNotFoundException e){}
-            mImageTopicButton.setText("");
-            mTopic.setTopicImage(targetUri.toString());
+        if (requestCode == PICK_COLOR_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                if (data == null) {
+                    return;
+                }
+                color = ColorPicker.getColor(data);
+                mImageTopicButton.setBackgroundColor(color);
+                mTopic.setTopicColor(color);
+            }
+        }
+
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
+                Uri targetUri = data.getData();
+                Log.d("New Topic Fragment", targetUri.toString());
+                Bitmap bitmap;
+                try {
+                    bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(targetUri));
+                    BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
+                    mImageTopicButton.setBackground(bdrawable);
+                } catch (FileNotFoundException e) {
+                }
+                mImageTopicButton.setText("");
+                mTopic.setTopicImage(targetUri.toString());
+            }
         }
     }
 
-    public byte[] insertImg(Bitmap img ) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        img.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
-        return outputStream.toByteArray();
-    }
 
-
-    private class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    private class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView mItemImageView;
         private Drawable mDrawable;
+
         public PhotoHolder(View ImageView) {
             super(ImageView);
             mItemImageView = (ImageView) itemView
@@ -265,7 +287,7 @@ public class NewTopicFragment extends Fragment {
         @Override
         public void onClick(View v) {
 
-            Bitmap bitmap = ((BitmapDrawable)mDrawable).getBitmap();
+            Bitmap bitmap = ((BitmapDrawable) mDrawable).getBitmap();
             BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
             mImageTopicButton.setBackground(bdrawable);
             mImageTopicButton.setText("");
@@ -277,9 +299,11 @@ public class NewTopicFragment extends Fragment {
 
     private class PhotoAdapter extends RecyclerView.Adapter<PhotoHolder> {
         private List<FlickrItem> mGalleryItems;
+
         public PhotoAdapter(List<FlickrItem> galleryItems) {
             mGalleryItems = galleryItems;
         }
+
         @Override
         public PhotoHolder onCreateViewHolder(ViewGroup viewGroup,
                                               int viewType) {
@@ -287,6 +311,7 @@ public class NewTopicFragment extends Fragment {
             View view = inflater.inflate(R.layout.flickr_item, viewGroup, false);
             return new PhotoHolder(view);
         }
+
         @Override
         public void onBindViewHolder(PhotoHolder photoHolder, int position) {
             FlickrItem galleryItem = mGalleryItems.get(position);
@@ -296,13 +321,14 @@ public class NewTopicFragment extends Fragment {
             mThumbnailDownloader.queueThumbnail(photoHolder,
                     galleryItem.getUrl());
         }
+
         @Override
         public int getItemCount() {
             return mGalleryItems.size();
         }
     }
 
-    private class FetchItemsTask extends AsyncTask<Void,Void,List<FlickrItem>> {
+    private class FetchItemsTask extends AsyncTask<Void, Void, List<FlickrItem>> {
 
         private String mQuery = null;
 
@@ -311,7 +337,7 @@ public class NewTopicFragment extends Fragment {
         }
 
         @Override
-        protected List<FlickrItem>  doInBackground(Void... params) {
+        protected List<FlickrItem> doInBackground(Void... params) {
 
             if (mQuery == null) {
 //                return new FlickrFetchr().fetchRecentPhotos();
