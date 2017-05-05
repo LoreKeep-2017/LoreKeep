@@ -1,9 +1,7 @@
-package com.example.ilya.lorekeep.topic;
+package com.example.ilya.lorekeep.topic.draw_and_colorpicker;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;

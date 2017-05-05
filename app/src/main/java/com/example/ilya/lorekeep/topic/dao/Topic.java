@@ -16,7 +16,7 @@ public class Topic {
     @DatabaseField(dataType = DataType.INTEGER)
     private int userId;
 
-    @DatabaseField(canBeNull = false, dataType = DataType.STRING)
+    @DatabaseField(dataType = DataType.STRING)
     private String title;
 
     @DatabaseField(dataType = DataType.STRING)

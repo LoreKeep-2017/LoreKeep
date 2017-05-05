@@ -38,7 +38,9 @@
             android:label="@string/title_activity_topics"/>
         <activity android:name=".topic.NewTopicActivity"
                   android:label="NewTopicctivity"/>
-        <activity android:name=".topic.ColorPicker"
+        <activity android:name=".topic.draw_and_colorpicker.ColorPicker"
+                  android:theme="@style/Theme.AppCompat.Dialog"/>
+        <activity android:name=".topic.draw_and_colorpicker.DrawActivity"
                   android:theme="@style/Theme.AppCompat.Dialog"/>
         <activity
             android:name=".note.NoteActivity"

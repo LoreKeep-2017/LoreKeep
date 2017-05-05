@@ -28,10 +28,13 @@ import android.widget.TextView;
 import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.config.HelperFactory;
 import com.example.ilya.lorekeep.topic.dao.Topic;
-import com.example.ilya.lorekeep.topic.image.CapturePhotoUtils;
-import com.example.ilya.lorekeep.topic.image.FlickrFetchr;
-import com.example.ilya.lorekeep.topic.image.FlickrItem;
-import com.example.ilya.lorekeep.topic.image.ThumbnailDownloader;
+import com.example.ilya.lorekeep.topic.draw_and_colorpicker.ColorPicker;
+import com.example.ilya.lorekeep.topic.draw_and_colorpicker.DrawActivity;
+import com.example.ilya.lorekeep.topic.draw_and_colorpicker.DrawPicture;
+import com.example.ilya.lorekeep.topic.image_flickr.CapturePhotoUtils;
+import com.example.ilya.lorekeep.topic.image_flickr.FlickrFetchr;
+import com.example.ilya.lorekeep.topic.image_flickr.FlickrItem;
+import com.example.ilya.lorekeep.topic.image_flickr.ThumbnailDownloader;
 
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
@@ -44,6 +47,7 @@ import static android.content.ContentValues.TAG;
 public class NewTopicFragment extends Fragment {
 
     static final int PICK_COLOR_REQUEST = 1;
+    static final int DRAW_PICTURE_REQUEST = 2;
 
     public static NewTopicFragment newInstance() {
         return new NewTopicFragment();
@@ -59,11 +63,13 @@ public class NewTopicFragment extends Fragment {
 
     private ImageView mRemoveTopic;
     private ImageView mColorPicker;
+    private ImageView mDraw;
 
     private Integer topicId;
     private Integer color;
     private Topic mTopic = new Topic();
     private Topic editTopic = new Topic();
+    private DrawPicture mDrawPicture;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,6 +114,7 @@ public class NewTopicFragment extends Fragment {
                 Log.d(TAG, "onClick: " + e.toString());
             }
         }
+
 
 
         mImageTopicButton = (Button) v.findViewById(R.id.set_topic_image);
@@ -164,6 +171,15 @@ public class NewTopicFragment extends Fragment {
             }
         });
 
+        mDraw = (ImageView) bottomToolbar.findViewById(R.id.button_draw);
+        mDraw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), DrawActivity.class);
+                startActivityForResult(intent, DRAW_PICTURE_REQUEST);
+            }
+        });
+
         mColorPicker = (ImageView) bottomToolbar.findViewById(R.id.button_color_picker);
         mColorPicker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,6 +188,7 @@ public class NewTopicFragment extends Fragment {
                 startActivityForResult(intent, PICK_COLOR_REQUEST);
             }
         });
+
 
         mSearchImage = (EditText) bottomToolbar.findViewById(R.id.flickr_search_image);
         mSearchImage.addTextChangedListener(new TextWatcher() {
@@ -198,6 +215,8 @@ public class NewTopicFragment extends Fragment {
         mPhotoRecyclerView.setLayoutManager(new GridLayoutManager
                 (getActivity(), 3));
 
+        setupAdapter();
+
         Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar_topic_top);
         mCreateTopic = (TextView) toolbar.findViewById(R.id.toolbar_topic_create);
 
@@ -219,7 +238,7 @@ public class NewTopicFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        setupAdapter();
+
 
         return v;
     }
@@ -247,6 +266,24 @@ public class NewTopicFragment extends Fragment {
                 color = ColorPicker.getColor(data);
                 mImageTopicButton.setBackgroundColor(color);
                 mTopic.setTopicColor(color);
+            }
+        }
+
+        if(requestCode == DRAW_PICTURE_REQUEST){
+            if(resultCode == RESULT_OK){
+                if(data == null){
+                    return;
+                }
+                Bitmap bitmap;
+                String targetUri = DrawActivity.getImage(data);
+                try {
+                    bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver()
+                            .openInputStream(Uri.parse(targetUri)));
+                    BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
+                    mImageTopicButton.setBackground(bdrawable);
+                } catch (FileNotFoundException e) {
+                }
+                mTopic.setTopicImage(targetUri);
             }
         }
 

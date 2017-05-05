@@ -1,4 +1,4 @@
-package com.example.ilya.lorekeep.topic.image;
+package com.example.ilya.lorekeep.topic.image_flickr;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
