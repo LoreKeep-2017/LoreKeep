@@ -9,6 +9,8 @@ import com.example.ilya.lorekeep.note.dao.Note;
 import com.example.ilya.lorekeep.note.dao.NoteImpl;
 import com.example.ilya.lorekeep.topic.dao.Topic;
 import com.example.ilya.lorekeep.topic.dao.TopicImpl;
+import com.example.ilya.lorekeep.user.dao.User;
+import com.example.ilya.lorekeep.user.dao.UserImpl;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 
 import com.j256.ormlite.support.ConnectionSource;
@@ -22,10 +24,11 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "links.db";
 
-    private static final int DATABASE_VERSION = 20;
+    private static final int DATABASE_VERSION = 21;
 
     private TopicImpl topicNoteDAO = null;
     private NoteImpl noteInfoDao = null;
+    private UserImpl userDao = null;
 
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -65,6 +68,13 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
             noteInfoDao = new NoteImpl(getConnectionSource(), Note.class);
         }
         return noteInfoDao;
+    }
+
+    public UserImpl getUserDao() throws SQLException{
+        if(userDao == null){
+            userDao = new UserImpl(getConnectionSource(), User.class);
+        }
+        return userDao;
     }
 
     @Override

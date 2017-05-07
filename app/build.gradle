@@ -41,5 +41,7 @@ dependencies {
     compile 'com.vk:androidsdk:1.6.5'
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.github.QuadFlask:colorpicker:0.0.13'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.5'
     testCompile 'junit:junit:4.12'
 }
