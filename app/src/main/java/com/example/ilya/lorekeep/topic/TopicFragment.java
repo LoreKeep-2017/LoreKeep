@@ -53,18 +53,7 @@ public class TopicFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        int buffer = ContextCompat.checkSelfPermission(this.getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE);
-        Log.d("topic fragment", "" + buffer);
-        if(ContextCompat.checkSelfPermission(this.getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            Log.d("topic fragment", "permission != check self");
-            if (this.getActivity().shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                //TODO: write asking permision
-            } else {
-                this.getActivity().requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
-                        MY_PERMISSION_READ_STORAGE);
-            }
-        }
+
         HelperFactory.setHelper(getActivity().getApplicationContext());
 
         try {
@@ -75,19 +64,8 @@ public class TopicFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch(requestCode){
-            case MY_PERMISSION_READ_STORAGE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Log.d("topic fragment", "in case read_storage");
-                } else {
 
-                }
-        }
-    }
-
-
+    @TargetApi(23)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,10 +75,18 @@ public class TopicFragment extends Fragment {
                 .findViewById(R.id.fragment_topic_recycler_view);
         mTopicRecyclerView.setLayoutManager(new GridLayoutManager
                 (getActivity(), 3));
-
+//        int buffer = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE);
+//        Log.d("topic fragment", "" + buffer);
+//        if(ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            Log.d("topic fragment", "permission != check self");
+//                getActivity().requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
+//                        MY_PERMISSION_READ_STORAGE);
+//
+//        }
         initToolbars(v);
+//        setupAdapter();
 
-        setupAdapter();
         return v;
     }
 
@@ -160,18 +146,21 @@ public class TopicFragment extends Fragment {
             });
         }
 
+        @TargetApi(23)
         public void bindTopicItem(Topic item) {
-            String imageUri = item.getTopicImage();
-            if(imageUri != null) {
-                Bitmap bitmap;
-                try {
-                    bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver()
-                            .openInputStream(Uri.parse(imageUri)));
-                    BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
-                    mTopicButton.setBackground(bdrawable);
-                } catch (FileNotFoundException e) {
-                }
-            }
+
+//            String imageUri = item.getTopicImage();
+////            getContext().grantUriPermission("Gallery",Uri.parse(imageUri),Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//            if(imageUri != null) {
+//                Bitmap bitmap;
+//                try {
+//                    bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver()
+//                            .openInputStream(Uri.parse(imageUri)));
+//                    BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
+//                    mTopicButton.setBackground(bdrawable);
+//                } catch (FileNotFoundException e) {
+//                }
+//            }
 //            if(item.getImage() != null){
 //                Bitmap bitmap = BitmapFactory.decodeByteArray(item.getImage(), 0, item.getImage().length);
 //                BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
@@ -182,6 +171,7 @@ public class TopicFragment extends Fragment {
 ////            mTopicButton.setBackground(mDrawable);
             topicId = item.getTopicId();
         }
+
 
 
         @Override

@@ -168,9 +168,4 @@ public class NewTopicFragment extends Fragment {
         }
     }
 
-    public byte[] insertImg(Bitmap img ) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        img.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
-        return outputStream.toByteArray();
-    }
 }
