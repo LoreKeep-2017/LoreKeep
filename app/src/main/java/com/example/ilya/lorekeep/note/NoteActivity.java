@@ -1,5 +1,6 @@
 package com.example.ilya.lorekeep.note;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,14 +20,26 @@ import com.example.ilya.lorekeep.dbexecutor.ExecutorCreateNote;
 import com.example.ilya.lorekeep.dbexecutor.ExecutorGetAllNotes;
 import com.example.ilya.lorekeep.note.dao.Note;
 import java.util.List;
+import java.util.Map;
 
 public class NoteActivity extends AppCompatActivity {
 
+    public static final String GET_NOTES_BY_TOPIC_ID =
+            "topic_id_for_note";
+
     private Intent intent;
-    private List<Note> notes = NoteList.getInstance().notes;
+//    private List<Note> notes = NoteList.getInstance().notes;
+private Map<Integer, List<Note>> mlNotes = NoteList.getInstance().mlNotes;
     private String TAG = "NoteActivity";
+    private Integer topicId;
 
     private RecyclerView recyclerView;
+
+    public static Intent newIntent(Context packageContext, Integer topicId) {
+        Intent intent = new Intent(packageContext, NoteActivity.class);
+        intent.putExtra(GET_NOTES_BY_TOPIC_ID, topicId);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,14 +49,15 @@ public class NoteActivity extends AppCompatActivity {
         toolbar.setTitle("Postgre SQL");
         setSupportActionBar(toolbar);
 
+        topicId = getIntent().getIntExtra(GET_NOTES_BY_TOPIC_ID, -1);
+
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
                 FragmentManager manager = getSupportFragmentManager();
-                NoteDialogFragment noteDialogFragment = new NoteDialogFragment();
+                NewNoteFragment noteDialogFragment = NewNoteFragment.newInstance(topicId);
                 noteDialogFragment.show(manager, "noteDialogFragment");
             }
         });
@@ -64,15 +78,16 @@ public class NoteActivity extends AppCompatActivity {
 
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-//                Note note = noteList.get(position);
-                Note note = notes.get(position);
+                Note note = mlNotes.get(topicId).get(position);
                 ((ItemViewHolder) holder).bind(note);
             }
 
             @Override
             public int getItemCount() {
-                return notes.size();
-//                return noteList.size();
+                if(mlNotes.get(topicId) == null)
+                    return 0;
+                else
+                    return mlNotes.get(topicId).size();
             }
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -96,6 +111,7 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        ExecutorGetAllNotes.getInstance().setTopicId(topicId);
         ExecutorGetAllNotes.getInstance().load();
         Log.d(TAG, "onResume: create new thread and execute!");
     }
@@ -108,19 +124,17 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     private void onNotesLoaded(){
-        if (notes == null){
+        if (mlNotes.get(topicId) == null){
             //TODO: smth
         } else {
-            Log.e(TAG, "onNotesLoaded: callback, cache size: "+notes.size() );
+            Log.e(TAG, "onNotesLoaded: callback, cache size: "+mlNotes.get(topicId).size() );
             recyclerView.getAdapter().notifyDataSetChanged();
         }
-
     }
 
     public void onNoteCreate(){
-        Log.e(TAG, "onNoteCreate: callback, cache size: "+notes.size() );
-        recyclerView.getAdapter().notifyItemInserted(notes.size());
-
+        Log.e(TAG, "onNoteCreate: callback, cache size: "+mlNotes.get(topicId).size() );
+        recyclerView.getAdapter().notifyItemInserted(mlNotes.get(topicId).size());
     }
 
     private static class ItemViewHolder extends RecyclerView.ViewHolder {

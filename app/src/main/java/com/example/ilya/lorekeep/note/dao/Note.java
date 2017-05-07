@@ -2,6 +2,7 @@ package com.example.ilya.lorekeep.note.dao;
 
 import android.provider.ContactsContract;
 
+import com.example.ilya.lorekeep.topic.dao.Topic;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -11,11 +12,13 @@ import java.util.Date;
 @DatabaseTable(tableName = "Note")
 public class Note {
 
+    public final static String NOTES_FILED_TOPIC = "topicId";
+
     @DatabaseField(generatedId = true)
     public int noteId;
 
-    @DatabaseField(canBeNull = false)
-    private int topicId;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = NOTES_FILED_TOPIC)
+    private Topic topic;
 
     @DatabaseField(dataType = DataType.STRING)
     private String comment;
@@ -40,8 +43,12 @@ public class Note {
 
     public Note(){}
 
-    public void setTopicId(){
-        topicId = 1;
+    public void setTopic(Topic topic) {
+        this.topic = topic;
+    }
+
+    public Topic getTopic() {
+        return topic;
     }
 
     public void setNoteComment(String comment){

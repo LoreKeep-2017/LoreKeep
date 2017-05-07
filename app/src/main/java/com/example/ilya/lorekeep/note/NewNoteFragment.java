@@ -16,17 +16,29 @@ import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.dbexecutor.ExecutorCreateNote;
 
 
-public class NoteDialogFragment extends DialogFragment implements View.OnClickListener{
+public class NewNoteFragment extends DialogFragment implements View.OnClickListener{
 
     private String title;
     private String link;
     private String content;
     private Button button;
     private String TAG = "CreateNoteFragment";
+    private Integer topicId;
 
     private EditText titleEdit;
     private EditText linkEdit;
     private EditText contentEdit;
+
+    static NewNoteFragment newInstance(int topicId) {
+        NewNoteFragment f = new NewNoteFragment();
+
+        // Supply num input as an argument.
+        Bundle args = new Bundle();
+        args.putInt("topicId", topicId);
+        f.setArguments(args);
+
+        return f;
+    }
 
 
     @Override
@@ -36,6 +48,8 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
         View view = inflater.inflate(R.layout.fragment_note_create, null);
         builder.setView(view);
 
+
+        topicId = getArguments().getInt("topicId");
 
         this.titleEdit = (EditText) view.findViewById(R.id.enterTitle);
         this.linkEdit = (EditText) view.findViewById(R.id.enterLink);
@@ -62,6 +76,7 @@ public class NoteDialogFragment extends DialogFragment implements View.OnClickLi
                     Toast.makeText(getActivity().getApplicationContext(), "Please, fill all filed", Toast.LENGTH_SHORT).show();
                 } else {
                     Log.d(TAG, "onClick: title content link"+ title+content+link);
+                    ExecutorCreateNote.getInstance().setTopicId(topicId);
                     ExecutorCreateNote.getInstance().create(title, content, link);
                     dismiss();
                 }

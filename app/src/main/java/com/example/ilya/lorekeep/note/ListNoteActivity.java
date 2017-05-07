@@ -25,12 +25,7 @@ public class ListNoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_note);
 
-        // title = (TextView) findViewById(R.id.title);
-        // content = (TextView) findViewById(R.id.content);
         mViewPager = (ViewPager) findViewById(R.id.linkViewPager);
-
-        // title.setText(getIntent().getStringExtra("title"));
-        // content.setText(getIntent().getStringExtra("content"));
         childCount = getIntent().getIntExtra("childCount", 10);
 
         Log.d("in on", "in ViewPager");

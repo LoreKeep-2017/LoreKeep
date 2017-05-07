@@ -179,7 +179,7 @@ public class TopicFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getActivity(), NoteActivity.class);
+            Intent intent = NoteActivity.newIntent(getContext(), topicId);
             startActivity(intent);
         }
     }
@@ -214,6 +214,5 @@ public class TopicFragment extends Fragment {
         HelperFactory.releaseHelper();
         super.onDestroy();
     }
-
 
 }
