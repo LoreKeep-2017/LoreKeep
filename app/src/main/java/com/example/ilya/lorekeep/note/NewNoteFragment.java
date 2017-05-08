@@ -29,7 +29,7 @@ public class NewNoteFragment extends DialogFragment implements View.OnClickListe
     private EditText linkEdit;
     private EditText contentEdit;
 
-    static NewNoteFragment newInstance(int topicId) {
+    public static NewNoteFragment newInstance(int topicId) {
         NewNoteFragment f = new NewNoteFragment();
 
         // Supply num input as an argument.

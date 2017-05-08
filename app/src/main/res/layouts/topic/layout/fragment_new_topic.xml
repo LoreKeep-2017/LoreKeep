@@ -31,7 +31,6 @@
         layout="@layout/topic_image"/>
 
 
-
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
@@ -47,50 +46,50 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/button_draw"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_draw_picture"/>
+
+                <ImageView
+                    android:id="@+id/button_color_picker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_color_picker"
+                    android:cropToPadding="true"/>
+
+                <ImageView
+                    android:id="@+id/flickr_search_image_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_search_image"
+                    android:scaleType="centerInside"/>
 
 
-
-            <EditText
-                android:id="@+id/flickr_search_image"
-                android:layout_width="240dp"
-                android:layout_height="40dp"
-                android:layout_margin="5dp"
-                android:background="@drawable/searchimage"
-                android:ems="10"
-                android:hint="search image for topic"
-                android:drawableLeft="@drawable/ic_search_image"
-                android:gravity="center" >
-            </EditText>
-
-            <ImageView
-                android:id="@+id/button_draw"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_draw_picture"
-                android:cropToPadding="true"/>
-
-            <ImageView
-                android:id="@+id/button_color_picker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_marginLeft="16dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_color_picker"
-                android:cropToPadding="true"/>
+                <ImageView
+                    android:id="@+id/button_remove_topic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="16dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/trash_white"
+                    android:cropToPadding="true"
+                    android:layout_toRightOf="@+id/button_color_picker"
+                    android:layout_toEndOf="@+id/button_color_picker"/>
+            </LinearLayout>
 
 
-            <ImageView
-                android:id="@+id/button_remove_topic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginRight="16dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/trash_white"
-                android:cropToPadding="true"/>
 
         </android.support.v7.widget.Toolbar>
 
@@ -99,12 +98,17 @@
             android:id="@+id/fragment_photo_gallery_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:layout_above="@+id/toolbar_topic_bottom">
-
         </android.support.v7.widget.RecyclerView>
+
+        <FrameLayout
+            android:id="@+id/loading_text_fragment_search"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_above="@+id/toolbar_topic_bottom"
+            android:layout_centerHorizontal="true">
+        </FrameLayout>
 
 
     </RelativeLayout>

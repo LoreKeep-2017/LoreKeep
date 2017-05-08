@@ -10,6 +10,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.ilya.lorekeep.R;
@@ -34,6 +37,7 @@ import com.example.ilya.lorekeep.topic.draw_and_colorpicker.DrawPicture;
 import com.example.ilya.lorekeep.topic.image_flickr.CapturePhotoUtils;
 import com.example.ilya.lorekeep.topic.image_flickr.FlickrFetchr;
 import com.example.ilya.lorekeep.topic.image_flickr.FlickrItem;
+import com.example.ilya.lorekeep.topic.image_flickr.SearchFragment;
 import com.example.ilya.lorekeep.topic.image_flickr.ThumbnailDownloader;
 
 import java.io.FileNotFoundException;
@@ -46,8 +50,11 @@ import static android.content.ContentValues.TAG;
 
 public class NewTopicFragment extends Fragment {
 
+    static final String REQUEST_IMAGE_FRAGMENT = "SearchFragment";
+
     static final int PICK_COLOR_REQUEST = 1;
     static final int DRAW_PICTURE_REQUEST = 2;
+    static final int REQUEST_IMAGE = 3;
 
     public static NewTopicFragment newInstance() {
         return new NewTopicFragment();
@@ -58,9 +65,9 @@ public class NewTopicFragment extends Fragment {
     private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
     private List<FlickrItem> mItems = new ArrayList<>();
     private EditText mTopicTitle;
-    private EditText mSearchImage;
     private TextView mCreateTopic;
 
+    private ImageView mSearchImage;
     private ImageView mRemoveTopic;
     private ImageView mColorPicker;
     private ImageView mDraw;
@@ -70,6 +77,7 @@ public class NewTopicFragment extends Fragment {
     private Topic mTopic = new Topic();
     private Topic editTopic = new Topic();
     private DrawPicture mDrawPicture;
+    private Boolean isAllreadPressed = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,7 +85,6 @@ public class NewTopicFragment extends Fragment {
         setRetainInstance(true);
         HelperFactory.setHelper(getActivity().getApplicationContext());
 
-//        updateItems();
         Handler responseHandler = new Handler();
 
         mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
@@ -100,7 +107,7 @@ public class NewTopicFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_new_topic, container,
                 false);
 
@@ -114,7 +121,6 @@ public class NewTopicFragment extends Fragment {
                 Log.d(TAG, "onClick: " + e.toString());
             }
         }
-
 
 
         mImageTopicButton = (Button) v.findViewById(R.id.set_topic_image);
@@ -190,22 +196,24 @@ public class NewTopicFragment extends Fragment {
         });
 
 
-        mSearchImage = (EditText) bottomToolbar.findViewById(R.id.flickr_search_image);
-        mSearchImage.addTextChangedListener(new TextWatcher() {
+        mSearchImage = (ImageView) bottomToolbar.findViewById(R.id.flickr_search_image_button);
+        mSearchImage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(
-                    CharSequence c, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence c, int start, int before, int count) {
-                Log.d(TAG, "QueryTextSubmit: " + c.toString());
-                updateItems(c.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable c) {
-
+            public void onClick(View v) {
+                if (isAllreadPressed) {
+                    Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.loading_text_fragment_search);
+                    getActivity().getSupportFragmentManager().beginTransaction().remove(currentFragment).commit();
+                    isAllreadPressed = false;
+                } else {
+                    FragmentManager manager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction transaction = manager.beginTransaction();
+                    Fragment searchFragment = SearchFragment.newInstance();
+                    searchFragment.setTargetFragment(NewTopicFragment.this, REQUEST_IMAGE);
+                    transaction.add(R.id.loading_text_fragment_search, searchFragment, REQUEST_IMAGE_FRAGMENT);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                    isAllreadPressed = true;
+                }
             }
         });
 
@@ -239,11 +247,11 @@ public class NewTopicFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
-
         return v;
     }
 
-    private void updateItems(String query) {
+
+    public void updateItems(String query) {
         new FetchItemsTask(query).execute();
     }
 
@@ -269,9 +277,9 @@ public class NewTopicFragment extends Fragment {
             }
         }
 
-        if(requestCode == DRAW_PICTURE_REQUEST){
-            if(resultCode == RESULT_OK){
-                if(data == null){
+        if (requestCode == DRAW_PICTURE_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                if (data == null) {
                     return;
                 }
                 Bitmap bitmap;
@@ -300,6 +308,13 @@ public class NewTopicFragment extends Fragment {
                 }
                 mImageTopicButton.setText("");
                 mTopic.setTopicImage(targetUri.toString());
+            }
+        }
+
+        if (requestCode == REQUEST_IMAGE) {
+            if (resultCode == RESULT_OK) {
+                String imageText = (String) data.getSerializableExtra(SearchFragment.EXTRA_REQUEST);
+                updateItems(imageText);
             }
         }
     }
