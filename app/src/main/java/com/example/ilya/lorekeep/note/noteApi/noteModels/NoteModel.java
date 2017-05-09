@@ -1,24 +1,33 @@
-package com.example.ilya.lorekeep.topic.topicApi;
+package com.example.ilya.lorekeep.note.noteApi.noteModels;
 
-import com.example.ilya.lorekeep.user.userApi.UserModel;
+
+import com.example.ilya.lorekeep.topic.topicApi.models.TopicModel;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
-public class TopicModel {
+public class NoteModel {
 
-    @SerializedName("topicId")
+    @SerializedName("noteId")
     @Expose
-    private int topicId;
+    private int noteId;
 
-    @SerializedName("user")
+    @SerializedName("topic")
     @Expose
-    private UserModel user;
+    private TopicModel topic;
 
-    @SerializedName("title")
+    @SerializedName("comment")
     @Expose
-    private String title;
+    private String comment;
+
+    @SerializedName("content")
+    @Expose
+    private String content;
+
+    @SerializedName("url")
+    @Expose
+    private String url;
 
     @SerializedName("image")
     @Expose
@@ -36,24 +45,28 @@ public class TopicModel {
     @Expose
     private Date lastUsed;
 
-    @SerializedName("color")
-    @Expose
-    private String color;
-
     @SerializedName("changed")
     @Expose
     private boolean changed;
 
-    public int getTopicId(){
-        return topicId;
+    public int getNoteId(){
+        return noteId;
     }
 
-    public UserModel getUser(){
-        return user;
+    public TopicModel getTopic(){
+        return topic;
     }
 
-    public String getTitle(){
-        return title;
+    public String getComment(){
+        return comment;
+    }
+
+    public String getContent(){
+        return content;
+    }
+
+    public String getUrl(){
+        return url;
     }
 
     public String getImage(){
@@ -72,24 +85,28 @@ public class TopicModel {
         return lastUsed;
     }
 
-    public String getColor(){
-        return color;
-    }
-
     public boolean getChanged(){
         return changed;
     }
 
-    public void setTopicId(int topicId){
-        this.topicId = topicId;
+    public void setNoteId(int noteId){
+        this.noteId = noteId;
     }
 
-    public void setUser(UserModel user){
-        this.user = user;
+    public void setTopic(TopicModel topic){
+        this.topic = topic;
     }
 
-    public void setTitle(String title){
-        this.title = title;
+    public void setComment(String comment){
+        this.comment = comment;
+    }
+
+    public void setContent(String content){
+        this.content = content;
+    }
+
+    public void setUrl(String url){
+        this.url = url;
     }
 
     public void setImage(String image){
@@ -106,10 +123,6 @@ public class TopicModel {
 
     public void setLastUsed(Date lastUsed){
         this.lastUsed = lastUsed;
-    }
-
-    public void setColor(String color){
-        this.color = color;
     }
 
     public void setChanged(boolean changed){

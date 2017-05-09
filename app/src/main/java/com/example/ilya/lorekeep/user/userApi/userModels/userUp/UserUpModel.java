@@ -1,10 +1,10 @@
-package com.example.ilya.lorekeep.user.userApi;
+package com.example.ilya.lorekeep.user.userApi.userModels.userUp;
 
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class UserModel {
+public class UserUpModel {
 
     @SerializedName("userId")
     @Expose
@@ -65,7 +65,6 @@ public class UserModel {
     public void setPhonenumber(String phonenumber){
         this.phonenumber = phonenumber;
     }
-
 
 }
 
