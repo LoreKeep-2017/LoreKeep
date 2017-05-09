@@ -23,4 +23,8 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    public void setPage(int position){
+        viewPager.setCurrentItem(position);
+    }
+
 }
