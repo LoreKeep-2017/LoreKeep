@@ -1,18 +1,18 @@
-package com.example.ilya.lorekeep.user.userApi.userModels.userUp;
+package com.example.ilya.lorekeep.user.userApi.userModels;
 
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class UserUpModel {
+public class UserModel {
 
     @SerializedName("userId")
     @Expose
     private int userId;
 
-    @SerializedName("username")
+    @SerializedName("login")
     @Expose
-    private String username;
+    private String login;
 
     @SerializedName("password")
     @Expose
@@ -30,10 +30,6 @@ public class UserUpModel {
         return userId;
     }
 
-    public String getUsername(){
-        return username;
-    }
-
     public String getPassword(){
         return password;
     }
@@ -46,12 +42,12 @@ public class UserUpModel {
         return phonenumber;
     }
 
-    public void setUserId(int userId){
-        this.userId = userId;
+    public String getLogin(){
+        return login;
     }
 
-    public void setUsername(String username){
-        this.username = username;
+    public void setUserId(int userId){
+        this.userId = userId;
     }
 
     public void setPassword(String password){
@@ -64,6 +60,10 @@ public class UserUpModel {
 
     public void setPhonenumber(String phonenumber){
         this.phonenumber = phonenumber;
+    }
+
+    public void setLogin(String login){
+        this.login = login;
     }
 
 }

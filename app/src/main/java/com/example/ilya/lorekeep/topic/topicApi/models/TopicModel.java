@@ -1,6 +1,6 @@
 package com.example.ilya.lorekeep.topic.topicApi.models;
 
-import com.example.ilya.lorekeep.user.userApi.UserModel;
+import com.example.ilya.lorekeep.user.userApi.userModels.UserModel;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -11,6 +11,8 @@ public class TopicModel {
     @SerializedName("topicId")
     @Expose
     private int topicId;
+
+    private int userId;
 
     @SerializedName("user")
     @Expose
@@ -38,7 +40,7 @@ public class TopicModel {
 
     @SerializedName("color")
     @Expose
-    private String color;
+    private int color;
 
     @SerializedName("changed")
     @Expose
@@ -46,6 +48,10 @@ public class TopicModel {
 
     public int getTopicId(){
         return topicId;
+    }
+
+    public int getUserId(){
+        return userId;
     }
 
     public UserModel getUser(){
@@ -72,7 +78,7 @@ public class TopicModel {
         return lastUsed;
     }
 
-    public String getColor(){
+    public int getColor(){
         return color;
     }
 
@@ -82,6 +88,10 @@ public class TopicModel {
 
     public void setTopicId(int topicId){
         this.topicId = topicId;
+    }
+
+    public void setUserId(int userId){
+        this.userId = userId;
     }
 
     public void setUser(UserModel user){
@@ -108,7 +118,7 @@ public class TopicModel {
         this.lastUsed = lastUsed;
     }
 
-    public void setColor(String color){
+    public void setColor(int color){
         this.color = color;
     }
 

@@ -25,11 +25,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.config.HelperFactory;
+import com.example.ilya.lorekeep.config.NetworkThread;
+import com.example.ilya.lorekeep.config.RetrofitFactory;
 import com.example.ilya.lorekeep.topic.dao.Topic;
 import com.example.ilya.lorekeep.topic.draw_and_colorpicker.ColorPicker;
 import com.example.ilya.lorekeep.topic.draw_and_colorpicker.DrawActivity;
@@ -39,11 +40,17 @@ import com.example.ilya.lorekeep.topic.image_flickr.FlickrFetchr;
 import com.example.ilya.lorekeep.topic.image_flickr.FlickrItem;
 import com.example.ilya.lorekeep.topic.image_flickr.SearchFragment;
 import com.example.ilya.lorekeep.topic.image_flickr.ThumbnailDownloader;
+import com.example.ilya.lorekeep.topic.topicApi.TopicApi;
+import com.example.ilya.lorekeep.topic.topicApi.models.TopicAnswer;
+import com.example.ilya.lorekeep.topic.topicApi.models.TopicModel;
 
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import retrofit2.Call;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
@@ -274,6 +281,25 @@ public class NewTopicFragment extends Fragment {
                 color = ColorPicker.getColor(data);
                 mImageTopicButton.setBackgroundColor(color);
                 mTopic.setTopicColor(color);
+
+                TopicModel newTopic = new TopicModel();
+                newTopic.setUserId(0);
+                newTopic.setTitle(mTopic.getTopicTitle());
+                newTopic.setCreationDate(new Date());
+                newTopic.setColor(mTopic.getTopicColor());
+                final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
+                final Call<TopicAnswer> call = topic.createNewTopic(newTopic);
+                NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<TopicAnswer>(){
+                   @Override
+                   public void onSuccess(TopicAnswer result){
+                        Log.d("onSuccess", "Success " + result.toString());
+                   }
+
+                   @Override
+                    public void onError(Exception ex){
+                       Log.d("onError", "Error " + ex.toString());
+                   }
+                });
             }
         }
 
@@ -284,13 +310,17 @@ public class NewTopicFragment extends Fragment {
                 }
                 Bitmap bitmap;
                 String targetUri = DrawActivity.getImage(data);
+                Log.d("ondraw", "picture" + targetUri);
+                //TODO rewrite, doesn't work
                 try {
                     bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver()
                             .openInputStream(Uri.parse(targetUri)));
                     BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
                     mImageTopicButton.setBackground(bdrawable);
                 } catch (FileNotFoundException e) {
+                    //TODO write catch block
                 }
+                Log.d("ondraw", "picture" + targetUri);
                 mTopic.setTopicImage(targetUri);
             }
         }
