@@ -1,7 +1,9 @@
 package com.example.ilya.lorekeep.topic;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,12 +24,20 @@ import android.widget.ImageView;
 
 import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.config.HelperFactory;
+import com.example.ilya.lorekeep.config.NetworkThread;
+import com.example.ilya.lorekeep.config.RetrofitFactory;
 import com.example.ilya.lorekeep.note.NoteActivity;
 import com.example.ilya.lorekeep.topic.dao.Topic;
+import com.example.ilya.lorekeep.topic.topicApi.TopicApi;
+import com.example.ilya.lorekeep.topic.topicApi.models.TopicAnswer;
+import com.example.ilya.lorekeep.topic.topicApi.models.TopicModel;
 
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 
 public class TopicFragment extends Fragment {
@@ -69,6 +79,26 @@ public class TopicFragment extends Fragment {
         } catch (SQLException e) {
             Log.e("on create", "fail to get query" + e.toString());
         }
+
+        SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.sharedTitle),
+                Context.MODE_PRIVATE);
+        int userId = sharedPref.getInt(getString(R.string.userId), 1);
+
+        final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
+        final Call<List<TopicModel>> call = topic.getAllTopics(userId);
+        NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<List<TopicModel>>() {
+            @Override
+            public void onSuccess(List<TopicModel> result, Response<List<TopicModel>> response) {
+                int size = result.toArray().length;
+                Log.d("onSuccess", "Success " + size);
+//                getActivity().finish();
+            }
+
+            @Override
+            public void onError(Exception ex) {
+                Log.d("onError", "Error " + ex.toString());
+            }
+        });
     }
 
     @Override

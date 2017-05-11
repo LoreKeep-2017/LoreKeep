@@ -13,17 +13,17 @@ public class UserAnswerModel {
     @Expose
     private Message messageClass;
 
-    @SerializedName("message")
-    @Expose
-    private String message;
+//    @SerializedName("message")
+//    @Expose
+//    private String message;
 
     public String getLevel(){
         return level;
     }
 
-    public String getMessage(){
-        return message;
-    }
+//    public String getMessage(){
+//        return message;
+//    }
 
     public String getLogin(){
         return messageClass.getLogin();

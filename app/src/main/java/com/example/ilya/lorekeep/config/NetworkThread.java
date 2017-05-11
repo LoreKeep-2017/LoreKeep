@@ -31,10 +31,11 @@ public class NetworkThread {
                 try {
                     final Response<T> response = call.execute();
                     if (response.isSuccessful()) {
+
                         uiHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.onSuccess(response.body());
+                                callback.onSuccess(response.body(), response);
                             }
                         });
                     } else {
@@ -54,7 +55,7 @@ public class NetworkThread {
     }
 
     public interface ExecuteCallback<T> {
-        void onSuccess(T result);
+        void onSuccess(T result, Response<T> response);
 
         void onError(Exception ex);
     }

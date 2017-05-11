@@ -1,6 +1,8 @@
 package com.example.ilya.lorekeep.topic;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -28,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ilya.lorekeep.R;
+import com.example.ilya.lorekeep.auth.LoginFragment;
 import com.example.ilya.lorekeep.config.HelperFactory;
 import com.example.ilya.lorekeep.config.NetworkThread;
 import com.example.ilya.lorekeep.config.RetrofitFactory;
@@ -51,6 +54,7 @@ import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
@@ -58,6 +62,8 @@ import static android.content.ContentValues.TAG;
 public class NewTopicFragment extends Fragment {
 
     static final String REQUEST_IMAGE_FRAGMENT = "SearchFragment";
+    private static String sessionId = "com.LoreKeep.sessionId";
+
 
     static final int PICK_COLOR_REQUEST = 1;
     static final int DRAW_PICTURE_REQUEST = 2;
@@ -241,10 +247,35 @@ public class NewTopicFragment extends Fragment {
                 try {
                     Log.d("create topic", mTopic.toString());
                     HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
+
+                    SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.sharedTitle),
+                            Context.MODE_PRIVATE);
+                    int userId = sharedPref.getInt(getString(R.string.userId), 1);
+                    Log.d("New Topic Fragment", "UserId " + userId);
+
+                    TopicModel newTopic = new TopicModel();
+                    newTopic.setUserId(userId);
+                    newTopic.setTitle(mTopic.getTopicTitle());
+                    newTopic.setCreationDate(new Date());
+                    newTopic.setColor(mTopic.getTopicColor());
+                    final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
+                    final Call<TopicAnswer> call = topic.createNewTopic(newTopic);
+                    NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<TopicAnswer>(){
+                        @Override
+                        public void onSuccess(TopicAnswer result, Response<TopicAnswer> response){
+                            Log.d("onSuccess", "Success " + result.getMessage());
+                            getActivity().finish();
+                        }
+
+                        @Override
+                        public void onError(Exception ex){
+                            Log.d("onError", "Error " + ex.toString());
+                        }
+                    });
+
                 } catch (SQLException e) {
                     Log.d(TAG, "onClick: " + e.toString());
                 }
-                getActivity().finish();
             }
         });
 
@@ -282,24 +313,6 @@ public class NewTopicFragment extends Fragment {
                 mImageTopicButton.setBackgroundColor(color);
                 mTopic.setTopicColor(color);
 
-                TopicModel newTopic = new TopicModel();
-                newTopic.setUserId(0);
-                newTopic.setTitle(mTopic.getTopicTitle());
-                newTopic.setCreationDate(new Date());
-                newTopic.setColor(mTopic.getTopicColor());
-                final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
-                final Call<TopicAnswer> call = topic.createNewTopic(newTopic);
-                NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<TopicAnswer>(){
-                   @Override
-                   public void onSuccess(TopicAnswer result){
-                        Log.d("onSuccess", "Success " + result.toString());
-                   }
-
-                   @Override
-                    public void onError(Exception ex){
-                       Log.d("onError", "Error " + ex.toString());
-                   }
-                });
             }
         }
 

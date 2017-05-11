@@ -1,7 +1,9 @@
 package com.example.ilya.lorekeep.auth;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,14 +13,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ilya.lorekeep.LoginActivity;
 import com.example.ilya.lorekeep.MainActivity;
 import com.example.ilya.lorekeep.R;
+import com.example.ilya.lorekeep.config.NetworkThread;
+import com.example.ilya.lorekeep.config.RetrofitFactory;
+import com.example.ilya.lorekeep.user.userApi.UserApi;
+import com.example.ilya.lorekeep.user.userApi.userModels.UserAnswerModel;
+import com.example.ilya.lorekeep.user.userApi.userModels.UserModel;
 
-import java.util.function.ToDoubleBiFunction;
+import okhttp3.Headers;
+import retrofit2.Call;
+import retrofit2.Response;
 
 
 public class LoginFragment extends Fragment {
@@ -97,8 +105,38 @@ public class LoginFragment extends Fragment {
         progressDialog = null;
         loginButton.setEnabled(true);
 
-        Intent intent = new Intent(getContext(), MainActivity.class);
-        startActivity(intent);
+        UserModel newUser = new UserModel();
+        newUser.setLogin("ilya");
+        newUser.setPassword("ilya");
+        final UserApi user = RetrofitFactory.retrofitLore().create(UserApi.class);
+        final Call<UserAnswerModel> call = user.signIn(newUser);
+        NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<UserAnswerModel>(){
+
+            @Override
+            public void onSuccess(UserAnswerModel result, Response<UserAnswerModel> response){
+                Headers headers = response.headers();
+                Log.d("onSuccess", "Response " + headers.toString());
+                Log.d("onSuccess", "Success " + result.getSessionId());
+                Log.d("onSuccess", "Success " + result.getUserId());
+
+                SharedPreferences sharedPref = getContext().getSharedPreferences(
+                        getString(R.string.sharedTitle), Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString(getString(R.string.sessionId), result.getSessionId());
+                editor.putInt(getString(R.string.userId), result.getUserId());
+                editor.apply();
+
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onError(Exception ex){
+                Log.d("onError", "Error " + ex.toString());
+
+            }
+        });
+
 
     }
 

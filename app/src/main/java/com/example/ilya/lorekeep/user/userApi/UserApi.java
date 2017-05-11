@@ -18,13 +18,13 @@ public interface UserApi {
     @POST("/api/signin")
     Call<UserAnswerModel> signIn(@Body UserModel user);
 
-    @GET("/auth")
+    @GET("api/auth")
     Call<String> isAuth();
 
-    @GET("/session")
+    @GET("api/session")
     Call<UserAnswerModel> getSession();
 
-    @DELETE("/session")
+    @DELETE("api/session")
     Call<UserAnswerModel> deleteSession();
 
     @GET("/api/user/{id}")
