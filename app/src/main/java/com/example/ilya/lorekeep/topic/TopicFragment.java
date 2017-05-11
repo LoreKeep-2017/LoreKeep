@@ -39,7 +39,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Response;
 
-
 public class TopicFragment extends Fragment {
 
     public static final String TOPIC_ID = "topic_id";
@@ -73,13 +72,6 @@ public class TopicFragment extends Fragment {
         }
         HelperFactory.setHelper(getActivity().getApplicationContext());
 
-        try {
-            mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
-            Log.d("on create", "query lenght: " + mTopics.size());
-        } catch (SQLException e) {
-            Log.e("on create", "fail to get query" + e.toString());
-        }
-
         SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.sharedTitle),
                 Context.MODE_PRIVATE);
         int userId = sharedPref.getInt(getString(R.string.userId), 1);
@@ -90,13 +82,25 @@ public class TopicFragment extends Fragment {
             @Override
             public void onSuccess(List<TopicModel> result, Response<List<TopicModel>> response) {
                 int size = result.toArray().length;
-                Log.d("onSuccess", "Success " + size);
-//                getActivity().finish();
+                Log.d("onSuccess TopicFragment", "Success " + size);
+                try {
+                    mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
+                    Log.d("on create", "query lenght: " + mTopics.size());
+                } catch (SQLException e) {
+                    Log.e("on create", "fail to get query");
+                }
+                setupAdapter();
             }
 
             @Override
             public void onError(Exception ex) {
                 Log.d("onError", "Error " + ex.toString());
+                try {
+                    mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
+                    Log.d("on create", "query lenght: " + mTopics.size());
+                } catch (SQLException e) {
+                    Log.e("on create", "fail to get query");
+                }
             }
         });
     }
@@ -126,7 +130,7 @@ public class TopicFragment extends Fragment {
 
         initToolbars(v);
 
-        setupAdapter();
+//        setupAdapter();
         return v;
     }
 
@@ -148,14 +152,7 @@ public class TopicFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        try {
-            mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
-            Log.d("on create", "query lenght: " + mTopics.size());
-        } catch (SQLException e) {
-            Log.e("on create", "fail to get query");
-        }
-
-        setupAdapter();
+//        setupAdapter();
 
         Log.d(TAG, "onResume: create new thread and execute!");
     }

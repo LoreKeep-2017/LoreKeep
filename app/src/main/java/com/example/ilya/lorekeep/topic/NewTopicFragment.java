@@ -245,13 +245,15 @@ public class NewTopicFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 try {
-                    Log.d("create topic", mTopic.toString());
-                    HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
-
                     SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.sharedTitle),
                             Context.MODE_PRIVATE);
                     int userId = sharedPref.getInt(getString(R.string.userId), 1);
                     Log.d("New Topic Fragment", "UserId " + userId);
+
+                    mTopic.setTopicUserId(userId);
+                    mTopic.setTopicChanged(true);
+                    HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
+
 
                     TopicModel newTopic = new TopicModel();
                     newTopic.setUserId(userId);
@@ -263,7 +265,12 @@ public class NewTopicFragment extends Fragment {
                     NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<TopicAnswer>(){
                         @Override
                         public void onSuccess(TopicAnswer result, Response<TopicAnswer> response){
-                            Log.d("onSuccess", "Success " + result.getMessage());
+                            Log.d("onSuccess NewTopicFrag", "Success " + result.getMessage());
+                            try {
+                                HelperFactory.getHelper().getTopicDAO().updateChanged(result.getMessage());
+                            } catch (SQLException ex){
+                                // TODO write exception
+                            }
                             getActivity().finish();
                         }
 
