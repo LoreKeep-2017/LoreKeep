@@ -3,6 +3,11 @@ package com.example.ilya.lorekeep.config;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.example.ilya.lorekeep.user.userApi.userModels.UserAnswerModel;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -16,6 +21,9 @@ public class NetworkThread {
 
     private final Executor executor = Executors.newSingleThreadExecutor();
     private final Handler uiHandler = new Handler(Looper.getMainLooper());
+
+    private final String MESSAGE = "message";
+    private final String CAUSE = "cause";
 
     private NetworkThread() {
     }
@@ -39,8 +47,7 @@ public class NetworkThread {
                             }
                         });
                     } else {
-                        final String error = response.errorBody().string();
-                        throw new IOException(error);
+                        throw new IOException(getCauseError(response));
                     }
                 } catch (final IOException e) {
                     uiHandler.post(new Runnable() {
@@ -49,6 +56,8 @@ public class NetworkThread {
                             callback.onError(e);
                         }
                     });
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -58,6 +67,13 @@ public class NetworkThread {
         void onSuccess(T result, Response<T> response);
 
         void onError(Exception ex);
+    }
+
+    private String getCauseError(Response response) throws IOException, JSONException {
+        final String error = response.errorBody().string();
+        JSONObject jObjError = new JSONObject(error);
+        return jObjError.getJSONObject(MESSAGE).getString(CAUSE);
+
     }
 }
 

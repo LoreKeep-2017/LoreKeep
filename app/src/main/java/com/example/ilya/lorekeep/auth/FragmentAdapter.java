@@ -15,9 +15,9 @@ public class FragmentAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (position) {
-            case 0: // Fragment # 0 - This will show FirstFragment
+            case 0:
                 return LoginFragment.newInstance("Page # 1");
-            case 1: // Fragment # 0 - This will show FirstFragment different title
+            case 1:
                 return SignUpFragment.newInstance("Page # 2");
             default:
                 return null;
@@ -33,9 +33,9 @@ public class FragmentAdapter extends FragmentStatePagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         switch (position) {
-            case 0: // Fragment # 0 - This will show FirstFragment
+            case 0:
                 return "LogIn";
-            case 1: // Fragment # 0 - This will show FirstFragment different title
+            case 1:
                 return "SignUp";
             default:
                 return null;

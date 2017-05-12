@@ -73,70 +73,33 @@ public class LoginFragment extends Fragment {
         Log.d(TAG, "Login");
 
         if (!validate()) {
-            onLoginFailed();
+            onLoginFailed("incorrect inputs");
             return;
         }
 
         loginButton.setEnabled(false);
 
         progressDialog = new AuthProgressDialog(getContext(), "LogIn");
-
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        progressDialog.dismiss();
-                        if (loginExecute()){
-                            onLoginSuccess();
-                        } else {
-                            onLoginFailed();
-                        }
-                    }
-                }, 2000);
+        loginExecute();
     }
 
-    public void onLoginFailed() {
-        Toast.makeText( getContext(),"Login failed", Toast.LENGTH_LONG).show();
+    public void onLoginFailed(String cause) {
+        Toast.makeText( getContext(),"Login failed: " + cause, Toast.LENGTH_LONG).show();
         loginButton.setEnabled(true);
-
+        if (progressDialog != null){
+            progressDialog.dismiss();
+        }
     }
 
     public void onLoginSuccess() {
 
+        if (progressDialog != null){
+            progressDialog.dismiss();
+        }
         progressDialog = null;
         loginButton.setEnabled(true);
-
-        UserModel newUser = new UserModel();
-        newUser.setLogin("ilya");
-        newUser.setPassword("ilya");
-        final UserApi user = RetrofitFactory.retrofitLore().create(UserApi.class);
-        final Call<UserAnswerModel> call = user.signIn(newUser);
-        NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<UserAnswerModel>(){
-
-            @Override
-            public void onSuccess(UserAnswerModel result, Response<UserAnswerModel> response){
-                Headers headers = response.headers();
-                Log.d("onSuccess", "Response " + headers.toString());
-                Log.d("onSuccess", "Success " + result.getSessionId());
-                Log.d("onSuccess", "Success " + result.getUserId());
-
-                SharedPreferences sharedPref = getContext().getSharedPreferences(
-                        getString(R.string.sharedTitle), Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString(getString(R.string.sessionId), result.getSessionId());
-                editor.putInt(getString(R.string.userId), result.getUserId());
-                editor.apply();
-
-                Intent intent = new Intent(getContext(), MainActivity.class);
-                startActivity(intent);
-            }
-
-            @Override
-            public void onError(Exception ex){
-                Log.d("onError", "Error " + ex.toString());
-
-            }
-        });
-
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        startActivity(intent);
 
     }
 
@@ -163,10 +126,39 @@ public class LoginFragment extends Fragment {
         return valid;
     }
 
-    public boolean loginExecute() {
-        //TODO logic
-        progressDialog.dismiss();
-        return true;
+    public void loginExecute() {
+        UserModel newUser = new UserModel();
+        newUser.setLogin("test11");
+        newUser.setPassword("test");
+        final UserApi user = RetrofitFactory.retrofitLore().create(UserApi.class);
+        final Call<UserAnswerModel> call = user.signIn(newUser);
+        NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<UserAnswerModel>(){
+
+            @Override
+            public void onSuccess(UserAnswerModel result, Response<UserAnswerModel> response){
+                Headers headers = response.headers();
+                Log.d("onSuccess", "Response " + headers.toString());
+                Log.d("onSuccess", "Success " + result.getSessionId());
+                Log.d("onSuccess", "Success " + result.getUserId());
+
+                SharedPreferences sharedPref = getContext().getSharedPreferences(
+                        getString(R.string.sharedTitle), Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString(getString(R.string.sessionId), result.getSessionId());
+                editor.putInt(getString(R.string.userId), result.getUserId());
+                editor.apply();
+
+                onLoginSuccess();
+
+            }
+
+            @Override
+            public void onError(Exception ex){
+                Log.d("onError", "Error " + ex.getMessage());
+                onLoginFailed(ex.getMessage());
+
+            }
+        });
     }
 
 
