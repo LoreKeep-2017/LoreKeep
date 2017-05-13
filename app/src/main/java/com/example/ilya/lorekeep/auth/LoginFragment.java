@@ -34,10 +34,13 @@ public class LoginFragment extends Fragment {
     private static final String TITLE = "TITLE";
     private static final String TAG = "login fragment";
     private String title;
-    private EditText emailText;
+    private EditText loginText;
     private EditText passwordText;
     private Button loginButton;
     private AuthProgressDialog progressDialog;
+
+    private String login;
+    private String password;
 
     public static LoginFragment newInstance(String title) {
         LoginFragment fragmentFirst = new LoginFragment();
@@ -64,7 +67,7 @@ public class LoginFragment extends Fragment {
                 login();
             }
         });
-        emailText = (EditText) root.findViewById(R.id.input_email_login);
+        loginText = (EditText) root.findViewById(R.id.input_login_login);
         passwordText = (EditText) root.findViewById(R.id.input_password_login);
         return root;
     }
@@ -106,14 +109,14 @@ public class LoginFragment extends Fragment {
     public boolean validate() {
         boolean valid = true;
 
-        String email = emailText.getText().toString();
-        String password = passwordText.getText().toString();
+        login = loginText.getText().toString();
+        password = passwordText.getText().toString();
 
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            this.emailText.setError("enter a valid email address");
+        if (login.isEmpty()) {
+            this.loginText.setError("login");
             valid = false;
         } else {
-            emailText.setError(null);
+            loginText.setError(null);
         }
 
         if (password.isEmpty()) {
@@ -128,8 +131,8 @@ public class LoginFragment extends Fragment {
 
     public void loginExecute() {
         UserModel newUser = new UserModel();
-        newUser.setLogin("test11");
-        newUser.setPassword("test");
+        newUser.setLogin(login);
+        newUser.setPassword(password);
         final UserApi user = RetrofitFactory.retrofitLore().create(UserApi.class);
         final Call<UserAnswerModel> call = user.signIn(newUser);
         NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<UserAnswerModel>(){
