@@ -1,36 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="title"
-        android:textSize="24sp"
-        android:textStyle="bold"/>
 
-    <TextView
-        android:id="@+id/link"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="link"
-        android:textSize="12sp"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/note_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/comment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="description"
-        android:textSize="12sp"
-        android:textStyle="italic"/>
+            <TextView
+                android:id="@+id/note_in_list"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:textSize="25dp"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@drawable/shape_bound">
-    </View>
+            <View
+                    android:id="@+id/view_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@drawable/shape_bound">
+            </View>
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/loading_description_note"
+            android:layout_width="wrap_content"
+            android:layout_above="@+id/note_item"
+            android:layout_height="350dp"
+            android:visibility="gone">
+        </FrameLayout>
 
 
-</LinearLayout>
+</RelativeLayout>

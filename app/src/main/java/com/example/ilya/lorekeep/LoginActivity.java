@@ -19,8 +19,6 @@ public class LoginActivity extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.vpPager);
         adapter = new FragmentAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
-
-
     }
 
     public void setPage(int position){
