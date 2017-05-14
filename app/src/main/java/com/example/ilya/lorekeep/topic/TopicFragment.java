@@ -130,6 +130,12 @@ public class TopicFragment extends Fragment {
 
         initToolbars(v);
 
+        //
+        SharedPreferences sharedPreferences = getContext()
+                .getSharedPreferences(getString(R.string.sharedTitle), Context.MODE_PRIVATE);
+
+        Log.d(TAG, "onCreateView: !!!!!!!!!!!sesid: " + sharedPreferences.getString(getString(R.string.sessionId), ""));
+
 //        setupAdapter();
         return v;
     }
@@ -166,6 +172,7 @@ public class TopicFragment extends Fragment {
     private class TopicHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private Button mTopicButton;
         Integer topicId;
+        private String title;
 
         public TopicHolder(LayoutInflater inflater, ViewGroup container) {
             super(inflater.inflate(R.layout.topic_item, container, false));
@@ -199,14 +206,15 @@ public class TopicFragment extends Fragment {
             if(color != 0){
                 mTopicButton.setBackgroundColor(color);
             }
-
-            mTopicButton.setText(item.getTopicTitle());
+            title = item.getTopicTitle();
+            mTopicButton.setText(title);
             topicId = item.getTopicId();
         }
 
         @Override
         public void onClick(View v) {
             Intent intent = NoteActivity.newIntent(getContext(), topicId);
+            intent.putExtra("topic", title);
             startActivity(intent);
         }
     }

@@ -19,6 +19,8 @@ import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.dbexecutor.ExecutorCreateNote;
 import com.example.ilya.lorekeep.dbexecutor.ExecutorGetAllNotes;
 import com.example.ilya.lorekeep.note.dao.Note;
+import com.example.ilya.lorekeep.note.notefragment.DetailFragment;
+
 import java.util.List;
 import java.util.Map;
 
@@ -28,8 +30,7 @@ public class NoteActivity extends AppCompatActivity {
             "topic_id_for_note";
 
     private Intent intent;
-//    private List<Note> notes = NoteList.getInstance().notes;
-private Map<Integer, List<Note>> mlNotes = NoteList.getInstance().mlNotes;
+    private Map<Integer, List<Note>> mlNotes = NoteList.getInstance().mlNotes;
     private String TAG = "NoteActivity";
     private Integer topicId;
 
@@ -45,8 +46,12 @@ private Map<Integer, List<Note>> mlNotes = NoteList.getInstance().mlNotes;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note);
+
+        Bundle bundle = getIntent().getExtras();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Postgre SQL");
+        if (bundle != null){
+            toolbar.setTitle(bundle.getString("topic"));
+        }
         setSupportActionBar(toolbar);
 
         topicId = getIntent().getIntExtra(GET_NOTES_BY_TOPIC_ID, -1);

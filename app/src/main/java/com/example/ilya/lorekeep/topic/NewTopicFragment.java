@@ -247,7 +247,7 @@ public class NewTopicFragment extends Fragment {
                 try {
                     SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.sharedTitle),
                             Context.MODE_PRIVATE);
-                    int userId = sharedPref.getInt(getString(R.string.userId), 1);
+                    int userId = sharedPref.getInt(getString(R.string.userId), 0);
                     Log.d("New Topic Fragment", "UserId " + userId);
 
                     mTopic.setTopicUserId(userId);
