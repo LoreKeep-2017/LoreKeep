@@ -7,10 +7,11 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @DatabaseTable(tableName = "Note")
-public class Note {
+public class Note implements Serializable{
 
     public final static String NOTES_FILED_TOPIC = "topicId";
 
@@ -42,6 +43,10 @@ public class Note {
     private boolean changed;
 
     public Note(){}
+
+    public int getNoteId() {
+        return noteId;
+    }
 
     public void setTopic(Topic topic) {
         this.topic = topic;

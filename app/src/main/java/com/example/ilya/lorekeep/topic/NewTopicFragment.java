@@ -255,30 +255,38 @@ public class NewTopicFragment extends Fragment {
                     HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
 
 
-                    TopicModel newTopic = new TopicModel();
-                    newTopic.setUserId(userId);
-                    newTopic.setTitle(mTopic.getTopicTitle());
-                    newTopic.setCreationDate(new Date());
-                    newTopic.setColor(mTopic.getTopicColor());
-                    final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
-                    final Call<TopicAnswer> call = topic.createNewTopic(newTopic);
-                    NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<TopicAnswer>(){
-                        @Override
-                        public void onSuccess(TopicAnswer result, Response<TopicAnswer> response){
-                            Log.d("onSuccess NewTopicFrag", "Success " + result.getMessage());
-                            try {
-                                HelperFactory.getHelper().getTopicDAO().updateChanged(result.getMessage());
-                            } catch (SQLException ex){
-                                // TODO write exception
-                            }
-                            getActivity().finish();
-                        }
+                    Topic newTopic = new Topic();
 
-                        @Override
-                        public void onError(Exception ex){
-                            Log.d("onError", "Error " + ex.toString());
-                        }
-                    });
+//                    TopicModel newTopic = new TopicModel();
+                    newTopic.setTopicUserId(userId);
+                    newTopic.setTopicTitle(mTopic.getTopicTitle());
+//                    newTopic.setTopicCreationDate(new Date());
+                    newTopic.setTopicColor(mTopic.getTopicColor());
+
+                    HelperFactory.getHelper().getTopicDAO().setTopic(newTopic);
+                    getActivity().finish();
+
+
+
+//                    final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
+//                    final Call<TopicAnswer> call = topic.createNewTopic(newTopic);
+//                    NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<TopicAnswer>(){
+//                        @Override
+//                        public void onSuccess(TopicAnswer result, Response<TopicAnswer> response){
+//                            Log.d("onSuccess NewTopicFrag", "Success " + result.getMessage());
+//                            try {
+//                                HelperFactory.getHelper().getTopicDAO().updateChanged(result.getMessage());
+//                            } catch (SQLException ex){
+//                                // TODO write exception
+//                            }
+//                            getActivity().finish();
+//                        }
+//
+//                        @Override
+//                        public void onError(Exception ex){
+//                            Log.d("onError", "Error " + ex.toString());
+//                        }
+//                    });
 
                 } catch (SQLException e) {
                     Log.d(TAG, "onClick: " + e.toString());

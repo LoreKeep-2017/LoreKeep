@@ -10,31 +10,39 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.example.ilya.lorekeep.config.HelperFactory;
 import com.example.ilya.lorekeep.R;
+import com.example.ilya.lorekeep.config.HelperFactory;
 import com.example.ilya.lorekeep.dbexecutor.ExecutorCreateNote;
 import com.example.ilya.lorekeep.dbexecutor.ExecutorGetAllNotes;
 import com.example.ilya.lorekeep.note.dao.Note;
-import com.example.ilya.lorekeep.note.notefragment.DetailFragment;
 
 import java.util.List;
 import java.util.Map;
 
 public class NoteActivity extends AppCompatActivity {
 
+    static final int DROP_DESCRIPTION = 1;
+    static final String DROP_DESCRIPTION_DICK = "dick";
     public static final String GET_NOTES_BY_TOPIC_ID =
             "topic_id_for_note";
 
-    private Intent intent;
     private Map<Integer, List<Note>> mlNotes = NoteList.getInstance().mlNotes;
     private String TAG = "NoteActivity";
     private Integer topicId;
-
     private RecyclerView recyclerView;
+    private TextView mTextView;
+    private Button mButtonUrl;
+    private boolean isItemPressed = false;
+    private Note mPriviousItem = null;
+    private LinearLayout mPriviousScrollView;
 
     public static Intent newIntent(Context packageContext, Integer topicId) {
         Intent intent = new Intent(packageContext, NoteActivity.class);
@@ -49,7 +57,7 @@ public class NoteActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (bundle != null){
+        if (bundle != null) {
             toolbar.setTitle(bundle.getString("topic"));
         }
         setSupportActionBar(toolbar);
@@ -69,8 +77,6 @@ public class NoteActivity extends AppCompatActivity {
 
         HelperFactory.setHelper(getApplicationContext());
 
-
-
         //recyclerView
         recyclerView = (RecyclerView) findViewById(R.id.recycle);
         recyclerView.setAdapter(new RecyclerView.Adapter() {
@@ -89,7 +95,7 @@ public class NoteActivity extends AppCompatActivity {
 
             @Override
             public int getItemCount() {
-                if(mlNotes.get(topicId) == null)
+                if (mlNotes.get(topicId) == null)
                     return 0;
                 else
                     return mlNotes.get(topicId).size();
@@ -121,46 +127,97 @@ public class NoteActivity extends AppCompatActivity {
         Log.d(TAG, "onResume: create new thread and execute!");
     }
 
-
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         HelperFactory.releaseHelper();
         super.onDestroy();
     }
 
-    private void onNotesLoaded(){
-        if (mlNotes.get(topicId) == null){
+    private void onNotesLoaded() {
+        if (mlNotes.get(topicId) == null) {
             //TODO: smth
         } else {
-            Log.e(TAG, "onNotesLoaded: callback, cache size: "+mlNotes.get(topicId).size() );
+            Log.e(TAG, "onNotesLoaded: callback, cache size: " + mlNotes.get(topicId).size());
             recyclerView.getAdapter().notifyDataSetChanged();
         }
     }
 
-    public void onNoteCreate(){
-        Log.e(TAG, "onNoteCreate: callback, cache size: "+mlNotes.get(topicId).size() );
+    public void onNoteCreate() {
+        Log.e(TAG, "onNoteCreate: callback, cache size: " + mlNotes.get(topicId).size());
         recyclerView.getAdapter().notifyItemInserted(mlNotes.get(topicId).size());
     }
 
-    private static class ItemViewHolder extends RecyclerView.ViewHolder {
+    private class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView link;
-        private final TextView content;
-        private final TextView comment;
+        private Note mNote = new Note();
+        private final TextView noteInList;
 
-        public ItemViewHolder(View itemView) {
+        public ItemViewHolder(final View itemView) {
             super(itemView);
-            this.content = (TextView) itemView.findViewById(R.id.content);
-            this.link = (TextView) itemView.findViewById(R.id.link);
-            this.comment = (TextView) itemView.findViewById(R.id.comment);
+            noteInList = (TextView) itemView.findViewById((R.id.note_in_list));
+
+            final LinearLayout dropdownView = (LinearLayout) itemView.findViewById(R.id.loading_description_note);
+            final ScrollView scrollView = (ScrollView) itemView.findViewById(R.id.scroll_view);
+
+            scrollView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    // Disallow the touch request for parent scroll on touch of child view
+                    view.getParent().requestDisallowInterceptTouchEvent(true);
+                    return false;
+                }
+            });
+
+            noteInList.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+                    if (isItemPressed) {
+                        if (mPriviousItem.getNoteId() == mNote.getNoteId()) {
+                            dropdownView.setVisibility(View.GONE);
+                            isItemPressed = false;
+                        } else {
+                            mPriviousScrollView.setVisibility(View.GONE);
+                            dropdownView.setVisibility(View.VISIBLE);
+                            isItemPressed = true;
+                            mPriviousItem = mNote;
+                            mPriviousScrollView = dropdownView;
+
+                            if (mNote.getNoteUrl() != null) {
+                                mButtonUrl = (Button) dropdownView.findViewById(R.id.button_open_browser);
+                                mButtonUrl.setText(mNote.getNoteUrl());
+                            }
+
+                            mTextView = (TextView) dropdownView.findViewById(R.id.fragment_test);
+                            mTextView.setText(mNote.getNoteComment());
+
+                        }
+                    } else {
+                        dropdownView.setVisibility(View.VISIBLE);
+                        isItemPressed = true;
+                        mPriviousItem = mNote;
+                        mPriviousScrollView = dropdownView;
+                        if (mNote.getNoteUrl() != null) {
+                            mButtonUrl = (Button) dropdownView.findViewById(R.id.button_open_browser);
+                            mButtonUrl.setText(mNote.getNoteUrl());
+                        }
+
+                        mTextView = (TextView) dropdownView.findViewById(R.id.fragment_test);
+                        mTextView.setText(mNote.getNoteComment());
+                    }
+                }
+            });
         }
 
         public void bind(Note note) {
-            content.setText(note.getNoteContent());
-            link.setText(note.getNoteUrl());
-            comment.setText(note.getNoteComment());
+
+            if (note.getNoteComment() != null)
+                noteInList.setText(note.getNoteContent());
+            else
+                noteInList.setText(note.getNoteComment());
+
+            mNote = note;
         }
-
     }
-
 }
