@@ -80,7 +80,7 @@ public class TopicFragment extends Fragment {
         final Call<List<TopicModel>> call = topic.getAllTopics(userId);
         NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<List<TopicModel>>() {
             @Override
-            public void onSuccess(List<TopicModel> result, Response<List<TopicModel>> response) {
+                public void onSuccess(List<TopicModel> result, Response<List<TopicModel>> response) {
                 int size = result.toArray().length;
                 Log.d("onSuccess TopicFragment", "Success " + size);
                 try {
@@ -138,6 +138,7 @@ public class TopicFragment extends Fragment {
 
 //        setupAdapter();
         return v;
+
     }
 
     private void initToolbars(View v) {
@@ -157,8 +158,14 @@ public class TopicFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        try{
+            mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
+            Log.d("on create", "query lenght: " + mTopics.size());
+        }catch(Exception e){
+            Log.d("topic fragment", e.toString());
+        }
 
-//        setupAdapter();
+        setupAdapter();
 
         Log.d(TAG, "onResume: create new thread and execute!");
     }

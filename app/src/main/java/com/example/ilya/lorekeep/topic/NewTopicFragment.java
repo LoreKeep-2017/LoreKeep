@@ -253,18 +253,17 @@ public class NewTopicFragment extends Fragment {
                     mTopic.setTopicUserId(userId);
                     mTopic.setTopicChanged(true);
                     HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
-
-
-                    Topic newTopic = new Topic();
-
-//                    TopicModel newTopic = new TopicModel();
-                    newTopic.setTopicUserId(userId);
-                    newTopic.setTopicTitle(mTopic.getTopicTitle());
-//                    newTopic.setTopicCreationDate(new Date());
-                    newTopic.setTopicColor(mTopic.getTopicColor());
-
-                    HelperFactory.getHelper().getTopicDAO().setTopic(newTopic);
                     getActivity().finish();
+
+//                    Topic newTopic = new Topic();
+//
+////                    TopicModel newTopic = new TopicModel();
+//                    newTopic.setTopicUserId(userId);
+//                    newTopic.setTopicTitle(mTopic.getTopicTitle());
+////                    newTopic.setTopicCreationDate(new Date());
+//                    newTopic.setTopicColor(mTopic.getTopicColor());
+//
+//                    HelperFactory.getHelper().getTopicDAO().setTopic(newTopic);
 
 
 

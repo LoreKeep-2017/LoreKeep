@@ -29,8 +29,6 @@ import java.util.Map;
 
 public class NoteActivity extends AppCompatActivity {
 
-    static final int DROP_DESCRIPTION = 1;
-    static final String DROP_DESCRIPTION_DICK = "dick";
     public static final String GET_NOTES_BY_TOPIC_ID =
             "topic_id_for_note";
 
