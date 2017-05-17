@@ -23,6 +23,8 @@ public interface TopicApi {
     Call<List<TopicModel>> getAllTopics(@Path("userId") int userId);
 
     @DELETE("/api/delete/{id}")
-    Call<Response> deleteTopic(@Path("id") int topicId);
+    Call<String> deleteTopic(@Path("id") int topicId);
 
+    @GET("/api/changes")
+    Call<List<TopicModel>> getChanges(@Header("Cookie") String sessionId);
 }

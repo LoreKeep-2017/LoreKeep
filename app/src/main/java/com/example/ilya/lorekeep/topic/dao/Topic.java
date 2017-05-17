@@ -1,5 +1,8 @@
 package com.example.ilya.lorekeep.topic.dao;
 
+import android.provider.ContactsContract;
+import android.renderscript.Element;
+
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -12,6 +15,9 @@ public class Topic {
 
     @DatabaseField(generatedId = true)
     private int topicId;
+
+    @DatabaseField(dataType = DataType.INTEGER)
+    private int serverTopicId;
 
     @DatabaseField(dataType = DataType.INTEGER)
     private int userId;
@@ -37,12 +43,21 @@ public class Topic {
     @DatabaseField(dataType = DataType.BOOLEAN)
     private boolean changed;
 
-    public Topic() {
-        topicId = 1;
-    }
+    @DatabaseField(dataType = DataType.BOOLEAN)
+    private boolean created;
+
+    @DatabaseField(dataType = DataType.BOOLEAN)
+    private boolean deleted;
+
+
+    public Topic() {}
 
     public void setTopicUserId(int userId) {
         this.userId = userId;
+    }
+
+    public void setServerTopicId(int serverTopicId){
+        this.serverTopicId = serverTopicId;
     }
 
     public void setTopicTitle(String title) {
@@ -73,8 +88,20 @@ public class Topic {
         this.changed = changed;
     }
 
+    public void setTopicCreated(boolean created){
+        this.created = created;
+    }
+
+    public void setTopicDeleted(boolean deleted){
+        this.deleted = deleted;
+    }
+
     public int getTopicId() {
         return topicId;
+    }
+
+    public int getServerTopicId() {
+        return serverTopicId;
     }
 
     public int getTopicUserId() {
@@ -107,5 +134,13 @@ public class Topic {
 
     public boolean getTopicChanged() {
         return changed;
+    }
+
+    public boolean getTopicCreated(){
+        return created;
+    }
+
+    public boolean getTopicDeleted(){
+        return deleted;
     }
 }

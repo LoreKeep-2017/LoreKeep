@@ -32,8 +32,10 @@ import com.example.ilya.lorekeep.topic.topicApi.TopicApi;
 import com.example.ilya.lorekeep.topic.topicApi.models.TopicAnswer;
 import com.example.ilya.lorekeep.topic.topicApi.models.TopicModel;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -64,7 +66,7 @@ public class TopicFragment extends Fragment {
                 != PackageManager.PERMISSION_GRANTED) {
             Log.d("topic fragment", "permission != check self");
             if (this.getActivity().shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                //TODO: write asking permision
+                //TODO: write asking permission
             } else {
                 this.getActivity().requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
                         MY_PERMISSION_READ_STORAGE);
@@ -74,35 +76,91 @@ public class TopicFragment extends Fragment {
 
         SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.sharedTitle),
                 Context.MODE_PRIVATE);
-        int userId = sharedPref.getInt(getString(R.string.userId), 1);
+        final int userId = sharedPref.getInt(getString(R.string.userId), 1);
+
+        SharedPreferences sharedPreferences = getContext()
+                .getSharedPreferences(getString(R.string.sharedTitle), Context.MODE_PRIVATE);
+        String sessionId = sharedPreferences.getString(getString(R.string.sessionId), "");
 
         final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
-        final Call<List<TopicModel>> call = topic.getAllTopics(userId);
-        NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<List<TopicModel>>() {
+        final Call<List<TopicModel>> callSyn = topic.getChanges("sessionId="+sessionId);
+        NetworkThread.getInstance().execute(callSyn, new NetworkThread.ExecuteCallback<List<TopicModel>>() {
             @Override
-                public void onSuccess(List<TopicModel> result, Response<List<TopicModel>> response) {
-                int size = result.toArray().length;
-                Log.d("onSuccess TopicFragment", "Success " + size);
+            public void onSuccess(List<TopicModel> result, Response<List<TopicModel>> response) {
                 try {
-                    mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
-                    Log.d("on create", "query lenght: " + mTopics.size());
+                    Log.d("on update", "result size " + result.size());
+                    for(int i = 0; i < result.size(); ++i) {
+                        Topic mTopic = new Topic();
+                        mTopic.setTopicUserId(userId);
+                        mTopic.setTopicTitle(result.get(i).getTitle());
+                        mTopic.setServerTopicId(result.get(i).getTopicId());
+                        mTopic.setTopicChanged(false);
+                        mTopic.setTopicCreated(true);
+                        mTopic.setTopicDeleted(false);
+                        mTopic.setTopicCreationDate(new Date());
+                        HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
+                    }
                 } catch (SQLException e) {
                     Log.e("on create", "fail to get query");
                 }
-                setupAdapter();
             }
 
             @Override
             public void onError(Exception ex) {
                 Log.d("onError", "Error " + ex.toString());
-                try {
-                    mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
-                    Log.d("on create", "query lenght: " + mTopics.size());
-                } catch (SQLException e) {
-                    Log.e("on create", "fail to get query");
-                }
             }
         });
+
+        int createdCount;
+        try {
+            createdCount = HelperFactory.getHelper().getTopicDAO().getCreatedCount();
+        } catch (SQLException ex) {
+            createdCount = -1;
+        }
+        Log.d("Topic fragment", "created count = " + createdCount);
+        if (createdCount > 0) {
+            List<Topic> createdTopics;
+            try {
+                createdTopics = HelperFactory.getHelper().getTopicDAO().getCreatedTopics();
+                Log.d("Topic fragment", "created ot send" + createdTopics.size());
+                for (int i = 0; i < createdCount; ++i) {
+                    final TopicModel newTopic = new TopicModel();
+                    newTopic.setUserId(userId);
+                    newTopic.setTopicId(createdTopics.get(i).getTopicId());
+                    newTopic.setTitle(createdTopics.get(i).getTopicTitle());
+                    newTopic.setCreationDate(createdTopics.get(i).getTopicCreationDate());
+                    newTopic.setColor(createdTopics.get(i).getTopicColor());
+
+                    final Call<TopicAnswer> call = topic.createNewTopic(newTopic);
+                    NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<TopicAnswer>() {
+                        @Override
+                        public void onSuccess(TopicAnswer result, Response<TopicAnswer> response) {
+                            try {
+                                Log.d("on create", "Created id" + newTopic.getTopicId());
+                                HelperFactory.getHelper().getTopicDAO().updateCreated(newTopic.getTopicId());
+                                Log.d("on create", "created count " + HelperFactory.getHelper().getTopicDAO().getCreatedCount());
+                            } catch (SQLException e) {
+                                Log.e("on create", "fail to get query");
+                            }
+                        }
+
+                        @Override
+                        public void onError(Exception ex) {
+                            Log.d("onError", "Error " + ex.toString());
+                        }
+                    });
+                }
+            } catch (SQLException ex) {
+                //TODO write exception
+            }
+        }
+        try {
+            mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
+        } catch (SQLException ex) {
+
+        }
+        setupAdapter();
+
     }
 
     @Override
@@ -130,15 +188,7 @@ public class TopicFragment extends Fragment {
 
         initToolbars(v);
 
-        //
-        SharedPreferences sharedPreferences = getContext()
-                .getSharedPreferences(getString(R.string.sharedTitle), Context.MODE_PRIVATE);
-
-        Log.d(TAG, "onCreateView: !!!!!!!!!!!sesid: " + sharedPreferences.getString(getString(R.string.sessionId), ""));
-
-//        setupAdapter();
         return v;
-
     }
 
     private void initToolbars(View v) {
@@ -158,12 +208,6 @@ public class TopicFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        try{
-            mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
-            Log.d("on create", "query lenght: " + mTopics.size());
-        }catch(Exception e){
-            Log.d("topic fragment", e.toString());
-        }
 
         setupAdapter();
 
@@ -188,7 +232,6 @@ public class TopicFragment extends Fragment {
             mTopicButton.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    // TODO Auto-generated method stub
                     Intent intent = new Intent(getActivity(), NewTopicActivity.class);
                     intent.putExtra(TOPIC_ID, topicId);
                     startActivity(intent);
@@ -210,7 +253,7 @@ public class TopicFragment extends Fragment {
                 } catch (FileNotFoundException e) {
                 }
             }
-            if(color != 0){
+            if (color != 0) {
                 mTopicButton.setBackgroundColor(color);
             }
             title = item.getTopicTitle();

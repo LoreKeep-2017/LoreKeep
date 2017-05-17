@@ -30,7 +30,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ilya.lorekeep.R;
+import com.example.ilya.lorekeep.auth.LoginFragment;
 import com.example.ilya.lorekeep.config.HelperFactory;
+import com.example.ilya.lorekeep.config.NetworkThread;
+import com.example.ilya.lorekeep.config.RetrofitFactory;
 import com.example.ilya.lorekeep.topic.dao.Topic;
 import com.example.ilya.lorekeep.topic.draw_and_colorpicker.ColorPicker;
 import com.example.ilya.lorekeep.topic.draw_and_colorpicker.DrawActivity;
@@ -40,11 +43,18 @@ import com.example.ilya.lorekeep.topic.image_flickr.FlickrFetchr;
 import com.example.ilya.lorekeep.topic.image_flickr.FlickrItem;
 import com.example.ilya.lorekeep.topic.image_flickr.SearchFragment;
 import com.example.ilya.lorekeep.topic.image_flickr.ThumbnailDownloader;
+import com.example.ilya.lorekeep.topic.topicApi.TopicApi;
+import com.example.ilya.lorekeep.topic.topicApi.models.TopicAnswer;
+import com.example.ilya.lorekeep.topic.topicApi.models.TopicModel;
 
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
@@ -78,7 +88,7 @@ public class NewTopicFragment extends Fragment {
     private Integer topicId;
     private Integer color;
     private Topic mTopic = new Topic();
-    private Topic editTopic = new Topic();
+    private List<Topic> editTopic;
     private DrawPicture mDrawPicture;
     private Boolean isAllreadPressed = false;
 
@@ -117,24 +127,28 @@ public class NewTopicFragment extends Fragment {
 
         topicId = getActivity().getIntent().getIntExtra("topic_id", -1);
 
+        mTopicTitle = (EditText) v.findViewById(R.id.set_topic_title);
+        mImageTopicButton = (Button) v.findViewById(R.id.set_topic_image);
+
         if (topicId != -1) {
             try {
-                editTopic = HelperFactory.getHelper().getTopicDAO().queryForId(topicId);
+                editTopic = HelperFactory.getHelper().getTopicDAO().getTopic(topicId);
+                Log.d("on Edit", "edit topic title " + editTopic.get(0).getTopicTitle());
+                mTopicTitle.setText(editTopic.get(0).getTopicTitle(), TextView.BufferType.EDITABLE);
+
+                String topicImagePath = editTopic.get(0).getTopicImage();
+                if (topicImagePath != null) {
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(Uri.parse(topicImagePath)));
+                        BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
+                        mImageTopicButton.setBackground(bdrawable);
+                    } catch (FileNotFoundException e) {
+                        // TODO : write catch
+                    }
+                }
+
             } catch (SQLException e) {
                 Log.d(TAG, "onClick: " + e.toString());
-            }
-        }
-
-
-        mImageTopicButton = (Button) v.findViewById(R.id.set_topic_image);
-        String topicImagePath = editTopic.getTopicImage();
-        if (topicImagePath != null) {
-            try {
-                Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(Uri.parse(topicImagePath)));
-                BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
-                mImageTopicButton.setBackground(bdrawable);
-            } catch (FileNotFoundException e) {
-                // TODO : write catch
             }
         }
 
@@ -147,7 +161,6 @@ public class NewTopicFragment extends Fragment {
             }
         });
 
-        mTopicTitle = (EditText) v.findViewById(R.id.set_topic_title);
         mTopicTitle.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(
@@ -163,7 +176,6 @@ public class NewTopicFragment extends Fragment {
             public void afterTextChanged(Editable c) {
 
             }
-
         });
 
         Toolbar bottomToolbar = (Toolbar) v.findViewById(R.id.toolbar_topic_bottom);
@@ -172,6 +184,34 @@ public class NewTopicFragment extends Fragment {
         mRemoveTopic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+                    HelperFactory.getHelper().getTopicDAO().updateDeleted(topicId);
+                    final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
+                    int serverTopicId = HelperFactory.getHelper().getTopicDAO().getServerTopicId(topicId);
+                    final Call<String> call = topic.deleteTopic(serverTopicId);
+                    NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<String>() {
+                        @Override
+                        public void onSuccess(String result, Response<String> response) {
+                            try {
+//                                Log.d("on Delete", "message: " + response.body());
+                                HelperFactory.getHelper().getTopicDAO().deleteTopicById(topicId);
+                            } catch (SQLException ex) {
+//                                 TODO write exception
+                            }
+                            getActivity().finish();
+                        }
+
+                        @Override
+                        public void onError(Exception ex) {
+                            Log.d("onError", "Error " + ex.toString());
+                            getActivity().finish();
+                        }
+                    });
+                } catch (SQLException ex){
+                // TODO write exception
+                }
+
+
                 try {
                     HelperFactory.getHelper().getTopicDAO().deleteTopicById(topicId);
                 } catch (SQLException e) {
@@ -198,7 +238,6 @@ public class NewTopicFragment extends Fragment {
                 startActivityForResult(intent, PICK_COLOR_REQUEST);
             }
         });
-
 
         mSearchImage = (ImageView) bottomToolbar.findViewById(R.id.flickr_search_image_button);
         mSearchImage.setOnClickListener(new View.OnClickListener() {
@@ -242,41 +281,40 @@ public class NewTopicFragment extends Fragment {
                     Log.d("New Topic Fragment", "UserId " + userId);
 
                     mTopic.setTopicUserId(userId);
-                    mTopic.setTopicChanged(true);
+                    mTopic.setTopicChanged(false);
+                    mTopic.setTopicCreated(true);
+                    mTopic.setTopicDeleted(false);
+                    mTopic.setTopicCreationDate(new Date());
                     HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
-                    getActivity().finish();
+                    int TopicId = mTopic.getTopicId();
+                    Log.d("NewTopicFragment", "TopicId: " + TopicId);
 
-//                    Topic newTopic = new Topic();
-//
-////                    TopicModel newTopic = new TopicModel();
-//                    newTopic.setTopicUserId(userId);
-//                    newTopic.setTopicTitle(mTopic.getTopicTitle());
-////                    newTopic.setTopicCreationDate(new Date());
-//                    newTopic.setTopicColor(mTopic.getTopicColor());
-//
-//                    HelperFactory.getHelper().getTopicDAO().setTopic(newTopic);
+                    TopicModel newTopic = new TopicModel();
+                    newTopic.setUserId(userId);
+                    newTopic.setTitle(mTopic.getTopicTitle());
+                    newTopic.setCreationDate(new Date());
+                    newTopic.setColor(mTopic.getTopicColor());
 
+                    final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
+                    final Call<TopicAnswer> call = topic.createNewTopic(newTopic);
+                    NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<TopicAnswer>(){
+                        @Override
+                        public void onSuccess(TopicAnswer result, Response<TopicAnswer> response){
+                            try {
+                                HelperFactory.getHelper().getTopicDAO().updateServerTopicId(mTopic.getTopicId(), result.getMessage());
+                                HelperFactory.getHelper().getTopicDAO().updateCreated(mTopic.getTopicId());
+                            } catch (SQLException ex){
+//                                 TODO write exception
+                            }
+                            getActivity().finish();
+                        }
 
-
-//                    final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
-//                    final Call<TopicAnswer> call = topic.createNewTopic(newTopic);
-//                    NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<TopicAnswer>(){
-//                        @Override
-//                        public void onSuccess(TopicAnswer result, Response<TopicAnswer> response){
-//                            Log.d("onSuccess NewTopicFrag", "Success " + result.getMessage());
-//                            try {
-//                                HelperFactory.getHelper().getTopicDAO().updateChanged(result.getMessage());
-//                            } catch (SQLException ex){
-//                                // TODO write exception
-//                            }
-//                            getActivity().finish();
-//                        }
-//
-//                        @Override
-//                        public void onError(Exception ex){
-//                            Log.d("onError", "Error " + ex.toString());
-//                        }
-//                    });
+                        @Override
+                        public void onError(Exception ex){
+                            Log.d("onError", "Error " + ex.toString());
+                            getActivity().finish();
+                        }
+                    });
 
                 } catch (SQLException e) {
                     Log.d(TAG, "onClick: " + e.toString());
@@ -288,7 +326,6 @@ public class NewTopicFragment extends Fragment {
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
-
 
         return v;
     }
@@ -440,7 +477,6 @@ public class NewTopicFragment extends Fragment {
         protected List<FlickrItem> doInBackground(Void... params) {
 
             if (mQuery == null) {
-//                return new FlickrFetchr().fetchRecentPhotos();
                 return null;
             } else {
                 return new FlickrFetchr().searchPhotos(mQuery);

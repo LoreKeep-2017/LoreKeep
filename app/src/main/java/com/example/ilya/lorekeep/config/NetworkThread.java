@@ -39,7 +39,6 @@ public class NetworkThread {
                 try {
                     final Response<T> response = call.execute();
                     if (response.isSuccessful()) {
-
                         uiHandler.post(new Runnable() {
                             @Override
                             public void run() {
