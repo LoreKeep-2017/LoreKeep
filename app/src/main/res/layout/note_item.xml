@@ -20,7 +20,9 @@
             android:gravity="center_vertical|start"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:textColor="@color/textNote"
             android:textSize="20sp"
+            android:fontFamily="Courier New"
             android:maxLength="60"
             android:maxLines="1"/>
 
@@ -39,7 +41,8 @@
         <Button
             android:id="@+id/button_open_browser"
             android:layout_width="match_parent"
-            android:layout_height="40dp"/>
+            android:layout_height="40dp"
+            android:visibility="visible"/>
 
         <ScrollView
                     android:id="@+id/scroll_view"

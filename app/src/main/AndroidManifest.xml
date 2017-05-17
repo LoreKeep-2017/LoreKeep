@@ -31,8 +31,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"
-            android:label="MainActivity"/>
         <activity
             android:name=".topic.TopicActivity"
             android:label="@string/title_activity_topics"/>

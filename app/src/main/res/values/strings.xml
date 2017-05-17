@@ -10,4 +10,7 @@
     <string name="userId">userId</string>
     <string name="sharedTitle">com.example.lorekeep.PREFERENCE_FILE_KEY</string>
     <integer name="com_vk_sdk_AppId">5928386</integer>
+    <string name="set_url">Set url</string>
+    <string name="title_note">Title</string>
+    <string name="start_writing">Start writing</string>
 </resources>

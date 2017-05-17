@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.ilya.lorekeep.MainActivity;
 import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.config.NetworkThread;
 import com.example.ilya.lorekeep.config.RetrofitFactory;

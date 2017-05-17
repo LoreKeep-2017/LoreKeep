@@ -30,10 +30,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ilya.lorekeep.R;
-import com.example.ilya.lorekeep.auth.LoginFragment;
 import com.example.ilya.lorekeep.config.HelperFactory;
-import com.example.ilya.lorekeep.config.NetworkThread;
-import com.example.ilya.lorekeep.config.RetrofitFactory;
 import com.example.ilya.lorekeep.topic.dao.Topic;
 import com.example.ilya.lorekeep.topic.draw_and_colorpicker.ColorPicker;
 import com.example.ilya.lorekeep.topic.draw_and_colorpicker.DrawActivity;
@@ -43,18 +40,11 @@ import com.example.ilya.lorekeep.topic.image_flickr.FlickrFetchr;
 import com.example.ilya.lorekeep.topic.image_flickr.FlickrItem;
 import com.example.ilya.lorekeep.topic.image_flickr.SearchFragment;
 import com.example.ilya.lorekeep.topic.image_flickr.ThumbnailDownloader;
-import com.example.ilya.lorekeep.topic.topicApi.TopicApi;
-import com.example.ilya.lorekeep.topic.topicApi.models.TopicAnswer;
-import com.example.ilya.lorekeep.topic.topicApi.models.TopicModel;
 
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
@@ -173,6 +163,7 @@ public class NewTopicFragment extends Fragment {
             public void afterTextChanged(Editable c) {
 
             }
+
         });
 
         Toolbar bottomToolbar = (Toolbar) v.findViewById(R.id.toolbar_topic_bottom);

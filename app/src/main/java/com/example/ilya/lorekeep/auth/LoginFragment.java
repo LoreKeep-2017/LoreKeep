@@ -1,6 +1,5 @@
 package com.example.ilya.lorekeep.auth;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,11 +14,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.ilya.lorekeep.LoginActivity;
-import com.example.ilya.lorekeep.MainActivity;
 import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.config.NetworkThread;
 import com.example.ilya.lorekeep.config.RetrofitFactory;
+import com.example.ilya.lorekeep.topic.TopicActivity;
 import com.example.ilya.lorekeep.user.userApi.UserApi;
 import com.example.ilya.lorekeep.user.userApi.userModels.UserAnswerModel;
 import com.example.ilya.lorekeep.user.userApi.userModels.UserModel;
@@ -87,21 +85,21 @@ public class LoginFragment extends Fragment {
     }
 
     public void onLoginFailed(String cause) {
-        Toast.makeText( getContext(),"Login failed: " + cause, Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Login failed: " + cause, Toast.LENGTH_LONG).show();
         loginButton.setEnabled(true);
-        if (progressDialog != null){
+        if (progressDialog != null) {
             progressDialog.dismiss();
         }
     }
 
     public void onLoginSuccess() {
 
-        if (progressDialog != null){
+        if (progressDialog != null) {
             progressDialog.dismiss();
         }
         progressDialog = null;
         loginButton.setEnabled(true);
-        Intent intent = new Intent(getContext(), MainActivity.class);
+        Intent intent = new Intent(getContext(), TopicActivity.class);
         startActivity(intent);
 
     }
@@ -135,10 +133,10 @@ public class LoginFragment extends Fragment {
         newUser.setPassword(password);
         final UserApi user = RetrofitFactory.retrofitLore().create(UserApi.class);
         final Call<UserAnswerModel> call = user.signIn(newUser);
-        NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<UserAnswerModel>(){
+        NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<UserAnswerModel>() {
 
             @Override
-            public void onSuccess(UserAnswerModel result, Response<UserAnswerModel> response){
+            public void onSuccess(UserAnswerModel result, Response<UserAnswerModel> response) {
                 Headers headers = response.headers();
                 Log.d("onSuccess", "Response " + headers.toString());
                 Log.d("onSuccess", "Success " + result.getSessionId());
@@ -156,7 +154,7 @@ public class LoginFragment extends Fragment {
             }
 
             @Override
-            public void onError(Exception ex){
+            public void onError(Exception ex) {
                 Log.d("onError", "Error " + ex.getMessage());
                 onLoginFailed(ex.getMessage());
 

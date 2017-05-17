@@ -1,10 +1,12 @@
 package com.example.ilya.lorekeep.note;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,9 +16,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
 
 import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.config.HelperFactory;
@@ -38,6 +42,7 @@ public class NoteActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private TextView mTextView;
     private Button mButtonUrl;
+    private ImageView mCreateNote;
     private boolean isItemPressed = false;
     private Note mPriviousItem = null;
     private LinearLayout mPriviousScrollView;
@@ -54,24 +59,31 @@ public class NoteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_note);
 
         Bundle bundle = getIntent().getExtras();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (bundle != null) {
-            toolbar.setTitle(bundle.getString("topic"));
-        }
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        if (bundle != null) {
+//            toolbar.setTitle(bundle.getString("topic"));
+//        }
+//        setSupportActionBar(toolbar);
+
 
         topicId = getIntent().getIntExtra(GET_NOTES_BY_TOPIC_ID, -1);
 
+        Toolbar bottomToolbar = (Toolbar) findViewById(R.id.toolbar_bottom_activty_note) ;
+        mCreateNote = (ImageView) bottomToolbar.findViewById(R.id.imageview_ceate_note);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mCreateNote.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                FragmentManager manager = getSupportFragmentManager();
+            public void onClick(View v) {
+                                FragmentManager manager = getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
                 NewNoteFragment noteDialogFragment = NewNoteFragment.newInstance(topicId);
-                noteDialogFragment.show(manager, "noteDialogFragment");
+                transaction.addToBackStack(null);
+                transaction.add(R.id.fragment_note_create, noteDialogFragment);
+                transaction.commit();
             }
         });
+
+
 
         HelperFactory.setHelper(getApplicationContext());
 
@@ -114,6 +126,15 @@ public class NoteActivity extends AppCompatActivity {
                 onNoteCreate();
             }
         });
+
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
 
     }
 
@@ -181,10 +202,31 @@ public class NoteActivity extends AppCompatActivity {
                             isItemPressed = true;
                             mPriviousItem = mNote;
                             mPriviousScrollView = dropdownView;
+                            mButtonUrl = (Button) dropdownView.findViewById(R.id.button_open_browser);
 
                             if (mNote.getNoteUrl() != null) {
-                                mButtonUrl = (Button) dropdownView.findViewById(R.id.button_open_browser);
+                                if(mButtonUrl.getVisibility() != View.VISIBLE)
+                                    mButtonUrl.setVisibility(View.VISIBLE);
                                 mButtonUrl.setText(mNote.getNoteUrl());
+                                mButtonUrl.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        String urlString=mNote.getNoteUrl();
+                                        Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        intent.setPackage("com.android.chrome");
+                                        try {
+                                            startActivity(intent);
+                                        } catch (ActivityNotFoundException ex) {
+                                            // Chrome browser presumably not installed so allow user to choose instead
+                                            intent.setPackage(null);
+                                            startActivity(intent);
+                                        }
+                                    }
+                                });
+                            }else{
+                                if(mButtonUrl.getVisibility() == View.VISIBLE)
+                                    mButtonUrl.setVisibility(View.GONE);
                             }
 
                             mTextView = (TextView) dropdownView.findViewById(R.id.fragment_test);
@@ -193,12 +235,33 @@ public class NoteActivity extends AppCompatActivity {
                         }
                     } else {
                         dropdownView.setVisibility(View.VISIBLE);
+                        mButtonUrl = (Button) dropdownView.findViewById(R.id.button_open_browser);
                         isItemPressed = true;
                         mPriviousItem = mNote;
                         mPriviousScrollView = dropdownView;
                         if (mNote.getNoteUrl() != null) {
-                            mButtonUrl = (Button) dropdownView.findViewById(R.id.button_open_browser);
+                            if(mButtonUrl.getVisibility() != View.VISIBLE)
+                                mButtonUrl.setVisibility(View.VISIBLE);
                             mButtonUrl.setText(mNote.getNoteUrl());
+                            mButtonUrl.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String urlString=mNote.getNoteUrl();
+                                    Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.setPackage("com.android.chrome");
+                                    try {
+                                        startActivity(intent);
+                                    } catch (ActivityNotFoundException ex) {
+                                        // Chrome browser presumably not installed so allow user to choose instead
+                                        intent.setPackage(null);
+                                        startActivity(intent);
+                                    }
+                                }
+                            });
+                        }else{
+                            if(mButtonUrl.getVisibility() == View.VISIBLE)
+                                mButtonUrl.setVisibility(View.GONE);
                         }
 
                         mTextView = (TextView) dropdownView.findViewById(R.id.fragment_test);
