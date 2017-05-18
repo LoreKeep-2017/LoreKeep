@@ -17,7 +17,7 @@ import retrofit2.http.Path;
 public interface TopicApi {
 
     @POST("/api/topic")
-    Call<TopicAnswer> createNewTopic(@Body TopicModel newTopic);
+    Call<TopicAnswer> createNewTopic(@Body TopicModel newTopic, @Header("Cookie") String sessionId);
 
     @GET("/api/topic/{userId}")
     Call<List<TopicModel>> getAllTopics(@Path("userId") int userId);
@@ -26,5 +26,5 @@ public interface TopicApi {
     Call<String> deleteTopic(@Path("id") int topicId);
 
     @GET("/api/changes")
-    Call<List<TopicModel>> getChanges(@Header("Cookie") String sessionId);
+    Call<List<TopicAnswer>> getChanges(@Header("Cookie") String sessionId);
 }

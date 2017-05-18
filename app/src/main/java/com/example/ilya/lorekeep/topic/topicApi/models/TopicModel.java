@@ -46,6 +46,10 @@ public class TopicModel {
     @Expose
     private boolean changed;
 
+    @SerializedName("imageBitmap")
+    @Expose
+    private byte[] imageBitmap;
+
     public int getTopicId(){
         return topicId;
     }
@@ -86,6 +90,10 @@ public class TopicModel {
         return changed;
     }
 
+    public byte[] getImageBitmap(){
+        return imageBitmap;
+    }
+
     public void setTopicId(int topicId){
         this.topicId = topicId;
     }
@@ -124,6 +132,10 @@ public class TopicModel {
 
     public void setChanged(boolean changed){
         this.changed = changed;
+    }
+
+    public void setImageBitmap(byte[] imageBitmap){
+        this.imageBitmap = imageBitmap;
     }
 
 }

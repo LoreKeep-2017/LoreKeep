@@ -20,6 +20,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,7 @@ import com.example.ilya.lorekeep.topic.topicApi.TopicApi;
 import com.example.ilya.lorekeep.topic.topicApi.models.TopicAnswer;
 import com.example.ilya.lorekeep.topic.topicApi.models.TopicModel;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -294,9 +296,25 @@ public class NewTopicFragment extends Fragment {
                     newTopic.setTitle(mTopic.getTopicTitle());
                     newTopic.setCreationDate(new Date());
                     newTopic.setColor(mTopic.getTopicColor());
+                    newTopic.setImage(mTopic.getTopicImage());
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver()
+                                .openInputStream(Uri.parse(mTopic.getTopicImage())));
+                        ByteArrayOutputStream bao = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+                        byte[] image = bao.toByteArray();
+//                        newTopic.setImageBitmap(image);
+                        String ba1 = Base64.encodeToString(image, Base64.DEFAULT);
+                    } catch(FileNotFoundException ex){
+                        // TODO write exception
+                    }
+
+                    SharedPreferences sharedPreferences = getContext()
+                            .getSharedPreferences(getString(R.string.sharedTitle), Context.MODE_PRIVATE);
+                    String sessionId = sharedPreferences.getString(getString(R.string.sessionId), "");
 
                     final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
-                    final Call<TopicAnswer> call = topic.createNewTopic(newTopic);
+                    final Call<TopicAnswer> call = topic.createNewTopic(newTopic, "sessionId=" + sessionId);
                     NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<TopicAnswer>(){
                         @Override
                         public void onSuccess(TopicAnswer result, Response<TopicAnswer> response){

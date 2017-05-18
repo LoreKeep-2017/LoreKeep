@@ -83,17 +83,17 @@ public class TopicFragment extends Fragment {
         String sessionId = sharedPreferences.getString(getString(R.string.sessionId), "");
 
         final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
-        final Call<List<TopicModel>> callSyn = topic.getChanges("sessionId="+sessionId);
-        NetworkThread.getInstance().execute(callSyn, new NetworkThread.ExecuteCallback<List<TopicModel>>() {
+        final Call<List<TopicAnswer>> callSyn = topic.getChanges("sessionId="+sessionId);
+        NetworkThread.getInstance().execute(callSyn, new NetworkThread.ExecuteCallback<List<TopicAnswer>>() {
             @Override
-            public void onSuccess(List<TopicModel> result, Response<List<TopicModel>> response) {
+            public void onSuccess(List<TopicAnswer> result, Response<List<TopicAnswer>> response) {
                 try {
                     Log.d("on update", "result size " + result.size());
-                    for(int i = 0; i < result.size(); ++i) {
+                    for(int i = 0; i < 0; ++i) {
                         Topic mTopic = new Topic();
                         mTopic.setTopicUserId(userId);
-                        mTopic.setTopicTitle(result.get(i).getTitle());
-                        mTopic.setServerTopicId(result.get(i).getTopicId());
+//                        mTopic.setTopicTitle(result.get(i).getTitle());
+//                        mTopic.setServerTopicId(result.get(i).getTopicId());
                         mTopic.setTopicChanged(false);
                         mTopic.setTopicCreated(true);
                         mTopic.setTopicDeleted(false);
