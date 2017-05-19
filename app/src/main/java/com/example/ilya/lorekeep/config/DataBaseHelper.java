@@ -1,6 +1,5 @@
 package com.example.ilya.lorekeep.config;
 
-
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -24,7 +23,7 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "links.db";
 
-    private static final int DATABASE_VERSION = 27;
+    private static final int DATABASE_VERSION = 62;
 
     private TopicImpl topicNoteDAO = null;
     private NoteImpl noteInfoDao = null;

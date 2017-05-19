@@ -2,8 +2,7 @@ package com.example.ilya.lorekeep.config;
 
 import android.os.Handler;
 import android.os.Looper;
-
-import com.example.ilya.lorekeep.user.userApi.userModels.UserAnswerModel;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,10 +64,13 @@ public class NetworkThread {
     public interface ExecuteCallback<T> {
         void onSuccess(T result, Response<T> response);
 
+
+
         void onError(Exception ex);
     }
 
     private String getCauseError(Response response) throws IOException, JSONException {
+        Log.d("ResponseError", response.errorBody().string());
         final String error = response.errorBody().string();
         JSONObject jObjError = new JSONObject(error);
         return jObjError.getJSONObject(MESSAGE).getString(CAUSE);

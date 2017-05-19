@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.ilya.lorekeep.MainActivity;
 import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.config.NetworkThread;
 import com.example.ilya.lorekeep.config.RetrofitFactory;
@@ -99,7 +100,7 @@ public class LoginFragment extends Fragment {
         }
         progressDialog = null;
         loginButton.setEnabled(true);
-        Intent intent = new Intent(getContext(), TopicActivity.class);
+        Intent intent = new Intent(getContext(), MainActivity.class);
         startActivity(intent);
 
     }
@@ -147,6 +148,7 @@ public class LoginFragment extends Fragment {
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString(getString(R.string.sessionId), result.getSessionId());
                 editor.putInt(getString(R.string.userId), result.getUserId());
+                editor.putBoolean(getString(R.string.firstTime), true);
                 editor.apply();
 
                 onLoginSuccess();

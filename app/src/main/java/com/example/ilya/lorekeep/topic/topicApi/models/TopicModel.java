@@ -22,6 +22,10 @@ public class TopicModel {
     @Expose
     private String title;
 
+    @SerializedName("serverTopicId")
+    @Expose
+    private int serverTopicId;
+
     @SerializedName("image")
     @Expose
     private String image;
@@ -49,6 +53,19 @@ public class TopicModel {
     @SerializedName("imageBitmap")
     @Expose
     private byte[] imageBitmap;
+
+    public void setServerTopicId(int serverTopicId) {
+        this.serverTopicId = serverTopicId;
+    }
+
+    public int getServerTopicId() {
+
+        return serverTopicId;
+    }
+
+    public boolean isChanged() {
+        return changed;
+    }
 
     public int getTopicId(){
         return topicId;

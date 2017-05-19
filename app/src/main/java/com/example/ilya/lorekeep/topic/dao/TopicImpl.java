@@ -20,8 +20,14 @@ public class TopicImpl extends BaseDaoImpl<Topic, Integer> {
         return this.queryForAll();
     }
 
-    public List<Topic> getTopic(int topicId) throws SQLException{
-        return this.queryBuilder().where().eq("topicId", topicId).query();
+
+    public Topic getTopic(int topicId) throws SQLException{   /// CHech changes !!!!!!!!!!!
+        return this.queryForId(topicId);
+//        return this.queryBuilder().where().eq("topicId", topicId).query();
+    }
+
+    public void updateTopic(Topic topic) throws SQLException{
+        this.update(topic);
     }
 
     public void setTopic(Topic newTopic) throws SQLException{
@@ -29,6 +35,10 @@ public class TopicImpl extends BaseDaoImpl<Topic, Integer> {
         newTopic.setTopicLastUsed(new Date());
         newTopic.setTopicRating(0);
         this.create(newTopic);
+    }
+
+    public Topic getTopicByServerTopicId(int serverTopicId) throws SQLException{
+        return this.queryBuilder().where().eq("serverTopicId", serverTopicId).queryForFirst(); /// Maybe the problem
     }
 
     public void updateChanged(int topicId){

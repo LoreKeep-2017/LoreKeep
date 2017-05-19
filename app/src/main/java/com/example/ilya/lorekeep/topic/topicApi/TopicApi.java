@@ -12,12 +12,16 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface TopicApi {
 
     @POST("/api/topic")
     Call<TopicAnswer> createNewTopic(@Body TopicModel newTopic, @Header("Cookie") String sessionId);
+
+    @PUT("/api/topic")
+    Call<TopicAnswer> updateTopic(@Body TopicModel topic, @Header("Cookie") String sessionId);
 
     @GET("/api/topic/{userId}")
     Call<List<TopicModel>> getAllTopics(@Path("userId") int userId);
@@ -26,5 +30,5 @@ public interface TopicApi {
     Call<String> deleteTopic(@Path("id") int topicId);
 
     @GET("/api/changes")
-    Call<List<TopicAnswer>> getChanges(@Header("Cookie") String sessionId);
+    Call<List<TopicModel>> getChanges(@Header("Cookie") String sessionId);
 }
