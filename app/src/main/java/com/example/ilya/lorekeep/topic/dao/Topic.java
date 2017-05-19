@@ -13,7 +13,7 @@ import java.util.Date;
 @DatabaseTable(tableName = "Topic")
 public class Topic {
 
-    @DatabaseField(generatedId = true)
+    @DatabaseField(generatedId = true, unique = true)
     private int topicId;
 
     @DatabaseField(dataType = DataType.INTEGER)

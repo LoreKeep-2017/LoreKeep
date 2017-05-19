@@ -34,7 +34,9 @@ import com.example.ilya.lorekeep.topic.topicApi.models.TopicModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.Ref;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -44,6 +46,8 @@ import retrofit2.Response;
 public class TopicFragment extends Fragment {
 
     public static final String TOPIC_ID = "topic_id";
+    public static final String TOPIC_CREATE = "topic_create";
+    public static final String TOPIC_UPDATE = "topic_update";
     private String TAG = "TopicActivity";
     private final static int MY_PERMISSION_READ_STORAGE = 1;
 
@@ -74,92 +78,143 @@ public class TopicFragment extends Fragment {
         }
         HelperFactory.setHelper(getActivity().getApplicationContext());
 
-        SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.sharedTitle),
+        final SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.sharedTitle),
                 Context.MODE_PRIVATE);
         final int userId = sharedPref.getInt(getString(R.string.userId), 1);
 
-        SharedPreferences sharedPreferences = getContext()
-                .getSharedPreferences(getString(R.string.sharedTitle), Context.MODE_PRIVATE);
-        String sessionId = sharedPreferences.getString(getString(R.string.sessionId), "");
+        String sessionId = sharedPref.getString(getString(R.string.sessionId), "");
 
-        final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
-        final Call<List<TopicModel>> callSyn = topic.getChanges("sessionId="+sessionId);
-        NetworkThread.getInstance().execute(callSyn, new NetworkThread.ExecuteCallback<List<TopicModel>>() {
-            @Override
-            public void onSuccess(List<TopicModel> result, Response<List<TopicModel>> response) {
-                try {
-                    Log.d("on update", "result size " + result.size());
-                    for(int i = 0; i < result.size(); ++i) {
-                        Topic mTopic = new Topic();
-                        mTopic.setTopicUserId(userId);
-                        mTopic.setTopicTitle(result.get(i).getTitle());
-                        mTopic.setServerTopicId(result.get(i).getTopicId());
-                        mTopic.setTopicChanged(false);
-                        mTopic.setTopicCreated(true);
-                        mTopic.setTopicDeleted(false);
-                        mTopic.setTopicCreationDate(new Date());
-                        HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
-                    }
-                } catch (SQLException e) {
-                    Log.e("on create", "fail to get query");
-                }
-            }
+        /////////////////// Request for pulling all topic if user logged in first time //////////////
 
-            @Override
-            public void onError(Exception ex) {
-                Log.d("onError", "Error " + ex.toString());
-            }
-        });
+        Boolean firstTime = sharedPref.getBoolean(getString(R.string.firstTime), false);
 
-        int createdCount;
-        try {
-            createdCount = HelperFactory.getHelper().getTopicDAO().getCreatedCount();
-        } catch (SQLException ex) {
-            createdCount = -1;
-        }
-        Log.d("Topic fragment", "created count = " + createdCount);
-        if (createdCount > 0) {
-            List<Topic> createdTopics;
-            try {
-                createdTopics = HelperFactory.getHelper().getTopicDAO().getCreatedTopics();
-                Log.d("Topic fragment", "created ot send" + createdTopics.size());
-                for (int i = 0; i < createdCount; ++i) {
-                    final TopicModel newTopic = new TopicModel();
-                    newTopic.setUserId(userId);
-                    newTopic.setTopicId(createdTopics.get(i).getTopicId());
-                    newTopic.setTitle(createdTopics.get(i).getTopicTitle());
-                    newTopic.setCreationDate(createdTopics.get(i).getTopicCreationDate());
-                    newTopic.setColor(createdTopics.get(i).getTopicColor());
 
-                    final Call<TopicAnswer> call = topic.createNewTopic(newTopic);
-                    NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<TopicAnswer>() {
-                        @Override
-                        public void onSuccess(TopicAnswer result, Response<TopicAnswer> response) {
-                            try {
-                                Log.d("on create", "Created id" + newTopic.getTopicId());
-                                HelperFactory.getHelper().getTopicDAO().updateCreated(newTopic.getTopicId());
-                                Log.d("on create", "created count " + HelperFactory.getHelper().getTopicDAO().getCreatedCount());
-                            } catch (SQLException e) {
-                                Log.e("on create", "fail to get query");
+//            final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
+//            final Call<List<TopicModel>> callPullAll = topic.getAllTopics(userId);
+//            NetworkThread.getInstance().execute(callPullAll, new NetworkThread.ExecuteCallback<List<TopicModel>>(){
+//                @Override
+//                public void onSuccess(List<TopicModel> result, Response<List<TopicModel>> response){
+//                    try {
+//                        Log.d("on get all topics", "result size " + result.size());
+//                        for(int i = 0; i < result.size(); ++i) {
+//                            Topic mTopic = new Topic();
+//                            mTopic.setTopicUserId(userId);
+//                            mTopic.setTopicTitle(result.get(i).getTitle());
+//                            mTopic.setServerTopicId(result.get(i).getTopicId());
+//                            mTopic.setTopicChanged(false);
+//                            mTopic.setTopicCreated(false);
+//                            mTopic.setTopicDeleted(false);
+//                            mTopic.setTopicCreationDate(new Date());
+//                            HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
+//                        }
+//                        mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
+//                        setupAdapter();
+//
+//                    } catch (SQLException e) {
+//                        Log.e("on create", "fail to get query");
+//                    }
+//                }
+//
+//
+//                @Override
+//                public void onError(Exception ex) {
+//                    Log.d("onError", "Error " + ex.toString());
+//                }
+//            });
+
+
+
+            ///////////////////    Request for pulling new topics ///////////////////////////
+
+            final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
+            final Call<List<TopicModel>> callSyn = topic.getChanges("sessionId=" + sessionId);
+            NetworkThread.getInstance().execute(callSyn, new NetworkThread.ExecuteCallback<List<TopicModel>>() {
+                @Override
+                public void onSuccess(List<TopicModel> result, Response<List<TopicModel>> response) {
+                    try {
+                        Log.d("on update", "result size " + result.size());
+                        for (int i = 0; i < result.size(); ++i) {
+                            Topic mTopic = new Topic();
+                            mTopic.setTopicUserId(userId);
+                            mTopic.setTopicTitle(result.get(i).getTitle());
+                            mTopic.setServerTopicId(result.get(i).getTopicId());
+                            mTopic.setTopicChanged(false);
+                            mTopic.setTopicCreated(false);
+                            mTopic.setTopicDeleted(false);
+                            mTopic.setTopicCreationDate(new Date());
+                            Topic isTopic = HelperFactory.getHelper().getTopicDAO().getTopicByServerTopicId(mTopic.getServerTopicId());
+                            if(isTopic == null){
+                                HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
+                            }else {
+                                isTopic.setTopicTitle(mTopic.getTopicTitle());
+                                isTopic.setTopicColor(mTopic.getTopicColor());
+                                HelperFactory.getHelper().getTopicDAO().updateTopic(isTopic);
                             }
+                            mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
+                            setupAdapter();
                         }
-
-                        @Override
-                        public void onError(Exception ex) {
-                            Log.d("onError", "Error " + ex.toString());
-                        }
-                    });
+                    } catch (SQLException e) {
+                        Log.e("on create", "fail to get query");
+                    }
                 }
-            } catch (SQLException ex) {
-                //TODO write exception
-            }
-        }
+
+                @Override
+                public void onError(Exception ex) {
+                    Log.d("onError", "Error " + ex.toString());
+                }
+            });
+
+
+//        int createdCount;
+//        try {
+//            createdCount = HelperFactory.getHelper().getTopicDAO().getCreatedCount();
+//        } catch (SQLException ex) {
+//            createdCount = -1;
+//        }
+//        Log.d("Topic fragment", "created count = " + createdCount);
+//        if (createdCount > 0) {
+//            List<Topic> createdTopics;
+//            try {
+//                createdTopics = HelperFactory.getHelper().getTopicDAO().getCreatedTopics();
+//                Log.d("Topic fragment", "created ot send" + createdTopics.size());
+//                for (int i = 0; i < createdCount; ++i) {
+//                    final TopicModel newTopic = new TopicModel();
+//                    newTopic.setUserId(userId);
+//                    newTopic.setTopicId(createdTopics.get(i).getTopicId());
+//                    newTopic.setTitle(createdTopics.get(i).getTopicTitle());
+//                    newTopic.setCreationDate(createdTopics.get(i).getTopicCreationDate());
+//                    newTopic.setColor(createdTopics.get(i).getTopicColor());
+//
+//                    final Call<TopicAnswer> call = topic.createNewTopic(newTopic, "sessionId=" + sessionId);
+//                    NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<TopicAnswer>() {
+//                        @Override
+//                        public void onSuccess(TopicAnswer result, Response<TopicAnswer> response) {
+//                            try {
+//                                Log.d("on create", "Created id" + newTopic.getTopicId());
+//                                HelperFactory.getHelper().getTopicDAO().updateCreated(newTopic.getTopicId());
+//                                Log.d("on create", "created count " + HelperFactory.getHelper().getTopicDAO().getCreatedCount());
+//                            } catch (SQLException e) {
+//                                Log.e("on create", "fail to get query");
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onError(Exception ex) {
+//                            Log.d("onError", "Error " + ex.toString());
+//                        }
+//                    });
+//                }
+//            } catch (SQLException ex) {
+//                //TODO write exception
+//            }
+//        }
         try {
             mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
         } catch (SQLException ex) {
 
         }
         setupAdapter();
+
 
     }
 
@@ -209,6 +264,12 @@ public class TopicFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        try{
+            mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
+        }catch (Exception e){
+            Log.d("Error", e.toString());
+        }
+
         setupAdapter();
 
         Log.d(TAG, "onResume: create new thread and execute!");
@@ -234,6 +295,7 @@ public class TopicFragment extends Fragment {
                 public boolean onLongClick(View v) {
                     Intent intent = new Intent(getActivity(), NewTopicActivity.class);
                     intent.putExtra(TOPIC_ID, topicId);
+                    intent.putExtra(TOPIC_UPDATE, true);
                     startActivity(intent);
                     return true;
                 }

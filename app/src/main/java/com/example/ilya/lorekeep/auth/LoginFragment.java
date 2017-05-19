@@ -14,13 +14,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.ilya.lorekeep.MainActivity;
 import com.example.ilya.lorekeep.R;
+import com.example.ilya.lorekeep.config.HelperFactory;
 import com.example.ilya.lorekeep.config.NetworkThread;
 import com.example.ilya.lorekeep.config.RetrofitFactory;
 import com.example.ilya.lorekeep.topic.TopicActivity;
+import com.example.ilya.lorekeep.topic.dao.Topic;
+import com.example.ilya.lorekeep.topic.topicApi.TopicApi;
+import com.example.ilya.lorekeep.topic.topicApi.models.TopicModel;
 import com.example.ilya.lorekeep.user.userApi.UserApi;
 import com.example.ilya.lorekeep.user.userApi.userModels.UserAnswerModel;
 import com.example.ilya.lorekeep.user.userApi.userModels.UserModel;
+
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
 
 import okhttp3.Headers;
 import retrofit2.Call;
@@ -99,7 +108,7 @@ public class LoginFragment extends Fragment {
         }
         progressDialog = null;
         loginButton.setEnabled(true);
-        Intent intent = new Intent(getContext(), TopicActivity.class);
+        Intent intent = new Intent(getContext(), MainActivity.class);
         startActivity(intent);
 
     }
@@ -147,10 +156,12 @@ public class LoginFragment extends Fragment {
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString(getString(R.string.sessionId), result.getSessionId());
                 editor.putInt(getString(R.string.userId), result.getUserId());
+                editor.putBoolean(getString(R.string.firstTime), true);
                 editor.apply();
 
-                onLoginSuccess();
+                fetchAllTopics(result.getUserId());
 
+                onLoginSuccess();
             }
 
             @Override
@@ -158,6 +169,39 @@ public class LoginFragment extends Fragment {
                 Log.d("onError", "Error " + ex.getMessage());
                 onLoginFailed(ex.getMessage());
 
+            }
+        });
+    }
+
+
+    public void fetchAllTopics(final Integer userId){
+        final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
+        final Call<List<TopicModel>> callPullAll = topic.getAllTopics(userId);
+        NetworkThread.getInstance().execute(callPullAll, new NetworkThread.ExecuteCallback<List<TopicModel>>(){
+            @Override
+            public void onSuccess(List<TopicModel> result, Response<List<TopicModel>> response){
+                try {
+                    Log.d("on get all topics", "result size " + result.size());
+                    for(int i = 0; i < result.size(); ++i) {
+                        Topic mTopic = new Topic();
+                        mTopic.setTopicUserId(userId);
+                        mTopic.setTopicTitle(result.get(i).getTitle());
+                        mTopic.setServerTopicId(result.get(i).getTopicId());
+                        mTopic.setTopicChanged(false);
+                        mTopic.setTopicCreated(false);
+                        mTopic.setTopicDeleted(false);
+                        mTopic.setTopicCreationDate(new Date());
+                        HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
+                    }
+                } catch (SQLException e) {
+                    Log.e("on create", "fail to get query");
+                }
+            }
+
+
+            @Override
+            public void onError(Exception ex) {
+                Log.d("onError", "Error " + ex.toString());
             }
         });
     }

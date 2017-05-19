@@ -8,6 +8,7 @@
     <string name="topic_title">Write a caption...</string>
     <string name="sessionId">sessionId</string>
     <string name="userId">userId</string>
+    <string name="firstTime">firstTime</string>
     <string name="sharedTitle">com.example.lorekeep.PREFERENCE_FILE_KEY</string>
     <integer name="com_vk_sdk_AppId">5928386</integer>
     <string name="set_url">Set url</string>
