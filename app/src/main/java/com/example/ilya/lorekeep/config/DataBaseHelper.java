@@ -23,7 +23,7 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "links.db";
 
-    private static final int DATABASE_VERSION = 62;
+    private static final int DATABASE_VERSION = 63;
 
     private TopicImpl topicNoteDAO = null;
     private NoteImpl noteInfoDao = null;
