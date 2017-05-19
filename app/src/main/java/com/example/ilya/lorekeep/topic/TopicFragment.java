@@ -88,43 +88,41 @@ public class TopicFragment extends Fragment {
 
         Boolean firstTime = sharedPref.getBoolean(getString(R.string.firstTime), false);
 
-        if(firstTime) {
-            final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
-            final Call<List<TopicModel>> callPullAll = topic.getAllTopics(userId);
-            NetworkThread.getInstance().execute(callPullAll, new NetworkThread.ExecuteCallback<List<TopicModel>>(){
-                @Override
-                public void onSuccess(List<TopicModel> result, Response<List<TopicModel>> response){
-                    try {
-                        Log.d("on get all topics", "result size " + result.size());
-                        for(int i = 0; i < result.size(); ++i) {
-                            Topic mTopic = new Topic();
-                            mTopic.setTopicUserId(userId);
-                            mTopic.setTopicTitle(result.get(i).getTitle());
-                            mTopic.setServerTopicId(result.get(i).getTopicId());
-                            mTopic.setTopicChanged(false);
-                            mTopic.setTopicCreated(false);
-                            mTopic.setTopicDeleted(false);
-                            mTopic.setTopicCreationDate(new Date());
-                            HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
-                            mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
-                            setupAdapter();
-                            SharedPreferences.Editor editor = sharedPref.edit();
-                            editor.putBoolean(getString(R.string.firstTime), false);
-                            editor.commit();
-                        }
-                    } catch (SQLException e) {
-                        Log.e("on create", "fail to get query");
-                    }
-                }
+
+//            final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
+//            final Call<List<TopicModel>> callPullAll = topic.getAllTopics(userId);
+//            NetworkThread.getInstance().execute(callPullAll, new NetworkThread.ExecuteCallback<List<TopicModel>>(){
+//                @Override
+//                public void onSuccess(List<TopicModel> result, Response<List<TopicModel>> response){
+//                    try {
+//                        Log.d("on get all topics", "result size " + result.size());
+//                        for(int i = 0; i < result.size(); ++i) {
+//                            Topic mTopic = new Topic();
+//                            mTopic.setTopicUserId(userId);
+//                            mTopic.setTopicTitle(result.get(i).getTitle());
+//                            mTopic.setServerTopicId(result.get(i).getTopicId());
+//                            mTopic.setTopicChanged(false);
+//                            mTopic.setTopicCreated(false);
+//                            mTopic.setTopicDeleted(false);
+//                            mTopic.setTopicCreationDate(new Date());
+//                            HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
+//                        }
+//                        mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
+//                        setupAdapter();
+//
+//                    } catch (SQLException e) {
+//                        Log.e("on create", "fail to get query");
+//                    }
+//                }
+//
+//
+//                @Override
+//                public void onError(Exception ex) {
+//                    Log.d("onError", "Error " + ex.toString());
+//                }
+//            });
 
 
-                @Override
-                public void onError(Exception ex) {
-                    Log.d("onError", "Error " + ex.toString());
-                }
-            });
-
-        }else {
 
             ///////////////////    Request for pulling new topics ///////////////////////////
 
@@ -165,7 +163,7 @@ public class TopicFragment extends Fragment {
                     Log.d("onError", "Error " + ex.toString());
                 }
             });
-        }
+
 
 //        int createdCount;
 //        try {
