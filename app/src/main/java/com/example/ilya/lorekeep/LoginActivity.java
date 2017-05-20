@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import com.example.ilya.lorekeep.auth.FragmentAdapter;
 import com.example.ilya.lorekeep.config.NetworkThread;
@@ -46,8 +48,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onSessionRequestError() {
-
+        findViewById(R.id.loading).setVisibility(View.GONE);
         viewPager = (ViewPager) findViewById(R.id.vpPager);
+        viewPager.setVisibility(View.VISIBLE);
         adapter = new FragmentAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
 
