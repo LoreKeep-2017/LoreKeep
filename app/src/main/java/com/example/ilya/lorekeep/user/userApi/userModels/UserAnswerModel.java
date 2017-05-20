@@ -25,6 +25,11 @@ public class UserAnswerModel {
 //        return message;
 //    }
 
+
+    public Message getMessageClass() {
+        return messageClass;
+    }
+
     public String getLogin(){
         return messageClass.getLogin();
     }

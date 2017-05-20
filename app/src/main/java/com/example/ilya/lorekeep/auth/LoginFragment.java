@@ -156,7 +156,7 @@ public class LoginFragment extends Fragment {
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString(getString(R.string.sessionId), result.getSessionId());
                 editor.putInt(getString(R.string.userId), result.getUserId());
-                //editor.putBoolean(getString(R.string.firstTime), true);
+                editor.putBoolean(getString(R.string.firstTime), true);
                 editor.apply();
 
                 fetchAllTopics(result.getUserId());
@@ -182,6 +182,7 @@ public class LoginFragment extends Fragment {
             public void onSuccess(List<TopicModel> result, Response<List<TopicModel>> response){
                 try {
                     Log.d("on get all topics", "result size " + result.size());
+                    HelperFactory.setHelper(getActivity().getApplicationContext());
                     for(int i = 0; i < result.size(); ++i) {
                         Topic mTopic = new Topic();
                         mTopic.setTopicUserId(userId);

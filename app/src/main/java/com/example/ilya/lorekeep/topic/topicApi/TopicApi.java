@@ -26,9 +26,12 @@ public interface TopicApi {
     @GET("/api/topic/{userId}")
     Call<List<TopicModel>> getAllTopics(@Path("userId") int userId);
 
-    @DELETE("/api/delete/{id}")
-    Call<String> deleteTopic(@Path("id") int topicId);
+    @DELETE("/api/topic/{id}")
+    Call<TopicAnswerDelModel> deleteTopic(@Path("id") int topicId, @Header("Cookie") String sessionId);
 
     @GET("/api/changes")
     Call<List<TopicModel>> getChanges(@Header("Cookie") String sessionId);
+
+    @GET("/api/changes/delete/topic")
+    Call<List<Integer>> getChagesDelTopic(@Header("Cookie") String sessionId);
 }

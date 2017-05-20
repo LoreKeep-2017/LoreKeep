@@ -44,6 +44,7 @@ import com.example.ilya.lorekeep.topic.image_flickr.FlickrFetchr;
 import com.example.ilya.lorekeep.topic.image_flickr.FlickrItem;
 import com.example.ilya.lorekeep.topic.image_flickr.SearchFragment;
 import com.example.ilya.lorekeep.topic.image_flickr.ThumbnailDownloader;
+import com.example.ilya.lorekeep.topic.topicApi.TopicAnswerDelModel;
 import com.example.ilya.lorekeep.topic.topicApi.TopicApi;
 import com.example.ilya.lorekeep.topic.topicApi.models.TopicAnswer;
 import com.example.ilya.lorekeep.topic.topicApi.models.TopicModel;
@@ -64,7 +65,7 @@ import static android.content.ContentValues.TAG;
 public class NewTopicFragment extends Fragment {
 
     static final String REQUEST_IMAGE_FRAGMENT = "SearchFragment";
-    private static String sessionId = "com.LoreKeep.sessionId";
+//    private static String sessionId = "com.LoreKeep.sessionId";
 
 
     static final int PICK_COLOR_REQUEST = 1;
@@ -189,13 +190,18 @@ public class NewTopicFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 try {
+
+                    SharedPreferences sharedPreferences = getContext()
+                            .getSharedPreferences(getString(R.string.sharedTitle), Context.MODE_PRIVATE);
+                    String sessionId = sharedPreferences.getString(getString(R.string.sessionId), "");
+
                     HelperFactory.getHelper().getTopicDAO().updateDeleted(topicId);
                     final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
                     int serverTopicId = HelperFactory.getHelper().getTopicDAO().getServerTopicId(topicId);
-                    final Call<String> call = topic.deleteTopic(serverTopicId);
-                    NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<String>() {
+                    final Call<TopicAnswerDelModel> call = topic.deleteTopic(serverTopicId, "sessionId=" + sessionId);
+                    NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<TopicAnswerDelModel>() {
                         @Override
-                        public void onSuccess(String result, Response<String> response) {
+                        public void onSuccess(TopicAnswerDelModel result, Response<TopicAnswerDelModel> response) {
                             try {
 //                                Log.d("on Delete", "message: " + response.body());
                                 HelperFactory.getHelper().getTopicDAO().deleteTopicById(topicId);
@@ -216,12 +222,12 @@ public class NewTopicFragment extends Fragment {
                 }
 
 
-                try {
-                    HelperFactory.getHelper().getTopicDAO().deleteTopicById(topicId);
-                } catch (SQLException e) {
-                    Log.d(TAG, "onClick: " + e.toString());
-                }
-                getActivity().finish();
+//                try {
+//                    HelperFactory.getHelper().getTopicDAO().deleteTopicById(topicId);
+//                } catch (SQLException e) {
+//                    Log.d(TAG, "onClick: " + e.toString());
+//                }
+//                getActivity().finish();
             }
         });
 

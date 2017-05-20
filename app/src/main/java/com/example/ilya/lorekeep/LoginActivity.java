@@ -8,7 +8,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import com.example.ilya.lorekeep.auth.FragmentAdapter;
 import com.example.ilya.lorekeep.config.NetworkThread;
@@ -81,7 +80,13 @@ public class LoginActivity extends AppCompatActivity {
                 Log.e("onSuccess", "Response " + headers.toString());
                 Log.e("onSuccess", "Success " + result.getId());
 
-                onSessionRequestSuccess(result.getId());
+
+
+                if(result.getId() == -1){
+                    onSessionRequestError();
+                }else {
+                    onSessionRequestSuccess(result.getId());
+                }
 
             }
 

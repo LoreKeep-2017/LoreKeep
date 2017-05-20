@@ -86,8 +86,6 @@ public class TopicFragment extends Fragment {
 
         /////////////////// Request for pulling all topic if user logged in first time //////////////
 
-        Boolean firstTime = sharedPref.getBoolean(getString(R.string.firstTime), false);
-
 
 //            final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
 //            final Call<List<TopicModel>> callPullAll = topic.getAllTopics(userId);
@@ -123,6 +121,33 @@ public class TopicFragment extends Fragment {
 //            });
 
 
+            ///////////////////    Request for pulling deleted topics ///////////////////////////
+
+
+        final TopicApi topicDel = RetrofitFactory.retrofitLore().create(TopicApi.class);
+        final Call<List<Integer>> callSynDelTopic = topicDel.getChagesDelTopic("sessionId=" + sessionId);
+        NetworkThread.getInstance().execute(callSynDelTopic, new NetworkThread.ExecuteCallback<List<Integer>>() {
+            @Override
+            public void onSuccess(List<Integer> result, Response<List<Integer>> response) {
+                try {
+                    Log.d("on update", "result size " + result.size());
+                    for (int i = 0; i < result.size(); ++i) {
+                        HelperFactory.getHelper().getTopicDAO().deleteTopicById(result.get(i));
+                    }
+
+                    mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
+                    setupAdapter();
+
+                } catch (SQLException e) {
+                    Log.e("on create", "fail to get query");
+                }
+            }
+
+            @Override
+            public void onError(Exception ex) {
+                Log.d("onError", "Error " + ex.toString());
+            }
+        });
 
             ///////////////////    Request for pulling new topics ///////////////////////////
 
