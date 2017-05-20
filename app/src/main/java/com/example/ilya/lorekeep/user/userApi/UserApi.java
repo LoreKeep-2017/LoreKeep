@@ -20,7 +20,7 @@ public interface UserApi {
     Call<UserAnswerModel> signIn(@Body UserModel user);
 
     @GET("api/auth")
-    Call<String> isAuth(@Header("Cookie") String sessionId);
+    Call<UserAnswerModel> isAuth(@Header("Cookie") String sessionId);
 
     @GET("api/session")
     Call<UserAnswerModel> getSession();

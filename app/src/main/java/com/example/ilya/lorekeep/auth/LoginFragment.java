@@ -156,7 +156,7 @@ public class LoginFragment extends Fragment {
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString(getString(R.string.sessionId), result.getSessionId());
                 editor.putInt(getString(R.string.userId), result.getUserId());
-                editor.putBoolean(getString(R.string.firstTime), true);
+                //editor.putBoolean(getString(R.string.firstTime), true);
                 editor.apply();
 
                 fetchAllTopics(result.getUserId());
