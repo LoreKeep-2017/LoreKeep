@@ -168,16 +168,17 @@ public class TopicFragment extends Fragment {
                             mTopic.setTopicDeleted(false);
                             mTopic.setTopicCreationDate(new Date());
                             Topic isTopic = HelperFactory.getHelper().getTopicDAO().getTopicByServerTopicId(mTopic.getServerTopicId());
-                            if(isTopic == null){
+                            if (isTopic == null) {
                                 HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
-                            }else {
+                            } else {
                                 isTopic.setTopicTitle(mTopic.getTopicTitle());
                                 isTopic.setTopicColor(mTopic.getTopicColor());
                                 HelperFactory.getHelper().getTopicDAO().updateTopic(isTopic);
                             }
+                        }
                             mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
                             setupAdapter();
-                        }
+
                     } catch (SQLException e) {
                         Log.e("on create", "fail to get query");
                     }
