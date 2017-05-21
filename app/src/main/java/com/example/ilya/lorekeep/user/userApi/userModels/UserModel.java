@@ -1,10 +1,11 @@
 package com.example.ilya.lorekeep.user.userApi.userModels;
 
 
+import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class UserModel {
+public class UserModel{
 
     @SerializedName("userId")
     @Expose

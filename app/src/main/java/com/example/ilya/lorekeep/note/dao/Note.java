@@ -18,6 +18,9 @@ public class Note implements Serializable{
     @DatabaseField(generatedId = true)
     public int noteId;
 
+    @DatabaseField(dataType = DataType.INTEGER)
+    private int serverNoteId;
+
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = NOTES_FILED_TOPIC)
     private Topic topic;
 
@@ -40,9 +43,31 @@ public class Note implements Serializable{
     private int rating;
 
     @DatabaseField(dataType = DataType.BOOLEAN)
+    private boolean created;
+
+    @DatabaseField(dataType = DataType.BOOLEAN)
     private boolean changed;
 
     public Note(){}
+
+    public int getServerNoteId() {
+        return serverNoteId;
+    }
+
+    public void setServerNoteId(int serverNoteId) {
+
+        this.serverNoteId = serverNoteId;
+    }
+
+
+    public void setCreated(boolean created) {
+        this.created = created;
+    }
+
+    public boolean isCreated() {
+
+        return created;
+    }
 
     public int getNoteId() {
         return noteId;

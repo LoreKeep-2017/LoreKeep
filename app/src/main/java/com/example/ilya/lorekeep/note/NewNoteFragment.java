@@ -1,5 +1,7 @@
 package com.example.ilya.lorekeep.note;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,7 +17,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ilya.lorekeep.R;
+import com.example.ilya.lorekeep.config.HelperFactory;
+import com.example.ilya.lorekeep.config.NetworkThread;
+import com.example.ilya.lorekeep.config.RetrofitFactory;
 import com.example.ilya.lorekeep.dbexecutor.ExecutorCreateNote;
+import com.example.ilya.lorekeep.note.noteApi.NoteApi;
+import com.example.ilya.lorekeep.note.noteApi.noteModels.NoteAnswer;
+import com.example.ilya.lorekeep.note.noteApi.noteModels.NoteModel;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 
 public class NewNoteFragment extends Fragment {
@@ -80,9 +91,50 @@ public class NewNoteFragment extends Fragment {
                             if (title.isEmpty() || content.isEmpty()) {
                                 Toast.makeText(getActivity().getApplicationContext(), "Please, fill all filed", Toast.LENGTH_SHORT).show();
                             } else {
-                                Log.d(TAG, "onClick: title content link" + title + content + link);
-                                ExecutorCreateNote.getInstance().setTopicId(topicId);
-                                ExecutorCreateNote.getInstance().create(title, content, link);
+
+                                //////////////////// Send new topic to server /////////////////////////////
+
+                                try {
+
+                                    final NoteModel newNote = new NoteModel();
+//                                    Topic topic = HelperFactory.getHelper().getTopicDAO().queryForId(topicId);
+                                    newNote.setTopic(topicId);
+                                    newNote.setComment(title);
+                                    newNote.setContent(content);
+                                    newNote.setUrl(link);
+
+                                    SharedPreferences sharedPreferences = getContext()
+                                            .getSharedPreferences(getString(R.string.sharedTitle), Context.MODE_PRIVATE);
+                                    String sessionId = sharedPreferences.getString(getString(R.string.sessionId), "");
+
+                                    final NoteApi note = RetrofitFactory.retrofitLore().create(NoteApi.class);
+                                    final Call<NoteAnswer> call = note.createNote(newNote, "sessionId=" + sessionId);
+                                    NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<NoteAnswer>() {
+                                        @Override
+                                        public void onSuccess(NoteAnswer result, Response<NoteAnswer> response) {
+                                            try {
+//                                                HelperFactory.getHelper().getNoteDao().updateServerNoteId(newNote.getTopicId(), result.getMessage());
+//                                                HelperFactory.getHelper().getNoteDao().updateCreated(newNote.getTopicId());
+                                                Log.d(TAG, "onClick: title content link" + title + content + link);
+                                                ExecutorCreateNote.getInstance().setTopicId(topicId);
+                                                ExecutorCreateNote.getInstance().create(title, content, link, result.getMessage());
+
+                                            } catch (Exception ex) {
+//                                 TODO write exception
+                                            }
+                                            getActivity().finish();
+                                        }
+
+                                        @Override
+                                        public void onError(Exception ex) {
+                                            Log.d("onError", "Error " + ex.toString());
+                                            getActivity().finish();
+                                        }
+                                    });
+
+                                } catch (Exception e) {
+                                    Log.d(TAG, "onClick: " + e.toString());
+                                }
 
 
                                 FragmentManager manager = getActivity().getSupportFragmentManager();

@@ -1,17 +1,25 @@
 package com.example.ilya.lorekeep.note.noteApi.noteModels;
 
 
+import android.os.Parcelable;
+
+import com.example.ilya.lorekeep.topic.dao.Topic;
 import com.example.ilya.lorekeep.topic.topicApi.models.TopicModel;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
-public class NoteModel {
+
+public class NoteModel{
 
     @SerializedName("noteId")
     @Expose
     private int noteId;
+
+    @SerializedName("topicId")
+    @Expose
+    private int topicId;
 
     @SerializedName("topic")
     @Expose
@@ -49,12 +57,29 @@ public class NoteModel {
     @Expose
     private boolean changed;
 
+    public TopicModel getTopic() {
+        return topic;
+    }
+
+    public void setTopicId(int topicId) {
+        this.topicId = topicId;
+    }
+
+    public void setTopic(TopicModel topic) {
+        this.topic = topic;
+    }
+
+    public boolean isChanged() {
+
+        return changed;
+    }
+
     public int getNoteId(){
         return noteId;
     }
 
-    public TopicModel getTopic(){
-        return topic;
+    public int getTopicId(){
+        return topicId;
     }
 
     public String getComment(){
@@ -93,8 +118,8 @@ public class NoteModel {
         this.noteId = noteId;
     }
 
-    public void setTopic(TopicModel topic){
-        this.topic = topic;
+    public void setTopic(int topicId){
+        this.topicId = topicId;
     }
 
     public void setComment(String comment){

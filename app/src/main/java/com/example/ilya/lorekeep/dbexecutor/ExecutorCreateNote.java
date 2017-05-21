@@ -49,13 +49,15 @@ public class ExecutorCreateNote {
         this.callback = callback;
     }
 
-    public void create(final String content, final String comment, final String link) {
+    public void create(final String content, final String comment, final String link, final int serverNoteId) {
         executor.execute(new Runnable() {
             @Override
             public void run() {
                 try {
                     Note newNote = new Note();
                     Topic topic = HelperFactory.getHelper().getTopicDAO().queryForId(topicId);
+                    newNote.setServerNoteId(serverNoteId);
+                    newNote.setCreated(false);
                     newNote.setTopic(topic);
                     newNote.setNoteContent(content);
                     newNote.setNoteComment(comment);
@@ -69,7 +71,6 @@ public class ExecutorCreateNote {
                 } catch (SQLException e) {
                     Log.e("in create link", e.toString());
                 }
-
                 notifyLoaded();
             }
         });

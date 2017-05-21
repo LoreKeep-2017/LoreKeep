@@ -4,6 +4,7 @@ import com.example.ilya.lorekeep.topic.dao.Topic;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
@@ -26,6 +27,28 @@ public class NoteImpl extends BaseDaoImpl<Note, Integer> {
         List<Note> noteList =query(preparedQuery);
 
         return noteList;
+    }
+
+    public void updateServerNoteId(int noteId, int serverNoteId){
+        try{
+            UpdateBuilder<Note, Integer> updateBuilder = this.updateBuilder();
+            updateBuilder.where().eq("noteId", noteId);
+            updateBuilder.updateColumnValue("serverNoteId", serverNoteId);
+            updateBuilder.update();
+        } catch(SQLException ex){
+            //TODO write exception
+        }
+    }
+
+    public void updateCreated(int noteId){
+        try {
+            UpdateBuilder<Note, Integer> updateBuilder = this.updateBuilder();
+            updateBuilder.where().eq("noteId", noteId);
+            updateBuilder.updateColumnValue("created", false);
+            updateBuilder.update();
+        } catch(SQLException ex){
+            //TODO write exception
+        }
     }
 
     public void setNewNote(Note note) throws SQLException{
