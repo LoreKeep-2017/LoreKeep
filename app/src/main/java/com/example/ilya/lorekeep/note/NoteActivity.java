@@ -3,6 +3,7 @@ package com.example.ilya.lorekeep.note;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -24,12 +25,21 @@ import android.widget.TextView;
 
 import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.config.HelperFactory;
+import com.example.ilya.lorekeep.config.NetworkThread;
+import com.example.ilya.lorekeep.config.RetrofitFactory;
 import com.example.ilya.lorekeep.dbexecutor.ExecutorCreateNote;
 import com.example.ilya.lorekeep.dbexecutor.ExecutorGetAllNotes;
 import com.example.ilya.lorekeep.note.dao.Note;
+import com.example.ilya.lorekeep.note.noteApi.NoteApi;
+import com.example.ilya.lorekeep.note.noteApi.noteModels.NoteModel;
+import com.example.ilya.lorekeep.topic.dao.Topic;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class NoteActivity extends AppCompatActivity {
 
@@ -113,11 +123,65 @@ public class NoteActivity extends AppCompatActivity {
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        ExecutorGetAllNotes.getInstance().setCallback(new ExecutorGetAllNotes.Callback() {
+
+
+        final SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(getString(R.string.sharedTitle),
+                Context.MODE_PRIVATE);
+        final int userId = sharedPref.getInt(getString(R.string.userId), 1);
+        String sessionId = sharedPref.getString(getString(R.string.sessionId), "");
+
+        final NoteApi note = RetrofitFactory.retrofitLore().create(NoteApi.class);
+        final Call<List<NoteModel>> callSyn = note.getChanges(topicId, "sessionId=" + sessionId);
+        NetworkThread.getInstance().execute(callSyn, new NetworkThread.ExecuteCallback<List<NoteModel>>() {
             @Override
-            public void onLoaded() {
-                onNotesLoaded();
+            public void onSuccess(List<NoteModel> result, Response<List<NoteModel>> response) {
+                try {
+                    Log.d("on update", "result size " + result.size());
+                    try {
+                        Topic topic = HelperFactory.getHelper().getTopicDAO().getTopic(topicId);
+
+                        for (int i = 0; i < result.size(); ++i) {
+
+                            Note mNote = new Note();
+                            mNote.setTopic(topic);
+                            mNote.setServerNoteId(result.get(i).getNoteId());
+                            mNote.setNoteComment(result.get(i).getComment());
+                            mNote.setNoteContent(result.get(i).getContent());
+                            mNote.setNoteUrl(result.get(i).getUrl());
+
+                            HelperFactory.getHelper().getNoteDao().setNewNote(mNote);
+
+//                            Note isNote = HelperFactory.getHelper().getNoteDao().getNoteByServerTopicId(mNote.getServerNoteId());
+//                            if (isNote == null) {
+//                                HelperFactory.getHelper().getNoteDao().setNewNote(mNote);
+//                            } else {
+//                                isNote.setNoteComment(mNote.getNoteComment());
+//                                isNote.setNoteContent(mNote.getNoteContent());
+//                                isNote.setNoteUrl(mNote.getNoteUrl());
+//                                HelperFactory.getHelper().getNoteDao().updateNote(isNote);
+//                            }
+                        }
+                    }catch(SQLException e){
+                        Log.d("Error", e.toString());
+                    }
+
+
+                } catch (Exception e) {
+                    Log.e("on create", "fail to get query");
+                }
             }
+
+            @Override
+            public void onError(Exception ex) {
+                Log.d("onError", "Error " + ex.toString());
+            }
+        });
+
+        ExecutorGetAllNotes.getInstance().setCallback(new ExecutorGetAllNotes.Callback() {
+                @Override
+                public void onLoaded() {
+                    onNotesLoaded();
+                }
         });
 
         ExecutorCreateNote.getInstance().setCallback(new ExecutorCreateNote.Callback() {
@@ -126,6 +190,7 @@ public class NoteActivity extends AppCompatActivity {
                 onNoteCreate();
             }
         });
+
 
 
 

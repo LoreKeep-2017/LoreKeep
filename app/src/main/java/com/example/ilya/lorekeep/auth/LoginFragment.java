@@ -164,7 +164,6 @@ public class LoginFragment extends Fragment {
                 editor.apply();
 
                 fetchAllTopics(result.getUserId());
-//                fetchAllNotes(result.getUserId());
 
                 onLoginSuccess();
             }
@@ -180,8 +179,6 @@ public class LoginFragment extends Fragment {
 
 
     public void fetchAllTopics(final Integer userId){
-//        new GsonBuilder().registerTypeAdapter(TopicModel.class, new TopicModel.Deserializer()).create();
-
         final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
         final Call<List<TopicModel>> callPullAll = topic.getAllTopics(userId);
         NetworkThread.getInstance().execute(callPullAll, new NetworkThread.ExecuteCallback<List<TopicModel>>(){
@@ -223,39 +220,5 @@ public class LoginFragment extends Fragment {
             }
         });
     }
-
-    public void fetchAllNotes(final Integer userId){
-        final NoteApi note = RetrofitFactory.retrofitLore().create(NoteApi.class);
-        final Call<List<NoteModel>> callPullAll = note.getAllNoteByUserId(userId);
-        NetworkThread.getInstance().execute(callPullAll, new NetworkThread.ExecuteCallback<List<NoteModel>>() {
-            @Override
-            public void onSuccess(List<NoteModel> result, Response<List<NoteModel>> response){
-                try {
-
-                    Log.d("on get all notes", "result size " + result.size());
-                    HelperFactory.setHelper(getActivity().getApplicationContext());
-                    for(int i=0; i<result.size(); i++) {
-                        Note newNote = new Note();
-//                        Topic topic = HelperFactory.getHelper().getTopicDAO().getTopicByServerTopicId(result.get(i).getTopicId());
-//                        newNote.setTopic(topic);
-                        newNote.setNoteComment(result.get(i).getComment());
-                        newNote.setNoteContent(result.get(i).getContent());
-                        newNote.setNoteUrl(result.get(i).getUrl());
-                        HelperFactory.getHelper().getNoteDao().setNewNote(newNote);
-                    }
-                } catch (SQLException e) {
-                    Log.e("on create", "fail to get query");
-                }
-            }
-
-
-            @Override
-            public void onError(Exception ex) {
-                Log.d("onError", "Error " + ex.toString());
-            }
-        });
-
-    }
-
 
 }

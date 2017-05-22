@@ -29,6 +29,10 @@ public class NoteImpl extends BaseDaoImpl<Note, Integer> {
         return noteList;
     }
 
+    public Note getNoteByServerTopicId(Integer serverNoteId) throws SQLException{
+        return this.queryBuilder().where().eq("serverTopicId", serverNoteId).queryForFirst();
+    }
+
     public void updateServerNoteId(int noteId, int serverNoteId){
         try{
             UpdateBuilder<Note, Integer> updateBuilder = this.updateBuilder();
@@ -38,6 +42,10 @@ public class NoteImpl extends BaseDaoImpl<Note, Integer> {
         } catch(SQLException ex){
             //TODO write exception
         }
+    }
+
+    public void updateNote(Note note) throws SQLException{
+        this.update(note);
     }
 
     public void updateCreated(int noteId){

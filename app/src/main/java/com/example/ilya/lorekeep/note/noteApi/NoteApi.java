@@ -28,6 +28,11 @@ public interface NoteApi {
     @DELETE("/api/note/{noteId}")
     Call<String> deleteNote(@Path("noteId") int noteId);
 
+    @GET("/api/changes/note/{topicId}")
+    Call<List<NoteModel>> getChanges(@Path("topicId") int topicId, @Header("Cookie") String sessionId);
+
+//    @GET("/api/changes/delete/")
+
 //    @PUT("/api/note")
 //    Call<> updateNote()
 
