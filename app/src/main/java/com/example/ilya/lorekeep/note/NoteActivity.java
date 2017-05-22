@@ -57,6 +57,7 @@ public class NoteActivity extends AppCompatActivity {
     private Note mPriviousItem = null;
     private LinearLayout mPriviousScrollView;
 
+
     public static Intent newIntent(Context packageContext, Integer topicId) {
         Intent intent = new Intent(packageContext, NoteActivity.class);
         intent.putExtra(GET_NOTES_BY_TOPIC_ID, topicId);
@@ -161,6 +162,26 @@ public class NoteActivity extends AppCompatActivity {
 //                                HelperFactory.getHelper().getNoteDao().updateNote(isNote);
 //                            }
                         }
+
+                        List<Note> notes = HelperFactory.getHelper().getNoteDao().getAllNotesByTopicId(topic);
+                        mlNotes.put(topicId, notes);
+
+
+                        ExecutorGetAllNotes.getInstance().setCallback(new ExecutorGetAllNotes.Callback() {
+                            @Override
+                            public void onLoaded() {
+                                onNotesLoaded();
+                            }
+                        });
+
+                        ExecutorCreateNote.getInstance().setCallback(new ExecutorCreateNote.Callback() {
+                            @Override
+                            public void onCreate() {
+                                onNoteCreate();
+                            }
+                        });
+
+
                     }catch(SQLException e){
                         Log.d("Error", e.toString());
                     }
@@ -176,21 +197,6 @@ public class NoteActivity extends AppCompatActivity {
                 Log.d("onError", "Error " + ex.toString());
             }
         });
-
-        ExecutorGetAllNotes.getInstance().setCallback(new ExecutorGetAllNotes.Callback() {
-                @Override
-                public void onLoaded() {
-                    onNotesLoaded();
-                }
-        });
-
-        ExecutorCreateNote.getInstance().setCallback(new ExecutorCreateNote.Callback() {
-            @Override
-            public void onCreate() {
-                onNoteCreate();
-            }
-        });
-
 
 
 
