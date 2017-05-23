@@ -6,8 +6,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitFactory {
 
     private final static Retrofit INSTANCE = new Retrofit.Builder()
-//            .baseUrl("https://whispering-castle-86895.herokuapp.com/")
-            .baseUrl("http://10.0.2.2:8080")
+            .baseUrl("https://whispering-castle-86895.herokuapp.com/")
+//            .baseUrl("http://10.0.2.2:8080")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 

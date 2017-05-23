@@ -86,103 +86,7 @@ public class NewNoteFragment extends AppCompatActivity {
                 try {
                     switch (v.getId()) {
                         case R.id.toolbar_note_create:
-                            title = titleEdit.getText().toString();
-                            link = linkEdit.getText().toString();
-                            content = contentEdit.getText().toString();
-
-                            if (title.isEmpty() || content.isEmpty()) {
-                                Toast.makeText(getApplicationContext(), "Please, fill all filed", Toast.LENGTH_SHORT).show();
-                            }
-
-                            SharedPreferences sharedPreferences = getApplicationContext()
-                                    .getSharedPreferences(getString(R.string.sharedTitle), Context.MODE_PRIVATE);
-                            String sessionId = sharedPreferences.getString(getString(R.string.sessionId), "");
-                            if(!isUpdate){
-
-                                //////////////////// Send new topic to server /////////////////////////////
-
-                                try {
-
-                                    final NoteModel newNote = new NoteModel();
-                                    newNote.setTopic(topicId);
-                                    newNote.setComment(title);
-                                    newNote.setContent(content);
-                                    newNote.setUrl(link);
-//                                    newNote.setServerTopicId(HelperFactory.getHelper().getTopicDAO().getServerTopicId(topicId));
-
-
-                                    final NoteApi note = RetrofitFactory.retrofitLore().create(NoteApi.class);
-                                    final Call<NoteAnswer> call = note.createNote(newNote, "sessionId=" + sessionId);
-                                    NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<NoteAnswer>() {
-                                        @Override
-                                        public void onSuccess(NoteAnswer result, Response<NoteAnswer> response) {
-                                            try {
-                                                Log.d(TAG, "onClick: title content link" + title + content + link);
-                                                ExecutorCreateNote.getInstance().setTopicId(topicId);
-                                                ExecutorCreateNote.getInstance().create(title, content, link, result.getMessage());
-
-                                            } catch (Exception ex) {
-//                                 TODO write exception
-                                            }
-                                            finish();
-                                        }
-
-                                        @Override
-                                        public void onError(Exception ex) {
-                                            Log.d("onError", "Error " + ex.toString());
-                                            finish();
-                                        }
-                                    });
-
-                                } catch (Exception e) {
-                                    Log.d(TAG, "onClick: " + e.toString());
-                                }
-                            }else{
-
-                                try {
-
-                                    Note noteUpdate = HelperFactory.getHelper().getNoteDao().getNoteByNoteId(noteId);
-                                if(title != null)
-                                    noteUpdate.setNoteComment(title);
-                                if(link != null)
-                                    noteUpdate.setNoteUrl(link);
-                                if(content != null)
-                                    noteUpdate.setNoteContent(content);
-
-                                    NoteModel noteModel = new NoteModel();
-                                    noteModel.setComment(noteUpdate.getNoteComment());
-                                    noteModel.setUrl(noteUpdate.getNoteUrl());
-                                    noteModel.setContent(noteUpdate.getNoteContent());
-                                    noteModel.setServerTopicId(noteUpdate.getServerTopicId());
-                                    noteModel.setServerNoteId(noteUpdate.getServerNoteId());
-
-                                    final NoteApi note = RetrofitFactory.retrofitLore().create(NoteApi.class);
-                                    final Call<NoteAnswer> call = note.updateNote(noteModel, "sessionId=" + sessionId);
-                                    NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<NoteAnswer>() {
-                                        @Override
-                                        public void onSuccess(NoteAnswer result, Response<NoteAnswer> response) {
-                                            try {
-                                                Log.d(TAG, "onClick: title content link" + title + content + link);
-                                                ExecutorCreateNote.getInstance().setTopicId(topicId);
-                                                ExecutorCreateNote.getInstance().create(title, content, link, result.getMessage());
-
-                                            } catch (Exception ex) {
-//                                 TODO write exception
-                                            }
-                                            finish();
-                                        }
-
-                                        @Override
-                                        public void onError(Exception ex) {
-                                            Log.d("onError", "Error " + ex.toString());
-                                            finish();
-                                        }
-                                    });
-
-                                } catch (Exception e) {
-                                    Log.d(TAG, "onClick: " + e.toString());
-                                }
-                            }
+                            createNote();
                             break;
                         default:
                             break;
@@ -253,6 +157,106 @@ public class NewNoteFragment extends AppCompatActivity {
         });
 
 
+    }
+
+    private void createNote(){
+        title = titleEdit.getText().toString();
+        link = linkEdit.getText().toString();
+        content = contentEdit.getText().toString();
+
+        if (title.isEmpty() || content.isEmpty()) {
+            Toast.makeText(getApplicationContext(), "Please, fill all filed", Toast.LENGTH_SHORT).show();
+        }
+
+        SharedPreferences sharedPreferences = getApplicationContext()
+                .getSharedPreferences(getString(R.string.sharedTitle), Context.MODE_PRIVATE);
+        String sessionId = sharedPreferences.getString(getString(R.string.sessionId), "");
+        if(!isUpdate){
+
+            //////////////////// Send new topic to server /////////////////////////////
+
+            try {
+
+                final NoteModel newNote = new NoteModel();
+                newNote.setTopic(topicId);
+                newNote.setComment(title);
+                newNote.setContent(content);
+                newNote.setUrl(link);
+//                                    newNote.setServerTopicId(HelperFactory.getHelper().getTopicDAO().getServerTopicId(topicId));
+
+
+                final NoteApi note = RetrofitFactory.retrofitLore().create(NoteApi.class);
+                final Call<NoteAnswer> call = note.createNote(newNote, "sessionId=" + sessionId);
+                NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<NoteAnswer>() {
+                    @Override
+                    public void onSuccess(NoteAnswer result, Response<NoteAnswer> response) {
+                        try {
+                            Log.d(TAG, "onClick: title content link" + title + content + link);
+                            ExecutorCreateNote.getInstance().setTopicId(topicId);
+                            ExecutorCreateNote.getInstance().create(title, content, link, result.getMessage());
+
+                        } catch (Exception ex) {
+//                                 TODO write exception
+                        }
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(Exception ex) {
+                        Log.d("onError", "Error " + ex.toString());
+                        finish();
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.d(TAG, "onClick: " + e.toString());
+            }
+        }else{
+
+            try {
+
+                Note noteUpdate = HelperFactory.getHelper().getNoteDao().getNoteByNoteId(noteId);
+                if(title != null)
+                    noteUpdate.setNoteComment(title);
+                if(link != null)
+                    noteUpdate.setNoteUrl(link);
+                if(content != null)
+                    noteUpdate.setNoteContent(content);
+
+                NoteModel noteModel = new NoteModel();
+                noteModel.setComment(noteUpdate.getNoteComment());
+                noteModel.setUrl(noteUpdate.getNoteUrl());
+                noteModel.setContent(noteUpdate.getNoteContent());
+                noteModel.setServerTopicId(noteUpdate.getServerTopicId());
+                noteModel.setServerNoteId(noteUpdate.getServerNoteId());
+
+                final NoteApi note = RetrofitFactory.retrofitLore().create(NoteApi.class);
+                final Call<NoteAnswer> call = note.updateNote(noteModel, "sessionId=" + sessionId);
+                NetworkThread.getInstance().execute(call, new NetworkThread.ExecuteCallback<NoteAnswer>() {
+                    @Override
+                    public void onSuccess(NoteAnswer result, Response<NoteAnswer> response) {
+                        try {
+                            Log.d(TAG, "onClick: title content link" + title + content + link);
+                            ExecutorCreateNote.getInstance().setTopicId(topicId);
+                            ExecutorCreateNote.getInstance().create(title, content, link, result.getMessage());
+
+                        } catch (Exception ex) {
+//                                 TODO write exception
+                        }
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(Exception ex) {
+                        Log.d("onError", "Error " + ex.toString());
+                        finish();
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.d(TAG, "onClick: " + e.toString());
+            }
+        }
     }
 
 
