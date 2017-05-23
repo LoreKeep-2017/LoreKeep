@@ -54,26 +54,57 @@ public class ExecutorCreateNote {
             @Override
             public void run() {
                 try {
-                    Note newNote = new Note();
-                    Topic topic = HelperFactory.getHelper().getTopicDAO().queryForId(topicId);
-                    newNote.setServerNoteId(serverNoteId);
-                    newNote.setCreated(false);
-                    newNote.setTopic(topic);
-                    newNote.setNoteContent(content);
-                    newNote.setNoteComment(comment);
-                    newNote.setNoteUrl(link);
-                    HelperFactory.getHelper().getNoteDao().setNewNote(newNote);
 
-                    List<Note> notes = mlNotes.get(topicId);
-                    notes.add(newNote);
-                    mlNotes.put(topicId, notes);
-                    Log.e(TAG, "run: put in cache!!!" );
+
+                    Note newNote = HelperFactory.getHelper().getNoteDao().getNoteByServerNoteId(serverNoteId);
+                    if(newNote == null) {
+                        newNote = new Note();
+                        Topic topic = HelperFactory.getHelper().getTopicDAO().queryForId(topicId);
+                        newNote.setServerNoteId(serverNoteId);
+                        newNote.setCreated(false);
+                        newNote.setTopic(topic);
+                        newNote.setNoteContent(content);
+                        newNote.setNoteComment(comment);
+                        newNote.setNoteUrl(link);
+                        newNote.setServerTopicId(HelperFactory.getHelper().getTopicDAO().getServerTopicId(topicId));
+                        HelperFactory.getHelper().getNoteDao().setNewNote(newNote);
+
+                        List<Note> notes = mlNotes.get(topicId);
+                        notes.add(newNote);
+                        mlNotes.put(topicId, notes);
+                        Log.e(TAG, "run: put in cache!!!");
+                    }else{
+                        Topic topic = HelperFactory.getHelper().getTopicDAO().queryForId(topicId);
+                        newNote.setServerNoteId(serverNoteId);
+                        newNote.setCreated(false);
+                        newNote.setTopic(topic);
+                        newNote.setNoteContent(content);
+                        newNote.setNoteComment(comment);
+                        newNote.setNoteUrl(link);
+//                        newNote.setServerTopicId(HelperFactory.getHelper().getTopicDAO().getServerTopicId(topicId));
+                        HelperFactory.getHelper().getNoteDao().update(newNote);
+
+                        List<Note> notes = mlNotes.get(topicId);
+                        searchOb(notes, newNote);
+                        mlNotes.put(topicId, notes);
+                        Log.e(TAG, "run: put in cache!!!");
+                    }
                 } catch (SQLException e) {
                     Log.e("in create link", e.toString());
                 }
                 notifyLoaded();
             }
         });
+    }
+
+    public void searchOb(List<Note> notes, Note Ob){
+        for(Note x : notes){
+            if(x.getServerNoteId() == Ob.getServerNoteId()){
+                notes.remove(x);
+                notes.add(Ob);
+                break;
+            }
+        }
     }
 
     protected void notifyLoaded() {

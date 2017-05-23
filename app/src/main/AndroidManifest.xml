@@ -49,6 +49,8 @@
             android:name=".note.NoteActivity"
             android:label="@string/title_activity_links"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".note.NewNoteFragment"
+                  android:label="NoteActivity"/>
         <activity
             android:name="com.vk.sdk.VKServiceActivity"
             android:label="ServiceActivity"

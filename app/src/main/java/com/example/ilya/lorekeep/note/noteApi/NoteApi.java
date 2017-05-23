@@ -25,8 +25,11 @@ public interface NoteApi {
     @GET("/api/note/all/{userId}")
     Call<List<NoteModel>> getAllNoteByUserId(@Path("userId") int userId);
 
-    @DELETE("/api/note/{noteId}")
-    Call<String> deleteNote(@Path("noteId") int noteId);
+    @DELETE("/api/note/{noteId}/{userId}")
+    Call<NoteModel> deleteNote(@Path("noteId") int noteId, @Path("userId") int userId, @Header("Cookie") String sessionId);
+
+    @PUT("/api/note")
+    Call<NoteAnswer> updateNote(@Body NoteModel updateNote, @Header("Cookie") String sessionId);
 
     @GET("/api/changes/note/{topicId}")
     Call<List<NoteModel>> getChanges(@Path("topicId") int topicId, @Header("Cookie") String sessionId);

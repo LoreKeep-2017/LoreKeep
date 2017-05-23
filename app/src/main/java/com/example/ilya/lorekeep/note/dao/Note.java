@@ -24,6 +24,10 @@ public class Note implements Serializable{
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = NOTES_FILED_TOPIC)
     private Topic topic;
 
+    @DatabaseField(dataType = DataType.INTEGER)
+    private int serverTopicId;
+
+
     @DatabaseField(dataType = DataType.STRING)
     private String comment;
 
@@ -32,6 +36,9 @@ public class Note implements Serializable{
 
     @DatabaseField(dataType = DataType.STRING)
     private String url;
+
+    @DatabaseField(dataType = DataType.STRING)
+    private String image;
 
     @DatabaseField(dataType = DataType.DATE)
     private Date creation_date;
@@ -47,6 +54,24 @@ public class Note implements Serializable{
 
     @DatabaseField(dataType = DataType.BOOLEAN)
     private boolean changed;
+
+
+    public int getServerTopicId() {
+        return serverTopicId;
+    }
+
+    public void setServerTopicId(int serverTopicId) {
+        this.serverTopicId = serverTopicId;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getImage() {
+
+        return image;
+    }
 
     public Note(){}
 

@@ -54,32 +54,20 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/set_url"/>
 
-            <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <!--<ImageView-->
-                <!--android:id="@+id/image_note"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:contentDescription="@string/app_name"-->
-                <!--android:visibility="gone"-->
-                <!--/>-->
-
-                <EditText
-                    android:id="@+id/content_note"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="@string/start_writing"
-                    android:gravity="start"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true">
+            <EditText
+                android:id="@+id/content_note"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/start_writing"
+                android:gravity="start">
 
 
-                </EditText>
+            </EditText>
 
-            </RelativeLayout>
+            <ImageView
+                android:id="@+id/photo_library_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
         </LinearLayout>
 
@@ -108,7 +96,15 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_draw_picture"/>
+                android:src="@drawable/ic_photo_library_note"/>
+
+            <ImageView
+                android:id="@+id/trash_for_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:scaleType="centerInside"
+                android:src="@drawable/trash_black"/>
 
 
         </LinearLayout>

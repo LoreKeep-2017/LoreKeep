@@ -21,6 +21,15 @@ public class NoteModel{
     @Expose
     private int topicId;
 
+    @SerializedName("serverTopicId")
+    @Expose
+    private int serverTopicId;
+
+
+    @SerializedName("serverNoteId")
+    @Expose
+    private int serverNoteId;
+
     @SerializedName("topic")
     @Expose
     private TopicModel topic;
@@ -56,6 +65,24 @@ public class NoteModel{
     @SerializedName("changed")
     @Expose
     private boolean changed;
+
+    public void setServerNoteId(int serverNotecId) {
+        this.serverNoteId = serverNotecId;
+    }
+
+    public int getServerNoteId() {
+
+        return serverNoteId;
+    }
+
+    public void setServerTopicId(int serverTopicId) {
+        this.serverTopicId = serverTopicId;
+    }
+
+    public int getServerTopicId() {
+
+        return serverTopicId;
+    }
 
     public TopicModel getTopic() {
         return topic;
