@@ -3,50 +3,57 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <LinearLayout
-        android:id="@+id/layout_form_login"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerInParent="true"
-        android:padding="40dp">
+        android:layout_centerInParent="true">
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/input_login_login"
-                android:inputType="text"
-                android:hint="Login"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </android.support.design.widget.TextInputLayout>
-
-
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/input_password_login"
-                android:inputType="textPassword"
-                android:hint="Password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </android.support.design.widget.TextInputLayout>
-
-
-        <Button
-            android:id="@+id/button_login"
+        <LinearLayout
+            android:id="@+id/layout_form_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="LogIn" />
+            android:orientation="vertical"
+            android:padding="40dp">
 
-    </LinearLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/input_login_login"
+                    android:inputType="text"
+                    android:hint="Login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/input_password_login"
+                    android:inputType="textPassword"
+                    android:hint="Password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <Button
+                android:id="@+id/button_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="LogIn" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
 
 </RelativeLayout>
