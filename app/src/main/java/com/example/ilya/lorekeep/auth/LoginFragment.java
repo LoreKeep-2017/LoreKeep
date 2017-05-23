@@ -127,6 +127,7 @@ public class LoginFragment extends Fragment {
             this.loginText.setError("login");
             valid = false;
         } else {
+
             loginText.setError(null);
         }
 
@@ -163,7 +164,7 @@ public class LoginFragment extends Fragment {
                 editor.putBoolean(getString(R.string.firstTime), true);
                 editor.apply();
 
-                fetchAllTopics(result.getUserId());
+                //fetchAllTopics(result.getUserId());
 
                 onLoginSuccess();
             }
@@ -197,16 +198,16 @@ public class LoginFragment extends Fragment {
                         mTopic.setTopicDeleted(false);
                         mTopic.setTopicCreationDate(new Date());
                         HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
-                        List<NoteModel> notes = result.get(i).getNotes();
-                        for(int j = 0; j< notes.size(); j++){
-                            Note note = new Note();
-                            note.setTopic(mTopic);
-                            note.setNoteComment(notes.get(j).getComment());
-                            note.setNoteContent(notes.get(j).getContent());
-                            note.setNoteUrl(notes.get(j).getUrl());
-                            note.setServerNoteId(notes.get(j).getNoteId());
-                            HelperFactory.getHelper().getNoteDao().setNewNote(note);
-                        }
+//                        List<NoteModel> notes = result.get(i).getNotes();
+//                        for(int j = 0; j< notes.size(); j++){
+//                            Note note = new Note();
+//                            note.setTopic(mTopic);
+//                            note.setNoteComment(notes.get(j).getComment());
+//                            note.setNoteContent(notes.get(j).getContent());
+//                            note.setNoteUrl(notes.get(j).getUrl());
+//                            note.setServerNoteId(notes.get(j).getNoteId());
+//                            HelperFactory.getHelper().getNoteDao().setNewNote(note);
+//                        }
                     }
                 } catch (SQLException e) {
                     Log.e("on create", "fail to get query");

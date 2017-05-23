@@ -1,12 +1,17 @@
 package com.example.ilya.lorekeep.auth;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -33,6 +38,8 @@ public class SignUpFragment extends Fragment {
     private static final String TITLE = "TITLE";
     private String title;
     private static final String TAG = "signup fragment";
+    private final static int MY_PERMISSION_READ_PHONE = 1;
+
 
     private EditText loginText;
     private EditText phoneText;
@@ -66,6 +73,7 @@ public class SignUpFragment extends Fragment {
     }
 
     @Override
+    @TargetApi(23)
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_signup, container, false);

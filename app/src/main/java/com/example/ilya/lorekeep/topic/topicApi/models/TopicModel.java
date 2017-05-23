@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 public class TopicModel {
 
     @SerializedName("topicId")
@@ -73,10 +72,6 @@ public class TopicModel {
     @SerializedName("imageBitmap")
     @Expose
     private byte[] imageBitmap;
-
-
-
-
 
     public void setNotes(List<NoteModel> notes) {
         this.notes = notes;
@@ -187,57 +182,5 @@ public class TopicModel {
     public void setImageBitmap(byte[] imageBitmap){
         this.imageBitmap = imageBitmap;
     }
-
-
-
-    private final Gson gson = new GsonBuilder().create();
-
-//    public TopicModel(Integer topicId, Integer userId, ArrayList<NoteModel> notes, UserModel user, String title, Integer serverTopicId){
-//        this.topicId = topicId;
-//        this.userId = userId;
-//        this.notes = notes;
-//        this.user = user;
-//        this.title = title;
-//        this.serverTopicId = serverTopicId;
-//    }
-
-//    @Override
-//    public TopicModel deserialize(JsonElement json, Type typeOf, JsonDeserializationContext context) throws JsonParseException {
-////        TopicModel topicModel = gson.fromJson(json, typeOf);
-//
-////
-////        JsonObject body = json.getAsJsonObject().getAsJsonObject("body");
-////        JsonArray arr = body.entrySet().iterator().next().getValue().getAsJsonArray();
-////        List<T> list = new ArrayList<>();
-////        for(JsonElement element : arr) {
-////            JsonElement innerElement = element.getAsJsonObject().entrySet().iterator().next().getValue();
-////            list.add(context.deserialize(innerElement, clazz));
-////        }
-////        return new Body<>(list);
-//
-//
-//        JsonObject body = json.getAsJsonObject().getAsJsonObject("topicmodel");
-//        JsonArray
-//
-//
-//
-//
-//
-//
-//
-//        JsonObject jsonObject = json.getAsJsonObject();
-//
-//        JsonElement notes = json.getAsJsonObject().get("notes");
-//
-//        return new TopicModel(
-//                jsonObject.get("topicId").getAsInt(),
-//                jsonObject.get("userId").getAsInt(),
-//                jsonObject.get("notes").getAsJsonArray(),
-//                jsonObject.get("user").getAsJsonObject(),
-//                jsonObject.get("title").getAsString(),
-//                jsonObject.get("serverTopicId").getAsInt()
-//        )
-//    }
-
 
 }

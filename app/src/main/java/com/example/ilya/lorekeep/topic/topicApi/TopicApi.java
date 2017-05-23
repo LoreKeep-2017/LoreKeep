@@ -33,5 +33,5 @@ public interface TopicApi {
     Call<List<TopicModel>> getChanges(@Header("Cookie") String sessionId);
 
     @GET("/api/changes/delete/topic")
-    Call<List<Integer>> getChagesDelTopic(@Header("Cookie") String sessionId);
+    Call<List<TopicAnswer>> getChagesDelTopic(@Header("Cookie") String sessionId);
 }

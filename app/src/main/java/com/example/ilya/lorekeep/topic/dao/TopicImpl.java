@@ -1,6 +1,7 @@
 package com.example.ilya.lorekeep.topic.dao;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
@@ -127,6 +128,8 @@ public class TopicImpl extends BaseDaoImpl<Topic, Integer> {
     }
 
     public void deleteTopicById(Integer topicId) throws SQLException{
-        this.deleteById(topicId);
+        DeleteBuilder<Topic, Integer> deleteBuilder = this.deleteBuilder();
+        deleteBuilder.where().eq("serverTopicId", topicId);
+        deleteBuilder.delete();
     }
 }

@@ -52,6 +52,10 @@ public class Topic {
 
     public Topic() {}
 
+    public void setTopicId(int topicId){
+        this.topicId = topicId;
+    }
+
     public void setTopicUserId(int userId) {
         this.userId = userId;
     }
