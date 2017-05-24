@@ -3,9 +3,12 @@ package com.example.ilya.lorekeep.auth;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,17 +22,15 @@ import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.config.HelperFactory;
 import com.example.ilya.lorekeep.config.NetworkThread;
 import com.example.ilya.lorekeep.config.RetrofitFactory;
+import com.example.ilya.lorekeep.global_methods.GlobalMethods;
 import com.example.ilya.lorekeep.note.dao.Note;
-import com.example.ilya.lorekeep.note.noteApi.NoteApi;
 import com.example.ilya.lorekeep.note.noteApi.noteModels.NoteModel;
-import com.example.ilya.lorekeep.topic.TopicActivity;
 import com.example.ilya.lorekeep.topic.dao.Topic;
 import com.example.ilya.lorekeep.topic.topicApi.TopicApi;
 import com.example.ilya.lorekeep.topic.topicApi.models.TopicModel;
 import com.example.ilya.lorekeep.user.userApi.UserApi;
 import com.example.ilya.lorekeep.user.userApi.userModels.UserAnswerModel;
 import com.example.ilya.lorekeep.user.userApi.userModels.UserModel;
-import com.google.gson.GsonBuilder;
 
 import java.sql.SQLException;
 import java.util.Date;
@@ -165,8 +166,6 @@ public class LoginFragment extends Fragment {
                 editor.apply();
 
                 fetchAllTopics(result.getUserId());
-
-                onLoginSuccess();
             }
 
             @Override
@@ -179,16 +178,16 @@ public class LoginFragment extends Fragment {
     }
 
 
-    public void fetchAllTopics(final Integer userId){
+    public void fetchAllTopics(final Integer userId) {
         final TopicApi topic = RetrofitFactory.retrofitLore().create(TopicApi.class);
         final Call<List<TopicModel>> callPullAll = topic.getAllTopics(userId);
-        NetworkThread.getInstance().execute(callPullAll, new NetworkThread.ExecuteCallback<List<TopicModel>>(){
+        NetworkThread.getInstance().execute(callPullAll, new NetworkThread.ExecuteCallback<List<TopicModel>>() {
             @Override
-            public void onSuccess(List<TopicModel> result, Response<List<TopicModel>> response){
+            public void onSuccess(List<TopicModel> result, Response<List<TopicModel>> response) {
                 try {
                     Log.d("on get all topics", "result size " + result.size());
                     HelperFactory.setHelper(getActivity().getApplicationContext());
-                    for(int i = 0; i < result.size(); ++i) {
+                    for (int i = 0; i < result.size(); ++i) {
                         Topic mTopic = new Topic();
                         mTopic.setTopicUserId(userId);
                         mTopic.setTopicTitle(result.get(i).getTitle());
@@ -197,9 +196,18 @@ public class LoginFragment extends Fragment {
                         mTopic.setTopicCreated(false);
                         mTopic.setTopicDeleted(false);
                         mTopic.setTopicCreationDate(new Date());
+                        mTopic.setTopicColor(result.get(i).getColor());
+                        if(result.get(i).getImage() != null) {
+                            byte[] imageBytes = Base64.decode(result.get(i).getImage(), 0);
+
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                            String imageUri = GlobalMethods.insertImage(getActivity().getContentResolver(), bitmap, "image", "imageTopic");
+
+                            mTopic.setTopicImage(imageUri);
+                        }
                         HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
                         List<NoteModel> notes = result.get(i).getNotes();
-                        for(int j = 0; j< notes.size(); j++){
+                        for (int j = 0; j < notes.size(); j++) {
                             Note note = new Note();
                             note.setTopic(mTopic);
                             note.setNoteComment(notes.get(j).getComment());
@@ -207,8 +215,10 @@ public class LoginFragment extends Fragment {
                             note.setNoteUrl(notes.get(j).getUrl());
                             note.setServerNoteId(notes.get(j).getNoteId());
                             HelperFactory.getHelper().getNoteDao().setNewNote(note);
+
                         }
                     }
+                    onLoginSuccess();
                 } catch (SQLException e) {
                     Log.e("on create", "fail to get query");
                 }
@@ -223,3 +233,5 @@ public class LoginFragment extends Fragment {
     }
 
 }
+
+

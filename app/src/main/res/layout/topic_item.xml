@@ -12,8 +12,8 @@
         android:layout_width="130dp"
         android:layout_height="130dp"
         android:layout_gravity="center"
-        android:background="@color/greyUpLoad"
-        tools:text="Sound name"
+        android:background="@drawable/topic_item_bg"
+        tools:text="topic"
         android:elevation="0dp"/>
 
 </FrameLayout>

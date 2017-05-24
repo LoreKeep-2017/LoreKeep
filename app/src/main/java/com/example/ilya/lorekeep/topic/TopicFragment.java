@@ -15,6 +15,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import com.example.ilya.lorekeep.R;
 import com.example.ilya.lorekeep.config.HelperFactory;
 import com.example.ilya.lorekeep.config.NetworkThread;
 import com.example.ilya.lorekeep.config.RetrofitFactory;
+import com.example.ilya.lorekeep.global_methods.GlobalMethods;
 import com.example.ilya.lorekeep.note.NoteActivity;
 import com.example.ilya.lorekeep.topic.dao.Topic;
 import com.example.ilya.lorekeep.topic.topicApi.TopicApi;
@@ -102,11 +104,11 @@ public class TopicFragment extends Fragment {
 
         ///////////////////    Request for created new topics ///////////////////////////
 
-        pushingNewTopics();
+//        pushingNewTopics();
 
         ///////////////////    Request for updating topics ///////////////////////////
 
-        pushingUpdatedTopics();
+//        pushingUpdatedTopics();
 
         try {
             mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
@@ -159,14 +161,14 @@ public class TopicFragment extends Fragment {
     }
 
     private void deleteTopicsFromServer() {
-        final Call<List<TopicAnswer>> callSynDelTopic = topic.getChagesDelTopic("sessionId=" + sessionId);
-        NetworkThread.getInstance().execute(callSynDelTopic, new NetworkThread.ExecuteCallback<List<TopicAnswer>>() {
+        final Call<List<Integer>> callSynDelTopic = topic.getChagesDelTopic("sessionId=" + sessionId);
+        NetworkThread.getInstance().execute(callSynDelTopic, new NetworkThread.ExecuteCallback<List<Integer>>() {
             @Override
-            public void onSuccess(List<TopicAnswer> result, Response<List<TopicAnswer>> response) {
+            public void onSuccess(List<Integer> result, Response<List<Integer>> response) {
                 try {
                     Log.d("on update deleteSer", "result size " + result.size());
                     for (int i = 0; i < result.size(); ++i) {
-//                        HelperFactory.getHelper().getTopicDAO().deleteTopicById(result.get(i));
+                        HelperFactory.getHelper().getTopicDAO().deleteTopicById(result.get(i));
                     }
 
                     mTopics = HelperFactory.getHelper().getTopicDAO().getAllTopics();
@@ -200,6 +202,15 @@ public class TopicFragment extends Fragment {
                         mTopic.setTopicChanged(false);
                         mTopic.setTopicCreated(false);
                         mTopic.setTopicDeleted(false);
+                        if(result.get(i).getImage() != null) {
+                            byte[] imageBytes = Base64.decode(result.get(i).getImage(), 0);
+
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                            String imageUri = GlobalMethods.insertImage(getActivity().getContentResolver(), bitmap, "image", "imageTopic");
+
+                            mTopic.setTopicImage(imageUri);
+                        }
+
                         mTopic.setTopicCreationDate(new Date());
                         Topic isTopic = HelperFactory.getHelper().getTopicDAO().getTopicByServerTopicId(mTopic.getServerTopicId());
                         if (isTopic == null) {

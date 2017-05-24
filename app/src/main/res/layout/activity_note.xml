@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:titleTextColor="@android:color/white"
-        android:background="?attr/colorPrimary">
+        android:background="?attr/colorPrimaryDark">
 
 
     </android.support.v7.widget.Toolbar>
@@ -62,7 +62,7 @@
         android:id="@+id/toolbar_bottom_activty_note"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:background="?attr/colorPrimary"
+        android:background="?attr/colorPrimaryDark"
         android:layout_gravity="bottom"
         android:minHeight="?attr/actionBarSize"
         android:layout_alignParentBottom="true"

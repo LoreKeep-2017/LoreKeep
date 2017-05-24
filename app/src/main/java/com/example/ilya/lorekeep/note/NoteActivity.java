@@ -327,15 +327,18 @@ public class NoteActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(View v) {
                                     String urlString = mNote.getNoteUrl();
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    intent.setPackage("com.android.chrome");
-                                    try {
-                                        startActivity(intent);
-                                    } catch (ActivityNotFoundException ex) {
-                                        // Chrome browser presumably not installed so allow user to choose instead
-                                        intent.setPackage(null);
-                                        startActivity(intent);
+                                    if(Uri.parse(urlString) != null) {
+
+                                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        intent.setPackage("com.android.chrome");
+                                        try {
+                                            startActivity(intent);
+                                        } catch (ActivityNotFoundException ex) {
+                                            // Chrome browser presumably not installed so allow user to choose instead
+                                            intent.setPackage(null);
+                                            startActivity(intent);
+                                        }
                                     }
                                 }
                             });

@@ -31,7 +31,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ilya.lorekeep.R;
-import com.example.ilya.lorekeep.auth.LoginFragment;
 import com.example.ilya.lorekeep.config.HelperFactory;
 import com.example.ilya.lorekeep.config.NetworkThread;
 import com.example.ilya.lorekeep.config.RetrofitFactory;
@@ -148,7 +147,7 @@ public class NewTopicFragment extends Fragment {
                     } catch (FileNotFoundException e) {
                         // TODO : write catch
                     }
-                } else if (editTopic.getTopicColor() < 0){
+                } else if (editTopic.getTopicColor() < 0) {
                     mImageTopicButton.setBackgroundColor(editTopic.getTopicColor());
                 }
             } catch (SQLException e) {
@@ -185,7 +184,7 @@ public class NewTopicFragment extends Fragment {
         Toolbar bottomToolbar = (Toolbar) v.findViewById(R.id.toolbar_topic_bottom);
 
         mRemoveTopic = (ImageView) bottomToolbar.findViewById(R.id.button_remove_topic);
-        if(!update){
+        if (!update) {
             mRemoveTopic.setVisibility(View.GONE);
         }
         mRemoveTopic.setOnClickListener(new View.OnClickListener() {
@@ -219,8 +218,8 @@ public class NewTopicFragment extends Fragment {
                             getActivity().finish();
                         }
                     });
-                } catch (SQLException ex){
-                // TODO write exception
+                } catch (SQLException ex) {
+                    // TODO write exception
                 }
 
 
@@ -284,7 +283,7 @@ public class NewTopicFragment extends Fragment {
         mCreateTopic = (TextView) toolbar.findViewById(R.id.toolbar_topic_create);
 
 
-        if(update){
+        if (update) {
             mCreateTopic.setText("Update");
         }
 
@@ -309,7 +308,7 @@ public class NewTopicFragment extends Fragment {
                         mTopic.setTopicCreationDate(new Date());
                         try {
                             HelperFactory.getHelper().getTopicDAO().setTopic(mTopic);
-                        }catch(SQLException e){
+                        } catch (SQLException e) {
                             Log.d("Error", e.toString());
                         }
                         int TopicId = mTopic.getTopicId();
@@ -320,7 +319,23 @@ public class NewTopicFragment extends Fragment {
                         newTopic.setTitle(mTopic.getTopicTitle());
                         newTopic.setCreationDate(new Date());
                         newTopic.setColor(mTopic.getTopicColor());
-                        newTopic.setImage(mTopic.getTopicImage());
+                        String imageUri = mTopic.getTopicImage();
+
+                        if (imageUri != null) {
+                            Bitmap bitmap;
+                            try {
+                                bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver()
+                                        .openInputStream(Uri.parse(imageUri)));
+//                                Bitmap bmp = intent.getExtras().get("data");
+                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                byte[] byteArray = stream.toByteArray();
+                                newTopic.setImage(Base64.encodeToString(byteArray,0));
+
+                            } catch (FileNotFoundException e) {
+
+                            }
+                        }
 
                         //                    try {
 //                        Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver()
@@ -362,8 +377,8 @@ public class NewTopicFragment extends Fragment {
                     } catch (Exception e) {
                         Log.d(TAG, "onClick: " + e.toString());
                     }
-                }else{
-                    try{
+                } else {
+                    try {
 /*
                         Topic upTopic = HelperFactory.getHelper().getTopicDAO().getTopic(topicId);
 
@@ -372,18 +387,21 @@ public class NewTopicFragment extends Fragment {
 
                         upTopic.setTopicColor(mTopic.getTopicColor());
 */
-                        Topic upTopic = new Topic();
-                        upTopic.setTopicId(topicId);
+//                        Topic upTopic = new Topic();
+
+                        Topic upTopic = HelperFactory.getHelper().getTopicDAO().getTopic(topicId);
+
+//                        upTopic.setTopicId(topicId);
                         upTopic.setTopicTitle(mTopicTitle.getText().toString());
                         upTopic.setTopicCreationDate(creationUpdateDate);
-                        if(mTopic.getTopicColor() > 0) {
+                        if (mTopic.getTopicColor() > 0) {
                             upTopic.setTopicColor(mTopic.getTopicColor());
                         } else {
                             upTopic.setTopicColor(editTopic.getTopicColor());
                         }
-                        if(mTopic.getTopicImage() != null) {
+                        if (mTopic.getTopicImage() != null) {
                             upTopic.setTopicImage(mTopic.getTopicImage());
-                        }else{
+                        } else {
                             upTopic.setTopicImage(editTopic.getTopicImage());
                         }
                         upTopic.setTopicChanged(true);
@@ -392,7 +410,7 @@ public class NewTopicFragment extends Fragment {
 
                         try {
                             HelperFactory.getHelper().getTopicDAO().updateTopic(upTopic);
-                        }catch(SQLException e){
+                        } catch (SQLException e) {
                             Log.d("Error", e.toString());
                         }
                         int TopicId = mTopic.getTopicId();
@@ -404,8 +422,10 @@ public class NewTopicFragment extends Fragment {
                         newTopic.setServerTopicId(upTopic.getServerTopicId());
                         newTopic.setTitle(upTopic.getTopicTitle());
                         newTopic.setCreationDate(upTopic.getTopicCreationDate());
+
+
+
                         newTopic.setColor(upTopic.getTopicColor());
-                        newTopic.setImage(upTopic.getTopicImage());
 
                         SharedPreferences sharedPreferences = getContext()
                                 .getSharedPreferences(getString(R.string.sharedTitle), Context.MODE_PRIVATE);
@@ -421,7 +441,7 @@ public class NewTopicFragment extends Fragment {
                                     HelperFactory.getHelper().getTopicDAO().updateServerTopicId(mTopic.getTopicId(), result.getMessage());
                                     HelperFactory.getHelper().getTopicDAO().updateCreated(mTopic.getTopicId());
                                 } catch (SQLException ex) {
-    //                                 TODO write exception
+                                    //                                 TODO write exception
                                 }
                                 getActivity().finish();
                             }
@@ -490,6 +510,7 @@ public class NewTopicFragment extends Fragment {
                     bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver()
                             .openInputStream(Uri.parse(targetUri)));
                     BitmapDrawable bdrawable = new BitmapDrawable(getContext().getResources(), bitmap);
+
                     mImageTopicButton.setBackground(bdrawable);
                 } catch (FileNotFoundException e) {
                     //TODO write catch block
