@@ -221,14 +221,6 @@ public class NewTopicFragment extends Fragment {
                 } catch (SQLException ex) {
                     // TODO write exception
                 }
-
-
-//                try {
-//                    HelperFactory.getHelper().getTopicDAO().deleteTopicById(topicId);
-//                } catch (SQLException e) {
-//                    Log.d(TAG, "onClick: " + e.toString());
-//                }
-//                getActivity().finish();
             }
         });
 
@@ -336,18 +328,6 @@ public class NewTopicFragment extends Fragment {
 
                             }
                         }
-
-                        //                    try {
-//                        Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver()
-//                                .openInputStream(Uri.parse(mTopic.getTopicImage())));
-//                        ByteArrayOutputStream bao = new ByteArrayOutputStream();
-//                        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bao);
-//                        byte[] image = bao.toByteArray();
-////                        newTopic.setImageBitmap(image);
-//                        String ba1 = Base64.encodeToString(image, Base64.DEFAULT);
-//                    } catch(FileNotFoundException ex){
-//                        // TODO write exception
-//                    }
 
                         SharedPreferences sharedPreferences = getContext()
                                 .getSharedPreferences(getString(R.string.sharedTitle), Context.MODE_PRIVATE);
