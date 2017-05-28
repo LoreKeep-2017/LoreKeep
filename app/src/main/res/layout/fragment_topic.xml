@@ -32,17 +32,38 @@
         android:background="?attr/colorPrimaryDark"
         android:layout_alignParentBottom="true"
         android:minHeight="?attr/actionBarSize">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/add_topic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_action_name"
-            android:cropToPadding="true"/>
+            <ImageView
+                android:id="@+id/search_notes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/ic_search_image"
+                android:scaleType="centerInside"/>
+
+            <ImageView
+                android:id="@+id/add_topic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/ic_action_name"
+                android:cropToPadding="true"/>
+        </LinearLayout>
 
 
     </android.support.v7.widget.Toolbar>
+
+    <FrameLayout
+        android:id="@+id/loading_text_fragment_search"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_above="@+id/toolbar_bottom"
+        android:layout_centerHorizontal="true">
+    </FrameLayout>
+
 
 </RelativeLayout>

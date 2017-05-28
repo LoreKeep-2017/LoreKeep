@@ -12,6 +12,7 @@ import android.view.View;
 import com.example.ilya.lorekeep.auth.FragmentAdapter;
 import com.example.ilya.lorekeep.config.NetworkThread;
 import com.example.ilya.lorekeep.config.RetrofitFactory;
+import com.example.ilya.lorekeep.topic.TopicActivity;
 import com.example.ilya.lorekeep.user.userApi.UserApi;
 import com.example.ilya.lorekeep.user.userApi.userModels.UserAnswerModel;
 
@@ -41,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         editor.putInt(getString(R.string.userId), userId);
         editor.apply();
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, TopicActivity.class);
         startActivity(intent);
 
     }

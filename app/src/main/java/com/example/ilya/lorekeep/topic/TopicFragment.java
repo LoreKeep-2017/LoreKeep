@@ -11,6 +11,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +32,7 @@ import com.example.ilya.lorekeep.config.RetrofitFactory;
 import com.example.ilya.lorekeep.global_methods.GlobalMethods;
 import com.example.ilya.lorekeep.note.NoteActivity;
 import com.example.ilya.lorekeep.topic.dao.Topic;
+import com.example.ilya.lorekeep.topic.image_flickr.SearchFragment;
 import com.example.ilya.lorekeep.topic.topicApi.TopicApi;
 import com.example.ilya.lorekeep.topic.topicApi.models.TopicAnswer;
 import com.example.ilya.lorekeep.topic.topicApi.models.TopicModel;
@@ -45,6 +48,9 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static com.example.ilya.lorekeep.topic.NewTopicFragment.REQUEST_IMAGE;
+import static com.example.ilya.lorekeep.topic.NewTopicFragment.REQUEST_IMAGE_FRAGMENT;
+
 public class TopicFragment extends Fragment {
 
     public static final String TOPIC_ID = "topic_id";
@@ -53,6 +59,7 @@ public class TopicFragment extends Fragment {
     private String TAG = "TopicActivity";
     private final static int MY_PERMISSION_READ_STORAGE = 1;
 
+    private ImageView mSearchImage;
     private TopicApi topic;
     private RecyclerView mTopicRecyclerView;
     private List<Topic> mTopics;
@@ -156,6 +163,23 @@ public class TopicFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), NewTopicActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        mSearchImage = (ImageView) toolbarBottom.findViewById(R.id.search_notes);
+        mSearchImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                    FragmentManager manager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction transaction = manager.beginTransaction();
+                    Fragment searchFragment = SearchFragment.newInstance();
+                    searchFragment.setTargetFragment(TopicFragment.this, REQUEST_IMAGE);
+                    transaction.add(R.id.loading_text_fragment_search, searchFragment, REQUEST_IMAGE_FRAGMENT);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+
+
             }
         });
     }

@@ -25,6 +25,7 @@ import com.example.ilya.lorekeep.config.RetrofitFactory;
 import com.example.ilya.lorekeep.global_methods.GlobalMethods;
 import com.example.ilya.lorekeep.note.dao.Note;
 import com.example.ilya.lorekeep.note.noteApi.noteModels.NoteModel;
+import com.example.ilya.lorekeep.topic.TopicActivity;
 import com.example.ilya.lorekeep.topic.dao.Topic;
 import com.example.ilya.lorekeep.topic.topicApi.TopicApi;
 import com.example.ilya.lorekeep.topic.topicApi.models.TopicModel;
@@ -113,7 +114,7 @@ public class LoginFragment extends Fragment {
         }
         progressDialog = null;
         loginButton.setEnabled(true);
-        Intent intent = new Intent(getContext(), MainActivity.class);
+        Intent intent = new Intent(getContext(), TopicActivity.class);
         startActivity(intent);
 
     }
