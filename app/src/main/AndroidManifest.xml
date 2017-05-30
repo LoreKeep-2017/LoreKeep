@@ -40,7 +40,7 @@
             android:name=".topic.TopicActivity"
             android:label="@string/title_activity_topics"/>
         <activity android:name=".topic.NewTopicActivity"
-                  android:label="NewTopicctivity"/>
+                  android:label="New Topic"/>
         <activity android:name=".topic.draw_and_colorpicker.ColorPicker"
                   android:theme="@style/Theme.AppCompat.Dialog"/>
         <activity android:name=".topic.draw_and_colorpicker.DrawActivity"

@@ -127,6 +127,14 @@ public class TopicImpl extends BaseDaoImpl<Topic, Integer> {
         }
     }
 
+    public Topic getLastAdded(){
+        try{
+            return this.queryBuilder().orderBy("TopicId", false).limit(1L).query().get(0);
+        } catch (SQLException ex){
+            return null;
+        }
+    }
+
     public void deleteTopicById(Integer topicId) throws SQLException{
         DeleteBuilder<Topic, Integer> deleteBuilder = this.deleteBuilder();
         deleteBuilder.where().eq("serverTopicId", topicId);
