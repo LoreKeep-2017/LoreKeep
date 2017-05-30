@@ -198,11 +198,10 @@ public class NoteActivity extends AppCompatActivity {
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        (NoteActivity.this).setSupportActionBar(toolbar);
 
+        (NoteActivity.this).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        (NoteActivity.this).getSupportActionBar().setDisplayShowHomeEnabled(true);
 
     }
 

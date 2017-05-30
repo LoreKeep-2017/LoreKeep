@@ -47,15 +47,13 @@
                   android:theme="@style/Theme.AppCompat.Dialog"/>
         <activity
             android:name=".note.NoteActivity"
-            android:label="@string/title_activity_links"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="Links"/>
         <activity android:name=".note.NewNoteFragment"
-                  android:label="NoteActivity"/>
+                  android:label="New Link"/>
         <activity
             android:name="com.vk.sdk.VKServiceActivity"
             android:label="ServiceActivity"
             android:theme="@style/VK.Transparent" />
-        <activity android:name=".note.ListNoteActivity" />
     </application>
 
 </manifest>

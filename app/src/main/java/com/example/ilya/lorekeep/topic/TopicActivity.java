@@ -385,6 +385,7 @@ public class TopicActivity extends AppCompatActivity {
     private class TopicHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private Button mTopicButton;
         int topicPosition;
+        int topicId;
         int serverTopicId;
         private String title;
 
@@ -425,6 +426,7 @@ public class TopicActivity extends AppCompatActivity {
             title = item.getTopicTitle();
             mTopicButton.setText(title);
             serverTopicId = item.getServerTopicId();
+            topicId = item.getTopicId();
             topicPosition = getAdapterPosition();
 
             Animation animation = AnimationUtils.loadAnimation(TopicActivity.this, android.R.anim.slide_in_left);
@@ -442,8 +444,7 @@ public class TopicActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            //TODO change topicID
-            Intent intent = NoteActivity.newIntent(TopicActivity.this, serverTopicId);
+            Intent intent = NoteActivity.newIntent(TopicActivity.this, topicId);
             intent.putExtra("topic", title);
             startActivity(intent);
         }

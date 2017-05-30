@@ -5,7 +5,7 @@
               android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-                                                 android:background="@color/grey"
+    android:background="@color/grey"
     android:fitsSystemWindows="true"
     tools:context="com.example.ilya.lorekeep.note.NoteActivity"
     android:id="@+id/activity_note">
@@ -79,6 +79,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:tint="@color/vk_white"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_draw_picture"/>
 

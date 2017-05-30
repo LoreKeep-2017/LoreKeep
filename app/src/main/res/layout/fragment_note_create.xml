@@ -44,6 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
+                android:inputType="textCapSentences"
                 android:hint="@string/title_note">
 
             </EditText>
@@ -59,6 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/start_writing"
+                android:inputType="textCapSentences"
                 android:gravity="start">
 
 

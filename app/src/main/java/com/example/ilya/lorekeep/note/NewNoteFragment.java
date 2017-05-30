@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ilya.lorekeep.R;
+import com.example.ilya.lorekeep.auth.AuthProgressDialog;
 import com.example.ilya.lorekeep.config.HelperFactory;
 import com.example.ilya.lorekeep.config.NetworkThread;
 import com.example.ilya.lorekeep.config.RetrofitFactory;
@@ -26,7 +27,7 @@ import com.example.ilya.lorekeep.note.dao.Note;
 import com.example.ilya.lorekeep.note.noteApi.NoteApi;
 import com.example.ilya.lorekeep.note.noteApi.noteModels.NoteAnswer;
 import com.example.ilya.lorekeep.note.noteApi.noteModels.NoteModel;
-import com.example.ilya.lorekeep.topic.dao.Topic;
+
 
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
@@ -86,6 +87,7 @@ public class NewNoteFragment extends AppCompatActivity {
                 try {
                     switch (v.getId()) {
                         case R.id.toolbar_note_create:
+                            AuthProgressDialog progressDialog = new AuthProgressDialog(NewNoteFragment.this, "Creating");
                             createNote();
                             break;
                         default:
@@ -162,6 +164,7 @@ public class NewNoteFragment extends AppCompatActivity {
     private void createNote(){
         title = titleEdit.getText().toString();
         link = linkEdit.getText().toString();
+
         content = contentEdit.getText().toString();
 
         if (title.isEmpty() || content.isEmpty()) {
@@ -178,7 +181,7 @@ public class NewNoteFragment extends AppCompatActivity {
             try {
 
                 final NoteModel newNote = new NoteModel();
-                newNote.setTopic(topicId);
+                newNote.setTopic(1);
                 newNote.setComment(title);
                 newNote.setContent(content);
                 newNote.setUrl(link);
